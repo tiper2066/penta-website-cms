@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lock Icon</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* 자물쇠 glassmorphism이 보이도록 배경에 그라디언트 배치 */
+      background: radial-gradient(ellipse at 30% 40%, #b0b0b0 0%, #787878 60%, #505050 100%);
+    }
+
+    /* ── 전체 자물쇠 컨테이너 (240×323) ── */
+    .lock {
+      position: relative;
+      width: 240px;
+      height: 323px;
+    }
+
+    /* ── 걸쇠 (Shackle / Arch) ──────────────
+       Vector: 179×209px, left offset 31px
+       U자 아치형 — border로 구현, 하단 열림
+    ─────────────────────────────────────── */
+    .shackle {
+      position: absolute;
+      left: 31px;     /* (240 - 179) / 2 ≈ 31px */
+      top: 0;
+      width: 179px;
+      height: 209px;
+      border: 38px solid #222222;
+      border-bottom: none;
+      border-radius: 90px 90px 0 0;  /* 상단 반원 아치 */
+      z-index: 0;
+    }
+
+    /* ── 몸체 (Lock Body) ───────────────────
+       Exclude boolean: 240×190px, top 133px
+       Glassmorphism: 반투명 흰색 + backdrop blur
+       border-radius: 31px
+    ─────────────────────────────────────── */
+    .lock-body {
+      position: absolute;
+      left: 0;
+      top: 133px;
+      width: 240px;
+      height: 190px;
+      border-radius: 31px;
+      background: rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 0.6px solid rgba(255, 255, 255, 0.60);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+      z-index: 1;
+    }
+
+    /* noise texture (Figma NOISE 이펙트 근사) */
+    .lock-body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='200' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* ── 열쇠구멍 (Keyhole) ─────────────────
+       Union (Ellipse + Rectangle) 40×67px
+       몸체 기준: left 100px, top 61px
+       Exclude boolean로 구멍처럼 처리
+    ─────────────────────────────────────── */
+
+    /* 원형 부분 (Ellipse 24: 40×40) */
+    .keyhole-circle {
+      position: absolute;
+      left: 100px;
+      top: 61px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(210, 210, 210, 0.40);
+    }
+
+    /* 슬롯 부분 (Rectangle 211: 20×44, radius 28) */
+    .keyhole-slot {
+      position: absolute;
+      left: 110px;   /* 몸체 중앙 정렬: 100 + (40-20)/2 */
+      top: 84px;     /* 원과 약간 겹쳐 연속적인 열쇠구멍 형태 */
+      width: 20px;
+      height: 44px;
+      border-radius: 28px;
+      background: rgba(210, 210, 210, 0.40);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lock">
+    <!-- 걸쇠: 몸체 아래에 렌더링 (z-index 0) -->
+    <div class="shackle"></div>
+
+    <!-- 몸체: 걸쇠 위에 렌더링, 열쇠구멍 포함 (z-index 1) -->
+    <div class="lock-body">
+      <div class="keyhole-circle"></div>
+      <div class="keyhole-slot"></div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+<script>
+    /*
+    각 구성 요소의 CSS 구현 방식:
+
+Figma 레이어	CSS 기법	핵심 속성
+Vector (걸쇠)	border + border-bottom: none + border-radius: 90px 90px 0 0	border: 38px solid #222, U자 아치형
+Exclude (몸체)	border-radius: 31px + Glassmorphism	backdrop-filter: blur(30px), background: rgba(255,255,255,0.2), box-shadow
+Union (열쇠구멍)	원형 div + 슬롯 div 겹침	border-radius: 50% / border-radius: 28px, rgba(210,210,210,0.4)
+NOISE 이펙트	::before pseudo + SVG feTurbulence	opacity: 0.25
+포인트: z-index 0인 걸쇠 위에 z-index 1인 유리 몸체가 덮이면서, 걸쇠 하단이 몸체 안으로 삽입된 것처럼 자연스럽게 보입니다.
+    */
+</script>

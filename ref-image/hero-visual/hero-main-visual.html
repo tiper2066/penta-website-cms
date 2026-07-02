@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Shapes</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fecb09 0%, #27438f 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      padding: 60px;
+    }
+
+    .shape-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .label {
+      color: rgba(255, 255, 255, 0.75);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── 1. Ellipse 20 ─────────────────────────── */
+    .ellipse {
+      width: 396px;
+      height: 396px;
+      border-radius: 50%;
+      background-color: #FECB09;
+      border: 37px solid #27438F;
+    }
+
+    /* ── 2. Rectangle 155 ──────────────────────── */
+    .rectangle {
+      width: 253px;
+      height: 253px;
+      background-color: #27438F;
+    }
+
+    /* ── 3. Polygon 2 (삼각형) ─────────────────── */
+    /*
+      Figma: 3-point polygon (정삼각형), rotation = -45°
+      clip-path으로 위쪽을 향하는 삼각형 만든 뒤 -45° 회전
+    */
+    .polygon {
+      width: 106px;
+      height: 106px;
+      background-color: #5DD6D5;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      transform: rotate(-45deg);
+    }
+
+    /* ── 4. Subtract (Glassmorphism + 잘린 모서리) */
+    /*
+      Boolean Subtract: 큰 정사각형에서 회전된 사각형(다이아몬드)을
+      상단-오른쪽 모서리에서 빼내 사선 커팅 효과
+      clip-path 비율: 상단 기준 ~79% 지점 → 우측 기준 ~21% 지점으로 사선
+    */
+    .subtract {
+      width: 387px;
+      height: 387px;
+      background: rgba(255, 255, 255, 0.30);
+      border: 1px solid rgba(255, 255, 255, 0.50);
+      backdrop-filter: blur(100px);
+      -webkit-backdrop-filter: blur(100px);
+      clip-path: polygon(
+        0%   0%,
+        79%  0%,
+        100% 21%,
+        100% 100%,
+        0%   100%
+      );
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Noise texture overlay via SVG data URI */
+    .subtract::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+      background-size: 300px 300px;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .subtract {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 노란 원 -->
+  <div class="shape-wrapper">
+    <div class="ellipse"></div>
+    <span class="label">Ellipse 20</span>
+  </div>
+
+  <!-- 2. 파란 사각형 -->
+  <div class="shape-wrapper">
+    <div class="rectangle"></div>
+    <span class="label">Rectangle 155</span>
+  </div>
+
+  <!-- 3. 청록색 삼각형 -->
+  <div class="shape-wrapper">
+    <div class="polygon"></div>
+    <span class="label">Polygon 2</span>
+  </div>
+
+  <!-- 4. 모서리 잘린 유리 사각형 -->
+  <div class="shape-wrapper">
+    <div class="subtract"></div>
+    <span class="label">Subtract</span>
+  </div>
+
+</body>
+</html>
+
+<script>
+    /*
+각 도형의 구현 방식 요약:
+
+도형	CSS 기법	주요 속성
+Ellipse	border-radius: 50%	background: #FECB09, border: 37px solid #27438F
+Rectangle	기본 div	background: #27438F
+Polygon	clip-path: polygon(50% 0%, 0% 100%, 100% 100%) + transform: rotate(-45deg)	background: #5DD6D5
+Subtract	clip-path: polygon(0 0, 79% 0, 100% 21%, 100% 100%, 0 100%)	backdrop-filter: blur(100px), background: rgba(255,255,255,0.3)
+주의: backdrop-filter는 요소 뒤에 배경이 있어야 효과가 보입니다. 위 예제는 그라디언트 배경을 배치해 유리 블러 효과가 잘 드러나도록 했습니다. Subtract 도형의 noise 질감은 SVG feTurbulence 필터로 구현했습니다.    
+    */
+</script>

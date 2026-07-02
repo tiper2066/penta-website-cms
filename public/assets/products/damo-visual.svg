@@ -1,0 +1,35 @@
+<svg width="300" height="363" viewBox="0 0 300 363" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M221.512 209C211.301 209 203.023 200.716 203.023 190.497V89.5714C203.023 60.589 179.459 37.006 150.5 37.006C121.541 37.006 97.9765 60.589 97.9765 89.5714V190.497C97.9765 200.716 89.6988 209 79.4883 209C69.2777 209 61 200.716 61 190.497V89.5714C61 40.1852 101.153 0 150.5 0C199.847 0 240 40.1852 240 89.5714V190.497C240 200.716 231.722 209 221.512 209Z" fill="#222222"/>
+<foreignObject x="0" y="103" width="300" height="260"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(15px);clip-path:url(#bgblur_0_135_119_clip_path);height:100%;width:100%"></div></foreignObject><g filter="url(#filter0_dn_135_119)" data-figma-bg-blur-radius="30">
+<path d="M239 133C256.121 133 270 146.879 270 164V292C270 309.121 256.121 323 239 323H61C43.8792 323 30 309.121 30 292V164C30 146.879 43.8792 133 61 133H239ZM150 194C138.954 194 130 202.954 130 214C130 221.403 134.022 227.865 140 231.323V251C140 256.523 144.477 261 150 261C155.523 261 160 256.523 160 251V231.323C165.978 227.865 170 221.403 170 214C170 202.954 161.046 194 150 194Z" fill="white" fill-opacity="0.2" style="mix-blend-mode:overlay" shape-rendering="crispEdges"/>
+</g>
+<defs>
+<filter id="filter0_dn_135_119" x="0" y="103" width="300" height="260" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="10"/>
+<feGaussianBlur stdDeviation="15"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_135_119"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="2 2" stitchTiles="stitch" numOctaves="3" result="noise" seed="2364" />
+<feComponentTransfer in="noise" result="coloredNoise1">
+<feFuncR type="linear" slope="2" intercept="-0.5" />
+<feFuncG type="linear" slope="2" intercept="-0.5" />
+<feFuncB type="linear" slope="2" intercept="-0.5" />
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "/>
+</feComponentTransfer>
+<feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped" />
+<feComponentTransfer in="noise1Clipped" result="color1">
+<feFuncA type="table" tableValues="0 0.1" />
+</feComponentTransfer>
+<feMerge result="effect2_noise_135_119">
+<feMergeNode in="shape" />
+<feMergeNode in="color1" />
+</feMerge>
+<feBlend mode="normal" in="effect2_noise_135_119" in2="effect1_dropShadow_135_119" result="effect2_noise_135_119"/>
+</filter>
+<clipPath id="bgblur_0_135_119_clip_path" transform="translate(0 -103)"><path d="M239 133C256.121 133 270 146.879 270 164V292C270 309.121 256.121 323 239 323H61C43.8792 323 30 309.121 30 292V164C30 146.879 43.8792 133 61 133H239ZM150 194C138.954 194 130 202.954 130 214C130 221.403 134.022 227.865 140 231.323V251C140 256.523 144.477 261 150 261C155.523 261 160 256.523 160 251V231.323C165.978 227.865 170 221.403 170 214C170 202.954 161.046 194 150 194Z"/>
+</clipPath></defs>
+</svg>

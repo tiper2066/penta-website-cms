@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Icon & Viewfinder</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 80px;
+      background: linear-gradient(135deg, #d8d8d8, #c0c0c0);
+    }
+
+    /* ══════════════════════════════════════════════
+       1. 사람 아이콘 (Group 263: 239×246)
+       ══════════════════════════════════════════════ */
+    .user-icon {
+      position: relative;
+      width: 239px;
+      height: 246px;
+    }
+
+    /* 머리 (Ellipse 21: 101×101, left=69, top=0) */
+    .user-icon__head {
+      position: absolute;
+      left: 69px;
+      top: 0;
+      width: 101px;
+      height: 101px;
+      border-radius: 50%;
+      background: #222222;
+    }
+
+    /* 몸통 (Vector 239×126, top=121)
+       ✅ 수정: 상단 = 반타원 아치, 하단 = 40px 둥근 모서리
+       border-radius: TL TR BR BL / TL-v TR-v BR-v BL-v
+       - 상단 좌/우: horizontal 50%(=119px), vertical 68%(=86px)
+       - 하단 좌/우: 40px
+       - 86 + 40 = 126 = height → 브라우저 자동 축소 없이 정확히 적용 */
+    .user-icon__body {
+      position: absolute;
+      left: 0;
+      top: 121px;
+      width: 239px;
+      height: 126px;
+      background: #222222;
+      border-radius: 50% 50% 40px 40px / 68% 68% 40px 40px;
+    }
+
+    /* ══════════════════════════════════════════════
+       2. 뷰파인더 (Group 265: 266×266)
+       ══════════════════════════════════════════════ */
+    .viewfinder {
+      position: relative;
+      width: 266px;
+      height: 266px;
+    }
+
+    .glass {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.20);
+      border: 0.6px solid rgba(255, 255, 255, 0.60);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+    }
+
+    .glass::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .bar-h { width: 98px; height: 21px; }
+    .bar-v { width: 21px; height: 98px; }
+
+    .tl-h { top: 0;    left: 0; }
+    .tl-v { top: 0;    left: 0; }
+    .tr-h { top: 0;    right: 0; }
+    .tr-v { top: 0;    right: 0; }
+    .bl-h { bottom: 0; left: 0; }
+    .bl-v { bottom: 0; left: 0; }
+    .br-h { bottom: 0; right: 0; }
+    .br-v { bottom: 0; right: 0; }
+
+    /* 중앙 원: relX=173, relY=173, w=80 → visual TL=(93,93) */
+    .viewfinder__dot {
+      left: 93px;
+      top: 93px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ① 사람 아이콘 -->
+  <div class="user-icon">
+    <div class="user-icon__head"></div>
+    <div class="user-icon__body"></div>
+  </div>
+
+  <!-- ② 뷰파인더 -->
+  <div class="viewfinder">
+    <div class="glass bar-h tl-h"></div>
+    <div class="glass bar-v tl-v"></div>
+    <div class="glass bar-h tr-h"></div>
+    <div class="glass bar-v tr-v"></div>
+    <div class="glass bar-h bl-h"></div>
+    <div class="glass bar-v bl-v"></div>
+    <div class="glass bar-h br-h"></div>
+    <div class="glass bar-v br-v"></div>
+    <div class="glass viewfinder__dot"></div>
+  </div>
+
+</body>
+</html>
+
+<script>
+    /*
+    구현 방식 요약:
+
+요소	Figma 원본	CSS 구현
+머리	Ellipse 21 (100.5×100.5, left=69)	border-radius: 50%, background: #222
+몸통	Vector 238.6×125.6 (top=120.5)	border-radius: 50% 50% 0 0 / 100% 100% 0 0 (반타원)
+꺾쇠 브라켓	Union boolean (4방향 rotation으로 좌표 역산)	수평 바(98×21) + 수직 바(21×98) top/bottom/left/right: 0
+중앙 도트	Rectangle r=40 (rotation=180° → 역산)	border-radius: 50%, left/top=93px
+Glassmorphism	backdrop-filter + rgba(255,255,255,0.2)	-webkit-backdrop-filter: blur(30px)
+
+    */
+</script>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group 306 — 두 요소 분리</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 80px;
+      background: linear-gradient(135deg, #d8d8d8 0%, #c0c0c0 100%);
+    }
+
+    /* ════════════════════════════════════════════
+       1. 다크 카드 (Exclude Boolean: 294×181)
+          - 어두운 #222 배경, border-radius 10px
+          - 우상단 3개 흰 점: Exclude 구멍 → 흰 배경이 보이는 효과
+          - 3개 점: 12×12, gap 7px, right 10px, top 10px
+       ════════════════════════════════════════════ */
+    .dark-card {
+      position: relative;
+      width: 294px;
+      height: 181px;
+      border-radius: 10px;
+      background: #222222;
+      flex-shrink: 0;
+    }
+
+    /* 3개 점 컨테이너 — Exclude 구멍을 흰 원으로 재현 */
+    .dark-card__dots {
+      position: absolute;
+      top: 10px;
+      right: 10px;       /* 294 - (272 + 12) = 10px */
+      display: flex;
+      gap: 7px;          /* 점 사이 간격: 253-246=7, 272-265=7 */
+    }
+
+    .dark-card__dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d9d9d9; /* Exclude 구멍 → 뒤 배경(흰색) 노출 재현 */
+    }
+
+    /* ════════════════════════════════════════════
+       2. 벽돌 카드 그리드 (Group 262: 349×232)
+          - 6개 glassmorphism 카드, 각 134×68, radius 5
+          - 2열 엇갈림(staggered) 배열, 14px 행 간격
+          - rotation=180° 역산: visual TL = (relX-w, relY-h)
+            Row 1: (67,0)   / (215,0)
+            Row 2: (0,82)   / (148,82)
+            Row 3: (67,164) / (215,164)
+       ════════════════════════════════════════════ */
+    .card-grid {
+      position: relative;
+      width: 349px;
+      height: 232px;
+      flex-shrink: 0;
+    }
+
+    /* 카드 공통 */
+    .card {
+      position: absolute;
+      width: 134px;
+      height: 68px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.20);
+      border: 0.6px solid rgba(255, 255, 255, 0.60);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+    }
+
+    /* noise 텍스처 (Figma NOISE 이펙트) */
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='134' height='68'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='134' height='68' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* Row 1 */
+    .card--1 { left: 67px;  top: 0;     }   /* Rect 210: relX=201, relY=68  → (201-134, 68-68)  */
+    .card--2 { left: 215px; top: 0;     }   /* Rect 209: relX=349, relY=68  → (349-134, 68-68)  */
+    /* Row 2 */
+    .card--3 { left: 0;     top: 82px;  }   /* Rect 205: relX=134, relY=150 → (134-134, 150-68) */
+    .card--4 { left: 148px; top: 82px;  }   /* Rect 206: relX=282, relY=150 → (282-134, 150-68) */
+    /* Row 3 */
+    .card--5 { left: 67px;  top: 164px; }   /* Rect 207: relX=201, relY=232 → (201-134, 232-68) */
+    .card--6 { left: 215px; top: 164px; }   /* Rect 208: relX=349, relY=232 → (349-134, 232-68) */
+  </style>
+</head>
+<body>
+
+  <!-- ① 다크 카드 (Exclude: 294×181) -->
+  <div class="dark-card">
+    <div class="dark-card__dots">
+      <span class="dark-card__dot"></span>
+      <span class="dark-card__dot"></span>
+      <span class="dark-card__dot"></span>
+    </div>
+  </div>
+
+  <!-- ② 벽돌 카드 그리드 (Group 262: 349×232) -->
+  <div class="card-grid">
+    <div class="card card--1"></div>
+    <div class="card card--2"></div>
+    <div class="card card--3"></div>
+    <div class="card card--4"></div>
+    <div class="card card--5"></div>
+    <div class="card card--6"></div>
+  </div>
+
+</body>
+</html>
+
+
+<script>
+    /*
+항목	이전 문제	수정 방법
+다크 카드 미표시	mask-image 합성이 브라우저마다 달라 패널 전체가 사라짐	mask 제거 → 3개 점을 <span> 요소로 직접 렌더링
+두 요소 분리	하나의 컨테이너에 겹쳐서 배치	독립 요소로 분리, body에서 gap: 80px으로 나란히 배치
+3개 점 위치	mask 좌표 계산 오류	right: 10px, top: 10px, gap: 7px으로 정확히 재현
+    */
+</script>

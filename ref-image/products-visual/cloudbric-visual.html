@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checker & Cloud</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 80px;
+      background: linear-gradient(135deg, #b0c4de 0%, #778899 50%, #4a5568 100%);
+    }
+
+    /* ════════════════════════════════════════════
+       1. 체커보드 패턴 (180×180)
+          60×60 셀 5개, 나머지 4칸 = 완전 투명
+       ════════════════════════════════════════════ */
+    .checker {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      background: transparent;
+      flex-shrink: 0;
+    }
+    .checker__cell {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: #222222;
+    }
+
+    /* ════════════════════════════════════════════
+       2. 구름 (Union VECTOR: 316×196)
+          - clip-path: url(#cloud-clip) → SVG clipPath로 구름 형태 정의
+          - backdrop-filter + rgba 배경 → glassmorphism
+          - filter: drop-shadow → 클립 경계 따라 그림자
+       ════════════════════════════════════════════ */
+
+    /* 그림자는 클립된 구름 형태를 따라가도록 wrapper에 적용 */
+    .cloud-wrapper {
+      position: relative;
+      width: 316px;
+      height: 196px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+    }
+
+    .cloud {
+      width: 316px;
+      height: 196px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      /* SVG clipPath를 참조하여 구름 모양으로 클리핑 */
+      clip-path: url(#cloud-clip);
+      -webkit-clip-path: url(#cloud-clip);
+      position: relative;
+    }
+
+    /* noise 텍스처 */
+    .cloud::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='316' height='196'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='316' height='196' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
+      opacity: 0.2;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    SVG clipPath 정의 (화면에 보이지 않음, 0×0).
+    clipPathUnits="userSpaceOnUse" → div 픽셀 좌표(0,0)~(316,196) 기준으로 경로 적용.
+
+    구름 경로 설계 (316×196, Q = 이차 베지어):
+      - 하단 좌·우: 둥근 곡선 처리
+      - 상단 좌에서 우로: 작은 봉우리 → 큰 중앙 봉우리 → 중간 우측 봉우리
+      - 3개 봉우리가 y=0 위로 살짝 솟아 자연스러운 구름 실루엣 형성
+  -->
+  <svg width="0" height="0" style="position:absolute; overflow:hidden;">
+    <defs>
+      <clipPath id="cloud-clip" clipPathUnits="userSpaceOnUse">
+        <path d="
+          M 0 160
+          Q 0 196 40 196
+          L 276 196
+          Q 316 196 316 155
+          Q 316 100 278 88
+          Q 298 60 282 38
+          Q 266 10 238 24
+          Q 218 -8 180 8
+          Q 158 -16 128 10
+          Q 100 -8 86 20
+          Q 50 4 42 46
+          Q 8 60 0 100
+          Z
+        "/>
+      </clipPath>
+    </defs>
+  </svg>
+
+  <!-- ① 체커보드 패턴 (비검정 = 투명) -->
+  <div class="checker">
+    <div class="checker__cell" style="left:0;    top:0;"></div>
+    <div class="checker__cell" style="left:120px;top:0;"></div>
+    <div class="checker__cell" style="left:60px; top:60px;"></div>
+    <div class="checker__cell" style="left:0;    top:120px;"></div>
+    <div class="checker__cell" style="left:120px;top:120px;"></div>
+  </div>
+
+  <!-- ② 구름 (glassmorphism + SVG 클립) -->
+  <div class="cloud-wrapper">
+    <div class="cloud"></div>
+  </div>
+
+</body>
+</html>
+
+<script>
+    /*
+구현 핵심 정리:
+
+요소	Figma 원본	CSS 구현 방식
+체커보드 투명	5개 Vector (#222), 나머지 없음	background: transparent + 5개 .checker__cell div
+체커보드 위치	(0,0)(120,0)(60,60)(0,120)(120,120)	각 div에 left/top 직접 지정
+구름 실루엣	Union VECTOR (복잡한 벡터 패스)	clip-path: path('M...') 3봉우리 베지어 곡선
+Glassmorphism	background-blur(30) + rgba(255,255,255,0.2)	backdrop-filter: blur(30px)
+구름 테두리	stroke rgba(255,255,255,0.6) 0.6px	box-shadow: inset 0 0 0 0.6px
+Noise	NOISE 이펙트 (25% opacity)	::after + SVG feTurbulence
+구름의 clip-path: path() 는 Chrome/Edge/Safari에서 지원됩니다. Firefox 117+ 이상에서도 지원됩니다.
+
+핵심 수정 사항:
+
+문제	원인	해결
+구름이 박스로 보임	clip-path: path('...') 내 줄바꿈 파싱 실패	clip-path: url(#cloud-clip) — SVG <clipPath> 참조 방식으로 변경
+그림자가 박스 형태	box-shadow는 클립 경계 무시	filter: drop-shadow() — 클립된 구름 윤곽을 따라 그림자 적용
+구름 경로 설계 (SVG path):
+    */
+</script>
