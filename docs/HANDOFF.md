@@ -13,6 +13,8 @@
 - 공개 메인 페이지 `/`와 관리자 데모 `/admin-demo`가 생성되어 있습니다.
 - 현재 2단계 공개 페이지 데모 구현을 진행 중입니다.
 - 2단계는 한 차례 ref-image 비교 피드백을 반영해 타이포, Hero 도형, ProductTabs, Stats, Awards, Footer 구조를 조정했습니다.
+- Hero 및 제품 비주얼은 `ref-image/hero-visual/*.html`, `ref-image/products-visual/*.html`의 Figma HTML 코드를 참고해 `src/components/visuals/figma-visuals.tsx`로 React 컴포넌트화했습니다.
+- 사용자가 추가한 `ref-image/main_01.html`은 `C type_01` 전체 페이지의 CSS/배치 참고용 HTML입니다. 다음 정밀 보정에서 `main_01.png`와 함께 우선 참고합니다.
 - 아직 ref-image와 완전히 동일하지는 않으므로 다음 작업은 섹션별 정밀 보정으로 진행합니다.
 - 현재 기준 디자인은 `ref-image` 이미지 4개와 Figma 파일입니다.
 
@@ -52,6 +54,7 @@
 - `ref-image/main_02.png`
 - `ref-image/main_03.png`
 - `ref-image/main_04.png`
+- `ref-image/main_01.html`: Figma 기준 전체 페이지 구현 참고 HTML
 
 이 이미지는 Figma 4개 프레임의 시각 기준으로 사용합니다.
 
@@ -137,6 +140,7 @@ penta-cms/
       layout/
       sections/
       ui/
+      visuals/
     content/
       demo-site.json
     lib/
@@ -197,6 +201,7 @@ penta-cms/
 - Stats 구분선을 제거하고 수치 크기를 `24px` 기준으로 낮췄습니다.
 - Awards 카드를 제거하고 중앙 정렬 구조로 조정했습니다.
 - FooterNavigation/FooterLegal은 회색 배경과 FooterLegal 로고 좌측 배치로 조정했습니다.
+- `src/components/visuals/figma-visuals.tsx`를 추가해 Hero와 D.AMO/WAPPLES/iSIGN/Cloudbric 제품 비주얼을 CSS 도형으로 렌더링합니다.
 
 남은 정밀 보정 순서:
 
@@ -207,6 +212,12 @@ penta-cms/
 5. Footer
 
 다음 작업에서는 각 섹션을 ref-image와 직접 비교하면서 한 섹션씩 수정하고 검증합니다.
+
+다음 세션 시작 시 권장 작업:
+
+1. `ref-image/main_01.html`과 `ref-image/main_01.png`를 기준으로 Hero 섹션부터 좌표, 크기, 간격을 정밀 보정합니다.
+2. 각 섹션 보정 후 브라우저에서 `http://localhost:3000`을 ref-image와 비교합니다.
+3. 한 섹션이 끝날 때마다 `npm run typecheck`, `npm run lint`, `npm run build` 중 필요한 검증을 실행합니다.
 
 ## 관리자 데모 편집 항목
 
@@ -240,6 +251,6 @@ penta-cms/
 새 채팅에서는 아래처럼 시작하면 됩니다.
 
 ```txt
-docs/HANDOFF.md와 docs/PROJECT_PLAN.md를 기준으로 1단계 JSON 기반 데모 스캐폴딩을 시작해주세요.
-각 단계 완료 후 실행/구조 검증을 하고 다음 단계로 넘어가 주세요.
+docs/HANDOFF.md와 docs/PROJECT_PLAN.md를 기준으로 2단계 공개 페이지 정밀 보정을 이어가 주세요.
+ref-image/main_01.png와 ref-image/main_01.html을 기준으로 Hero부터 섹션별로 수정하고, 각 섹션 완료 후 실행/구조 검증을 해주세요.
 ```

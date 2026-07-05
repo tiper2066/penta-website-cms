@@ -94,13 +94,15 @@ penta-cms/
 
 - 1차 공개 페이지 구현 후 ref-image와 localhost 구현 화면을 비교했습니다.
 - `docs/typography-guide.md`를 추가 기준으로 삼아 텍스트 크기, 굵기, 색상 일부를 반영했습니다.
+- Hero 및 제품별 비주얼은 `ref-image/hero-visual`, `ref-image/products-visual`의 Figma HTML 코드를 참고해 `src/components/visuals/figma-visuals.tsx`로 컴포넌트화했습니다.
+- `ref-image/main_01.html`은 전체 페이지 레이아웃과 섹션별 CSS 수치를 확인하는 참고 HTML로 사용합니다.
 - 아직 시안과 완전히 동일하지 않으므로 이후 작업은 다음 순서로 섹션별 정밀 보정합니다.
   1. Hero
   2. News / Subscribe
   3. ProductTabs / Product
   4. Stats / Awards
   5. Footer
-- 각 섹션 보정 후 브라우저 확인과 `npm run lint`, `npm run build` 검증을 수행합니다.
+- 각 섹션 보정 후 `main_01.png`, `main_01.html`, localhost 구현 화면을 함께 비교하고 `npm run typecheck`, `npm run lint`, `npm run build` 검증을 수행합니다.
 
 ### 3단계: 관리자 데모
 

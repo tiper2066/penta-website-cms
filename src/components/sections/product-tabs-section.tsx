@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ProductVisual } from "@/components/visuals/figma-visuals";
 import { cn } from "@/lib/utils";
 import type { ProductTabsSection } from "@/lib/content/types";
 
@@ -27,7 +28,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
   return (
     <section className="pb-[78px] pt-[58px]">
       <div className="penta-container">
-        <h2 className="max-w-[760px] whitespace-pre-line text-[54px] font-bold leading-[1.18] tracking-[-0.055em] text-[var(--color-text-primary)]">
+        <h2 className="text-(--color-text-primary) max-w-[760px] whitespace-pre-line text-[54px] font-bold leading-[1.18] tracking-[-0.055em]">
           {section.data.headline}
         </h2>
 
@@ -46,8 +47,8 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
               className={cn(
                 "h-[54px] rounded-[2px] px-6 text-[20px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 activeTab.id === tab.id
-                  ? "bg-primary text-[var(--color-text-inverse)]"
-                  : "bg-card text-[var(--color-text-dark)] hover:bg-white/70",
+                  ? "text-(--color-text-inverse) bg-primary"
+                  : "text-(--color-text-dark) bg-card hover:bg-white/70",
               )}
             >
               {tab.label}
@@ -57,7 +58,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
 
         <div className="mt-[56px] grid items-start gap-10 lg:grid-cols-[0.58fr_0.42fr]">
           <div>
-            <p className="text-[22px] font-bold tracking-[-0.025em] text-[var(--color-text-primary)]">
+            <p className="text-(--color-text-primary) text-[22px] font-bold tracking-tight">
               {activeTab.category}
             </p>
             <Image
@@ -67,7 +68,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
               height={64}
               className="mt-3 h-[52px] w-auto object-contain"
             />
-            <p className="mt-[26px] max-w-[420px] text-[20px] font-normal leading-[1.56] tracking-[-0.02em] text-[var(--color-text-primary)]">
+            <p className="text-(--color-text-primary) mt-[26px] max-w-[420px] text-[20px] font-normal leading-[1.56] tracking-[-0.02em]">
               {activeTab.description}
             </p>
             <Button
@@ -82,13 +83,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
           </div>
 
           <div className="flex min-h-[240px] items-start justify-center lg:justify-end">
-            <Image
-              src={activeTab.visual.value}
-              alt={`${activeTab.productName} visual`}
-              width={260}
-              height={260}
-              className="h-auto max-h-[260px] w-auto max-w-[280px] object-contain"
-            />
+            <ProductVisual productId={activeTab.id} />
           </div>
         </div>
       </div>
