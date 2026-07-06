@@ -65,7 +65,7 @@ penta-cms/
 
 ### 2단계: 공개 페이지 데모
 
-상태: 진행 중
+상태: 완료
 
 목표:
 
@@ -90,19 +90,14 @@ penta-cms/
 - 제품 탭 클릭 시 D.AMO, WAPPLES, iSIGN, Cloudbric 콘텐츠가 전환된다.
 - 모든 텍스트와 버튼 링크가 JSON 데이터로부터 렌더링된다.
 
-현재 진행 메모:
+완료 메모:
 
-- 1차 공개 페이지 구현 후 ref-image와 localhost 구현 화면을 비교했습니다.
-- `docs/typography-guide.md`를 추가 기준으로 삼아 텍스트 크기, 굵기, 색상 일부를 반영했습니다.
-- Hero 및 제품별 비주얼은 `ref-image/hero-visual`, `ref-image/products-visual`의 Figma HTML 코드를 참고해 `src/components/visuals/figma-visuals.tsx`로 컴포넌트화했습니다.
-- `ref-image/main_01.html`은 전체 페이지 레이아웃과 섹션별 CSS 수치를 확인하는 참고 HTML로 사용합니다.
-- 아직 시안과 완전히 동일하지 않으므로 이후 작업은 다음 순서로 섹션별 정밀 보정합니다.
-  1. Hero
-  2. News / Subscribe
-  3. ProductTabs / Product
-  4. Stats / Awards
-  5. Footer
-- 각 섹션 보정 후 `main_01.png`, `main_01.html`, localhost 구현 화면을 함께 비교하고 `npm run typecheck`, `npm run lint`, `npm run build` 검증을 수행합니다.
+- `ref-image/main_01.png`와 `ref-image/main_01.html`을 기준으로 Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal의 데스크톱 정밀 보정을 완료했습니다.
+- Header 로고/메뉴/검색/언어 아이콘, Hero 도형 크기와 레이어, News 목록과 구독 카드, 제품 탭과 제품별 CSS 비주얼, 통계 카드, 푸터 메뉴/회사 정보 레이아웃을 시안 기준으로 조정했습니다.
+- 제품별 비주얼은 `src/components/visuals/figma-visuals.tsx`에서 CSS 도형으로 렌더링하며, Cloudbric 구름 도형은 `ref-image/products-visual/mask-cloud.png` 마스크를 사용합니다.
+- Awards는 `src/components/sections/awards-carousel.tsx` 클라이언트 컴포넌트로 분리해 3개 초과 아이템에서 자동 Carousel, hover pause, dot navigation을 제공합니다.
+- 콘텐츠는 `src/content/demo-site.json`에서 계속 관리하며, 뉴스/제품 설명/수상/푸터 메뉴 텍스트를 데모 기준으로 갱신했습니다.
+- 검증: `npm run typecheck` 통과. 커밋 전 `npm run lint`, `npm run build`를 추가 확인합니다.
 
 ### 3단계: 관리자 데모
 

@@ -1,4 +1,4 @@
-import { Globe2, Search } from "lucide-react";
+import { Globe, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,14 +16,14 @@ export function SiteHeader({ navigation }: SiteHeaderProps) {
           <Image
             src={navigation.logo.image}
             alt={navigation.logo.label}
-            width={124}
-            height={23}
+            width={206}
+            height={24}
             style={{ height: "auto" }}
             priority
           />
         </Link>
 
-        <nav className="hidden items-center gap-[46px] text-[14px] font-medium text-[var(--color-text-primary)] lg:flex">
+        <nav className="hidden items-center gap-[46px] text-[14px] font-medium tracking-[0.7px] text-(--color-text-primary) lg:flex">
           {navigation.items.map((item) => (
             <Link key={item.href} href={item.href} className="transition-colors hover:text-foreground">
               {item.label}
@@ -35,19 +35,19 @@ export function SiteHeader({ navigation }: SiteHeaderProps) {
           {navigation.search.enabled ? (
             <button
               type="button"
-              className="inline-flex h-[20px] w-[136px] items-center justify-end gap-2 rounded-[10px] border border-[#9a9a9a] bg-transparent px-2 text-[12px] font-medium text-[var(--color-text-primary)] transition-colors hover:bg-white/50"
+              className="inline-flex h-[30px] w-[181px] items-center justify-end rounded-[70px] border border-[#222] bg-transparent px-[9px] text-[12px] font-medium text-(--color-text-primary) transition-colors hover:bg-white/50"
               aria-label={navigation.search.placeholder}
             >
               <span className="sr-only">{navigation.search.placeholder}</span>
-              <Search className="h-3 w-3" />
+              <Search className="h-5 w-5" />
             </button>
           ) : null}
           <button
             type="button"
-            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-[var(--color-text-primary)] transition-colors hover:bg-white/50"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-(--color-text-primary) transition-colors hover:bg-white/50"
             aria-label="Language"
           >
-            <Globe2 className="h-3.5 w-3.5" />
+            <Globe className="h-5 w-5" />
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ProductVisual } from "@/components/visuals/figma-visuals";
@@ -25,11 +25,20 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
     return null;
   }
 
+  const [headlineLead, ...headlineRest] = section.data.headline.split("\n");
+  const headlineSuffix = headlineRest.join("\n");
+
   return (
     <section className="pb-[78px] pt-[58px]">
       <div className="penta-container">
-        <h2 className="text-(--color-text-primary) max-w-[760px] whitespace-pre-line text-[54px] font-bold leading-[1.18] tracking-[-0.055em]">
-          {section.data.headline}
+        <h2 className="text-(--color-text-primary) w-full whitespace-pre-line text-[54px] leading-[1.18] tracking-[-0.055em]">
+          <span className="font-bold">{headlineLead}</span>
+          {headlineSuffix ? (
+            <>
+              {"\n"}
+              <span className="font-extralight">{headlineSuffix}</span>
+            </>
+          ) : null}
         </h2>
 
         <div
@@ -45,7 +54,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
               role="tab"
               aria-selected={activeTab.id === tab.id}
               className={cn(
-                "h-[54px] rounded-[2px] px-6 text-[20px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                "h-[84px] rounded-[4px] px-6 text-[20px]! font-bold! leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 activeTab.id === tab.id
                   ? "text-(--color-text-inverse) bg-primary"
                   : "text-(--color-text-dark) bg-card hover:bg-white/70",
@@ -56,7 +65,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
           ))}
         </div>
 
-        <div className="mt-[56px] grid items-start gap-10 lg:grid-cols-[0.58fr_0.42fr]">
+        <div className="relative mt-[56px] grid min-h-[360px] items-start gap-10 lg:grid-cols-[0.58fr_0.42fr]">
           <div>
             <p className="text-(--color-text-primary) text-[22px] font-bold tracking-tight">
               {activeTab.category}
@@ -68,21 +77,34 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
               height={64}
               className="mt-3 h-[52px] w-auto object-contain"
             />
-            <p className="text-(--color-text-primary) mt-[26px] max-w-[420px] text-[20px] font-normal leading-[1.56] tracking-[-0.02em]">
+            <div className="mt-[42px] h-px w-[42px] bg-(--color-text-primary)" />
+            <p className="text-(--color-text-primary) mt-[42px] max-w-[560px] whitespace-pre-line text-[20px] font-normal leading-[1.7] tracking-[-0.02em]">
               {activeTab.description}
             </p>
             <Button
               asChild
-              className="mt-[30px] h-[44px] rounded-[4px] px-[24px] text-[20px] font-medium text-white"
+              className="mt-[30px] h-[66px] rounded-[4px] px-[24px] text-[20px] font-medium text-white! hover:text-white! **:text-white!"
             >
-              <Link href={activeTab.button.href}>
+              <Link href={activeTab.button.href} className="text-white!">
                 {activeTab.button.label}
-                <ArrowUpRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
 
-          <div className="flex min-h-[240px] items-start justify-center lg:justify-end">
+          <div
+            className={cn(
+              "flex min-h-[240px] items-start justify-center lg:justify-end",
+              activeTab.id === "damo" &&
+                "lg:pointer-events-none lg:absolute lg:left-[786px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
+              activeTab.id === "wapples" &&
+                "lg:pointer-events-none lg:absolute lg:left-[663px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
+              activeTab.id === "isign" &&
+                "lg:pointer-events-none lg:absolute lg:left-[752px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
+              activeTab.id === "cloudbric" &&
+                "lg:pointer-events-none lg:absolute lg:left-[730px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
+            )}
+          >
             <ProductVisual productId={activeTab.id} />
           </div>
         </div>

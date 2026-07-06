@@ -50,23 +50,44 @@
               {
                 "id": "news-001",
                 "badge": "NEW",
-                "title": "펜타시큐리티, 대한민국 IT서비스 혁신대상 과기정통부 장관상 수상",
+                "title": "펜타시큐리티, ‘대한민국 IT서비스 혁신대상’ 과기정통부 장관상 수상",
                 "date": "2025-11-17",
                 "href": "/resources/news/news-001"
               },
               {
                 "id": "news-002",
-                "badge": "NEWS",
-                "title": "Cloudbric, 글로벌 보안 어워드에서 SaaS 보안 역량 인정",
-                "date": "2025-10-28",
+                "badge": "NEW",
+                "title": "펜타시큐리티·한국산업단지경영자연합회, 산업단지 기업 보안 협력 MOU 체결",
+                "date": "2025-11-13",
                 "href": "/resources/news/news-002"
               },
               {
                 "id": "news-003",
-                "badge": "NOTICE",
-                "title": "펜타시큐리티 웹사이트/CMS 데모 콘텐츠 모델 공개",
-                "date": "2025-09-30",
+                "badge": "",
+                "title": "펜타시큐리티, FISCON 2025에서 차세대 통합 인증보안 선보인다",
+                "date": "2025-11-10",
                 "href": "/resources/news/news-003"
+              },
+              {
+                "id": "news-004",
+                "badge": "",
+                "title": "펜타시큐리티, 서울투자청 ‘CORE 2025’ 해외 투자 유망 기업 선정",
+                "date": "2025-09-30",
+                "href": "/resources/news/news-004"
+              },
+              {
+                "id": "news-005",
+                "badge": "",
+                "title": "펜타시큐리티, 서울투자청 ‘CORE 2025’ 해외 투자 유망 기업 선정",
+                "date": "2025-09-30",
+                "href": "/resources/news/news-005"
+              },
+              {
+                "id": "news-006",
+                "badge": "",
+                "title": "AI 기반 개인정보 자동 마스킹 SaaS ‘클라우드브릭 마스크’ 출시 기념 이벤트",
+                "date": "2025-09-24",
+                "href": "/resources/news/news-006"
               }
             ]
           }
@@ -111,7 +132,7 @@
                 "category": "암호 플랫폼",
                 "productName": "D.AMO",
                 "logo": "/assets/logos/damo.svg",
-                "description": "국내 데이터 암호화 시장 점유율 1위, 최다 레퍼런스 암호화가 적용된 서버 20,000+",
+                "description": "국내 데이터 암호화 시장 점유율 1위, 최다 레퍼런스\n암호화가 적용된 서버 20,000+\n일본, 이태리 등 해외 수출",
                 "button": {
                   "label": "자세히 보기",
                   "href": "/products/damo"
@@ -127,7 +148,7 @@
                 "category": "지능형 WAPP 솔루션",
                 "productName": "WAPPLES",
                 "logo": "/assets/logos/wapples.svg",
-                "description": "웹 애플리케이션과 API를 보호하는 지능형 보안 플랫폼으로 안정적인 서비스 운영을 지원합니다.",
+                "description": "WAPPLES 내용으로 수정\n암호화가 적용된 서버 20,000+\n일본, 이태리 등 해외 수출",
                 "button": {
                   "label": "자세히 보기",
                   "href": "/products/wapples"
@@ -143,7 +164,7 @@
                 "category": "인증 보안 플랫폼",
                 "productName": "iSIGN",
                 "logo": "/assets/logos/isign.svg",
-                "description": "사용자와 기기의 신뢰를 확인하는 인증 보안 플랫폼으로 안전한 디지털 전환을 돕습니다.",
+                "description": "iSIGN 내용으로 수정\n암호화가 적용된 서버 20,000+\n일본, 이태리 등 해외 수출",
                 "button": {
                   "label": "자세히 보기",
                   "href": "/products/isign"
@@ -159,7 +180,7 @@
                 "category": "클라우드 SaaS 보안 플랫폼",
                 "productName": "Cloudbric",
                 "logo": "/assets/logos/cloudbric.svg",
-                "description": "클라우드 웹보안 SaaS 리더로 일본, 북미, 유럽 등 글로벌 고객의 보안 운영을 지원합니다.",
+                "description": "클라우드 웹보안 SaaS 리더\nSC Awards Europe ‘Best SME Security Solution’ 수상\n일본, 북미, 유럽 등 글로벌 기업 고객 800+",
                 "button": {
                   "label": "자세히 보기",
                   "href": "/products/cloudbric"
@@ -197,20 +218,26 @@
               {
                 "id": "frost",
                 "logo": "/assets/awards/frost-sullivan.svg",
-                "title": "비즈니스 컨설팅 기업 Frost & Sullivan",
-                "description": "2024 Frost & Sullivan Best Practices Award에서 올해의 한국 웹 애플리케이션 방화벽 기업으로 선정되었습니다."
+                "title": "비즈니스 컨설팅 기업\nFrost & Sullivan",
+                "description": "2024 Frost & Sullivan Best Practices\nAward에서 올해의 한국 웹 애플리케이션 방화벽\n기업으로 선정되었습니다."
               },
               {
                 "id": "gartner",
                 "logo": "/assets/awards/gartner.svg",
-                "title": "글로벌 IT 시장조사기관 가트너(Gartner)",
-                "description": "2023년 클라우드 웹 애플리케이션 및 API 보호 마켓 가이드에서 대표 벤더로 선정되었습니다."
+                "title": "글로벌 IT 시장조사기관\n가트너(Gartner)",
+                "description": "2023년 클라우드 웹 애플리케이션 및\nAPI 보호 마켓 가이드에서 대표 벤더로\n선정되었습니다."
               },
               {
                 "id": "globee",
                 "logo": "/assets/awards/globee.svg",
-                "title": "글로벌 비즈니스 시상식 Globee Award",
-                "description": "2024 Globee Award에서 WAPPLES가 최고의 보안 하드웨어 부문 금상을 수상했습니다."
+                "title": "글로벌 비즈니스 시상식\nGlobee Award",
+                "description": "2024 Globee Award에서\nWAPPLES가 최고의 보안 하드웨어\n부문 금상을 수상했습니다."
+              },
+              {
+                "id": "cyber-security",
+                "logo": "/assets/awards/cyber-security.svg",
+                "title": "웹 애플리케이션 보안 부문 수상\nCyber Security Awards",
+                "description": "2026 Cyber Security Awards에서\nWAPPLES가 웹 애플리케이션\n보안 부문에서 수상했습니다."
               }
             ]
           }
@@ -226,39 +253,41 @@
           { "label": "Data Security", "href": "/products/data-security" },
           { "label": "Web Security", "href": "/products/web-security" },
           { "label": "Authentication Security", "href": "/products/authentication-security" },
-          { "label": "SaaS", "href": "/products/saas" }
+          { "label": "SaaS", "href": "/products/saas" },
+          { "label": "Cryptography", "href": "/products/cryptography" },
+          { "label": "Individual Security", "href": "/products/individual-security" }
         ]
       },
       {
         "title": "Solutions",
         "items": [
           { "label": "Enterprise", "href": "/solutions/enterprise" },
-          { "label": "Cloud", "href": "/solutions/cloud" },
-          { "label": "Compliance", "href": "/solutions/compliance" }
+          { "label": "Compliance", "href": "/solutions/compliance" },
+          { "label": "Industry", "href": "/solutions/industry" }
         ]
       },
       {
         "title": "Resources",
         "items": [
-          { "label": "News", "href": "/resources/news" },
-          { "label": "Blog", "href": "/blog" },
-          { "label": "Downloads", "href": "/resources/downloads" }
+          { "label": "Insight", "href": "/resources/insight" },
+          { "label": "뉴스레터", "href": "/resources/newsletter" }
         ]
       },
       {
         "title": "Support",
         "items": [
-          { "label": "Contact", "href": "/support/contact" },
-          { "label": "FAQ", "href": "/support/faq" },
-          { "label": "Technical Support", "href": "/support/technical" }
+          { "label": "문의하기", "href": "/support/contact" },
+          { "label": "자료 다운로드", "href": "/resources/downloads" },
+          { "label": "파트너십", "href": "/support/partnership" },
+          { "label": "Product Lifecycle Policy", "href": "/support/product-lifecycle-policy" }
         ]
       },
       {
         "title": "Company",
         "items": [
-          { "label": "About", "href": "/company" },
-          { "label": "Careers", "href": "/company/careers" },
-          { "label": "Contact", "href": "/support/contact" }
+          { "label": "회사 소개", "href": "/company" },
+          { "label": "회사 소식", "href": "/company/news" },
+          { "label": "인재 채용", "href": "/company/careers" }
         ]
       }
     ],
@@ -272,7 +301,7 @@
         { "label": "채용 정보", "href": "/company/careers" },
         { "label": "공식 블로그", "href": "/blog" }
       ],
-      "companyInfo": "펜타시큐리티(주) 사업자 등록번호 : 116-81-65189, 대표 김태균 ISO 9001:2015 | ISO 14001:2015 | ISO 27001:2022",
+      "companyInfo": "펜타시큐리티(주) 사업자 등록번호 : 116-81-65189, 대표 김태균\nISO 9001:2015  |  ISO 14001:2015  |  ISO 27001:2022",
       "copyright": "ⓒ 2024 Penta Security Inc. All rights reserved."
     }
   }

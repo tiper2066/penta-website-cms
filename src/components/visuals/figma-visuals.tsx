@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import cloudMask from "../../../ref-image/products-visual/mask-cloud.png";
 import { cn } from "@/lib/utils";
 
 const noise300 =
@@ -12,11 +13,11 @@ const glassStyle = {
 
 export function HeroMainVisual() {
   return (
-    <div className="relative h-[410px] w-full" aria-hidden="true">
-      <div className="absolute left-[9%] top-[3%] h-[214px] w-[214px] rounded-full border-20 border-brand-blue bg-brand-yellow shadow-[34px_34px_56px_rgba(254,203,9,0.32)]" />
-      <div className="absolute right-[9%] top-[8%] h-[184px] w-[184px] bg-brand-blue" />
+    <div className="relative h-full min-h-[720px] w-full" aria-hidden="true">
+      <div className="absolute left-[320px] top-[96px] h-[396px] w-[396px] rounded-full bg-brand-yellow shadow-[34px_34px_56px_rgba(254,203,9,0.28)] max-lg:left-[22%] max-lg:top-[130px]" />
+      <div className="absolute right-0 top-[178px] h-[253px] w-[253px] bg-brand-blue max-lg:right-[-70px]" />
       <div
-        className="absolute bottom-[16%] left-[30%] h-[206px] w-[206px] border border-white/50 bg-white/30 shadow-[0_5px_30px_rgba(0,0,0,0.05)]"
+        className="absolute left-[592px] top-[154px] h-[387px] w-[387px] border border-white/50 bg-white/30 shadow-[42px_34px_62px_rgba(39,67,143,0.28),0_8px_34px_rgba(0,0,0,0.08)] max-lg:left-[48%]"
         style={{
           ...glassStyle,
           clipPath: "polygon(0% 0%, 79% 0%, 100% 21%, 100% 100%, 0% 100%)",
@@ -25,8 +26,8 @@ export function HeroMainVisual() {
         <div className="absolute inset-0 opacity-25" style={{ backgroundImage: noise300 }} />
       </div>
       <div
-        className="absolute bottom-[20%] right-[20%] h-[82px] w-[82px] bg-brand-cyan"
-        style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", transform: "rotate(-45deg)" }}
+        className="absolute left-[118px] top-[330px] h-[82px] w-[82px] bg-brand-cyan"
+        style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", transform: "scaleX(-1) rotate(-45deg)" }}
       />
     </div>
   );
@@ -50,15 +51,15 @@ export function ProductVisual({ productId }: { productId: string }) {
 
 function DamoVisual() {
   return (
-    <div className="relative h-[232px] w-[172px]" aria-hidden="true">
-      <div className="absolute left-[22px] top-0 h-[150px] w-[128px] rounded-t-[64px] border-27 border-b-0 border-[#222222]" />
+    <div className="relative h-[324px] w-[240px]" aria-hidden="true">
+      <div className="absolute left-[31px] top-0 h-[209px] w-[179px] rounded-t-[89px] border-38 border-b-0 border-[#222222]" />
       <div
-        className="absolute left-0 top-[96px] h-[136px] w-[172px] rounded-[22px] border border-white/60 bg-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
+        className="absolute left-0 top-[134px] h-[190px] w-[240px] rounded-[31px] border border-white/60 bg-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
         style={glassStyle}
       >
         <div className="absolute inset-0 rounded-[inherit] opacity-25" style={{ backgroundImage: noise300 }} />
-        <div className="absolute left-[72px] top-[44px] h-[29px] w-[29px] rounded-full bg-[rgba(210,210,210,0.4)]" />
-        <div className="absolute left-[79px] top-[61px] h-[32px] w-[14px] rounded-[20px] bg-[rgba(210,210,210,0.4)]" />
+        <div className="absolute left-[101px] top-[61px] h-[40px] w-[40px] rounded-full bg-[rgba(210,210,210,0.4)]" />
+        <div className="absolute left-[110px] top-[85px] h-[45px] w-[20px] rounded-[28px] bg-[rgba(210,210,210,0.4)]" />
       </div>
     </div>
   );
@@ -66,28 +67,20 @@ function DamoVisual() {
 
 function WapplesVisual() {
   return (
-    <div className="relative h-[210px] w-[360px]" aria-hidden="true">
-      <div className="absolute left-0 top-[24px] h-[104px] w-[170px] rounded-[6px] bg-[#222222]">
-        <div className="absolute right-[6px] top-[6px] flex gap-1">
-          <span className="h-[7px] w-[7px] rounded-full bg-[#d9d9d9]" />
-          <span className="h-[7px] w-[7px] rounded-full bg-[#d9d9d9]" />
-          <span className="h-[7px] w-[7px] rounded-full bg-[#d9d9d9]" />
-        </div>
-      </div>
-
-      <div className="absolute right-0 top-0 h-[160px] w-[240px]">
+    <div className="relative h-[284px] w-[486px]" aria-hidden="true">
+      <div className="absolute left-0 top-[34px] z-10 h-[216px] w-[324px]">
         {[
-          "left-[46px] top-0",
-          "left-[148px] top-0",
-          "left-0 top-[56px]",
-          "left-[102px] top-[56px]",
-          "left-[46px] top-[112px]",
-          "left-[148px] top-[112px]",
+          "left-[62px] top-0",
+          "left-[200px] top-0",
+          "left-0 top-[76px]",
+          "left-[138px] top-[76px]",
+          "left-[62px] top-[151px]",
+          "left-[200px] top-[151px]",
         ].map((position) => (
           <div
             key={position}
             className={cn(
-              "absolute h-[47px] w-[92px] rounded-[4px] border border-white/60 bg-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.1)]",
+              "absolute h-[64px] w-[124px] rounded-[5px] border border-white/60 bg-white/20 shadow-[0_14px_40px_rgba(0,0,0,0.1)]",
               position,
             )}
             style={glassStyle}
@@ -96,40 +89,48 @@ function WapplesVisual() {
           </div>
         ))}
       </div>
+
+      <div className="absolute right-0 top-[52px] z-0 h-[177px] w-[294px] rounded-[10px] bg-[#222222]">
+        <div className="absolute right-[10px] top-[10px] flex gap-[6px]">
+          <span className="h-[11px] w-[11px] rounded-full bg-[#d9d9d9]" />
+          <span className="h-[11px] w-[11px] rounded-full bg-[#d9d9d9]" />
+          <span className="h-[11px] w-[11px] rounded-full bg-[#d9d9d9]" />
+        </div>
+      </div>
     </div>
   );
 }
 
 function IsignVisual() {
   return (
-    <div className="relative h-[230px] w-[360px]" aria-hidden="true">
-      <div className="absolute left-0 top-[8px] h-[168px] w-[164px]">
-        <div className="absolute left-[47px] top-0 h-[69px] w-[69px] rounded-full bg-[#222222]" />
-        <div className="absolute left-0 top-[83px] h-[86px] w-[164px] rounded-[50%_50%_28px_28px/68%_68%_28px_28px] bg-[#222222]" />
+    <div className="relative h-[266px] w-[308px]" aria-hidden="true">
+      <div className="absolute right-0 top-0 z-0 h-[245px] w-[238px]">
+        <div className="absolute left-[68px] top-0 h-[100px] w-[100px] rounded-full bg-[#222222]" />
+        <div className="absolute left-0 top-[120px] h-[125px] w-[238px] rounded-[50%_50%_40px_40px/68%_68%_40px_40px] bg-[#222222]" />
       </div>
 
-      <div className="absolute right-0 top-0 h-[184px] w-[184px]">
+      <div className="absolute left-0 top-0 z-10 h-[266px] w-[266px]">
         {[
-          "left-0 top-0 h-[15px] w-[68px]",
-          "left-0 top-0 h-[68px] w-[15px]",
-          "right-0 top-0 h-[15px] w-[68px]",
-          "right-0 top-0 h-[68px] w-[15px]",
-          "bottom-0 left-0 h-[15px] w-[68px]",
-          "bottom-0 left-0 h-[68px] w-[15px]",
-          "bottom-0 right-0 h-[15px] w-[68px]",
-          "bottom-0 right-0 h-[68px] w-[15px]",
+          "left-0 top-0 h-[22px] w-[98px]",
+          "left-0 top-0 h-[98px] w-[22px]",
+          "right-0 top-0 h-[22px] w-[98px]",
+          "right-0 top-0 h-[98px] w-[22px]",
+          "bottom-0 left-0 h-[22px] w-[98px]",
+          "bottom-0 left-0 h-[98px] w-[22px]",
+          "bottom-0 right-0 h-[22px] w-[98px]",
+          "bottom-0 right-0 h-[98px] w-[22px]",
         ].map((shape) => (
           <div
             key={shape}
             className={cn(
-              "absolute border border-white/60 bg-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.1)]",
+              "absolute border border-white/60 bg-white/20 shadow-[0_14px_40px_rgba(0,0,0,0.1)]",
               shape,
             )}
             style={glassStyle}
           />
         ))}
         <div
-          className="absolute left-[64px] top-[64px] h-[55px] w-[55px] rounded-full border border-white/60 bg-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
+          className="absolute left-[93px] top-[93px] h-[80px] w-[80px] rounded-full border border-white/60 bg-white/20 shadow-[0_14px_40px_rgba(0,0,0,0.1)]"
           style={glassStyle}
         />
       </div>
@@ -138,38 +139,40 @@ function IsignVisual() {
 }
 
 function CloudbricVisual() {
-  const cloudClipId = "cloudbric-clip";
+  const patternCells = [
+    "left-0 top-0",
+    "left-[120px] top-0",
+    "left-[60px] top-[60px]",
+    "left-0 top-[120px]",
+    "left-[120px] top-[120px]",
+  ];
 
   return (
-    <div className="relative h-[212px] w-[366px]" aria-hidden="true">
-      <svg width="0" height="0" className="absolute">
-        <defs>
-          <clipPath id={cloudClipId} clipPathUnits="userSpaceOnUse">
-            <path d="M 0 160 Q 0 196 40 196 L 276 196 Q 316 196 316 155 Q 316 100 278 88 Q 298 60 282 38 Q 266 10 238 24 Q 218 -8 180 8 Q 158 -16 128 10 Q 100 -8 86 20 Q 50 4 42 46 Q 8 60 0 100 Z" />
-          </clipPath>
-        </defs>
-      </svg>
-
-      <div className="absolute left-0 top-[18px] h-[180px] w-[180px]">
-        {[
-          "left-0 top-0",
-          "left-[120px] top-0",
-          "left-[60px] top-[60px]",
-          "left-0 top-[120px]",
-          "left-[120px] top-[120px]",
-        ].map((position) => (
+    <div className="relative h-[218px] w-[352px]" aria-hidden="true">
+      <div className="absolute right-0 top-0 z-0 h-[180px] w-[180px]">
+        {patternCells.map((position) => (
           <div key={position} className={cn("absolute h-[60px] w-[60px] bg-[#222222]", position)} />
         ))}
       </div>
 
-      <div className="absolute right-0 top-0 h-[196px] w-[316px] drop-shadow-[0_10px_30px_rgba(0,0,0,0.15)]">
+      <div className="absolute left-0 top-[22px] z-10 h-[196px] w-[316px] drop-shadow-[0_20px_28px_rgba(0,0,0,0.22)]">
         <div
-          className="h-[196px] w-[316px] bg-white/20"
+          className="relative h-[196px] w-[316px] overflow-hidden border border-white/60 bg-white/55"
           style={{
             ...glassStyle,
-            clipPath: `url(#${cloudClipId})`,
+            maskImage: `url(${cloudMask.src})`,
+            maskRepeat: "no-repeat",
+            maskSize: "100% 100%",
+            WebkitMaskImage: `url(${cloudMask.src})`,
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskSize: "100% 100%",
           }}
         >
+          <div className="absolute left-[172px] top-[-22px] h-[180px] w-[180px] opacity-70 blur-xl">
+            {patternCells.map((position) => (
+              <div key={position} className={cn("absolute h-[60px] w-[60px] bg-[#222222]", position)} />
+            ))}
+          </div>
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: noise300 }} />
         </div>
       </div>

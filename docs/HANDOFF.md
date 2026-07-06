@@ -11,11 +11,11 @@
 - Next.js, Tailwind CSS, `shadcn/ui` 호환 구조, `lucide-react`, Pretendard 로컬 폰트 연결이 구성되어 있습니다.
 - `src/content/demo-site.json`과 `src/lib/content` JSON 로더를 기준으로 공개 페이지와 관리자 데모가 같은 콘텐츠 스키마를 사용합니다.
 - 공개 메인 페이지 `/`와 관리자 데모 `/admin-demo`가 생성되어 있습니다.
-- 현재 2단계 공개 페이지 데모 구현을 진행 중입니다.
-- 2단계는 한 차례 ref-image 비교 피드백을 반영해 타이포, Hero 도형, ProductTabs, Stats, Awards, Footer 구조를 조정했습니다.
-- Hero 및 제품 비주얼은 `ref-image/hero-visual/*.html`, `ref-image/products-visual/*.html`의 Figma HTML 코드를 참고해 `src/components/visuals/figma-visuals.tsx`로 React 컴포넌트화했습니다.
-- 사용자가 추가한 `ref-image/main_01.html`은 `C type_01` 전체 페이지의 CSS/배치 참고용 HTML입니다. 다음 정밀 보정에서 `main_01.png`와 함께 우선 참고합니다.
-- 아직 ref-image와 완전히 동일하지는 않으므로 다음 작업은 섹션별 정밀 보정으로 진행합니다.
+- 2단계 공개 페이지 데모 구현은 완료되었습니다.
+- `ref-image/main_01.png`와 `ref-image/main_01.html`을 기준으로 Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal 정밀 보정을 완료했습니다.
+- Hero 및 제품 비주얼은 `ref-image/hero-visual/*.html`, `ref-image/products-visual/*.html`의 Figma HTML을 참고해 `src/components/visuals/figma-visuals.tsx`로 React 컴포넌트화했습니다.
+- Cloudbric 구름 비주얼은 `ref-image/products-visual/mask-cloud.png`를 CSS mask로 사용합니다.
+- Awards는 `src/components/sections/awards-carousel.tsx` 클라이언트 컴포넌트로 분리되어 자동 Carousel, hover pause, dot navigation을 제공합니다.
 - 현재 기준 디자인은 `ref-image` 이미지 4개와 Figma 파일입니다.
 
 ## 기준 문서
@@ -108,6 +108,7 @@ public/
       frost-sullivan.svg
       gartner.svg
       globee.svg
+      cyber-security.svg
     products/
       damo-visual.svg
       wapples-visual.svg
@@ -119,6 +120,10 @@ public/
 ```
 
 에셋 준비 전에도 개발을 시작할 수 있습니다. 이 경우 placeholder 또는 CSS 도형으로 먼저 구현하고, 파일이 준비되면 해당 경로를 연결하면 됩니다.
+
+추가 참고 에셋:
+
+- `ref-image/products-visual/mask-cloud.png`: Cloudbric 구름 유리 도형의 CSS mask로 사용합니다.
 
 ## 권장 프로젝트 구조
 
@@ -176,7 +181,7 @@ penta-cms/
 
 ## 2단계 구현 기준
 
-현재 진행 중인 공개 메인 페이지 구현 기준입니다.
+완료된 공개 메인 페이지 구현 기준입니다.
 
 - Header
 - Hero
@@ -194,30 +199,21 @@ penta-cms/
 
 - `docs/typography-guide.md`의 텍스트 크기, 굵기, 색상 기준을 우선 적용합니다.
 - Hero 헤드라인은 문서 기준 `Gotham Black`이지만 현재 프로젝트에는 Gotham 폰트 파일이 없어 `Gotham Black → Pretendard` fallback으로 처리되어 있습니다.
-- News 더보기 링크에 우측 화살표를 추가했습니다.
-- Subscribe 카드와 버튼의 radius, 버튼 텍스트 색상을 조정했습니다.
-- ProductTabs 외곽 pill 컨테이너를 제거하고 개별 탭 버튼 구조로 조정했습니다.
-- 제품 이미지는 감싸는 카드 없이 이미지만 보이도록 조정했습니다.
-- Stats 구분선을 제거하고 수치 크기를 `24px` 기준으로 낮췄습니다.
-- Awards 카드를 제거하고 중앙 정렬 구조로 조정했습니다.
-- FooterNavigation/FooterLegal은 회색 배경과 FooterLegal 로고 좌측 배치로 조정했습니다.
-- `src/components/visuals/figma-visuals.tsx`를 추가해 Hero와 D.AMO/WAPPLES/iSIGN/Cloudbric 제품 비주얼을 CSS 도형으로 렌더링합니다.
-
-남은 정밀 보정 순서:
-
-1. Hero
-2. News / Subscribe
-3. ProductTabs / Product
-4. Stats / Awards
-5. Footer
-
-다음 작업에서는 각 섹션을 ref-image와 직접 비교하면서 한 섹션씩 수정하고 검증합니다.
+- Header 로고, 메뉴 텍스트, 검색 필드, 검색/언어 아이콘 크기를 시안 기준으로 조정했습니다.
+- Hero 타이틀 자간, 노란 원/파란 사각형/유리 사각형/녹색 삼각형 크기와 위치, Header/News 간격을 조정했습니다.
+- News는 더보기 링크, 6개 뉴스 목록, 배지 없는 행의 좌측 정렬, 날짜 폭 정렬을 반영했습니다.
+- Subscribe는 카드 높이, input/button 높이, 버튼 텍스트 색상을 조정했습니다.
+- ProductTabs는 제목 굵기 분리, 84px 탭 버튼, 제품별 3줄 설명, 42px 분리선, 상세 버튼, D.AMO/WAPPLES/iSIGN/Cloudbric 비주얼 위치를 반영했습니다.
+- Stats는 라벨/값 순서를 바꾸고 값 텍스트를 `20px` bold, nowrap, 유연한 flex layout으로 조정했습니다.
+- Awards는 `AwardsCarousel` 클라이언트 컴포넌트로 분리해 자동 스크롤, hover pause, dot navigation을 구현하고 Cyber Security 수상 항목을 추가했습니다.
+- FooterNavigation/FooterLegal은 메뉴 분리선, Company 컬럼 폭, 회사 로고/개인정보/우측 링크/회사 정보 3줄 레이아웃을 조정했습니다.
+- `src/components/visuals/figma-visuals.tsx`에서 Hero와 D.AMO/WAPPLES/iSIGN/Cloudbric 제품 비주얼을 CSS 도형으로 렌더링합니다.
 
 다음 세션 시작 시 권장 작업:
 
-1. `ref-image/main_01.html`과 `ref-image/main_01.png`를 기준으로 Hero 섹션부터 좌표, 크기, 간격을 정밀 보정합니다.
-2. 각 섹션 보정 후 브라우저에서 `http://localhost:3000`을 ref-image와 비교합니다.
-3. 한 섹션이 끝날 때마다 `npm run typecheck`, `npm run lint`, `npm run build` 중 필요한 검증을 실행합니다.
+1. 2단계 공개 페이지 데모를 이해관계자에게 공유하고 `docs/REQUIREMENTS_WORKSHOP.md` 기준으로 CMS 편집 범위와 승인/다국어/뉴스 운영 요구사항을 확정합니다.
+2. 3단계 관리자 데모(`/admin-demo`)의 편집 UI를 실제 공개 페이지 JSON 구조에 맞춰 보강합니다.
+3. 데모 공유 전 `npm run typecheck`, `npm run lint`, `npm run build`를 다시 실행하고 브라우저에서 `http://localhost:3000`과 `http://localhost:3000/admin-demo`를 확인합니다.
 
 ## 관리자 데모 편집 항목
 
