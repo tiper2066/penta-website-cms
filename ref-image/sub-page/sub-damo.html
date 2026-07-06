@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D.AMO - 국내 최초 암호 플랫폼 | Penta Security</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f1f1f1;
+    color: #212121;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { text-decoration: none; color: inherit; }
+  .inner { max-width: 1200px; margin: 0 auto; }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(241,241,241,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .nav-bar {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 80px;
+  }
+  .logo { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+  .logo span { font-weight: 400; font-size: 14px; color: #666; margin-left: 2px; }
+  .nav-links { display: flex; gap: 50px; }
+  .nav-links a {
+    font-size: 14px; font-weight: 500; letter-spacing: 0.05em; color: #222;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 0.6; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-contact {
+    border: 1px solid #222; border-radius: 70px;
+    padding: 6px 24px; font-size: 13px; font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-contact:hover { background: #222; color: #fff; }
+  .nav-icon { width: 20px; height: 20px; opacity: 0.7; cursor: pointer; }
+  .nav-icon:hover { opacity: 1; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 120px 0 100px;
+    overflow: hidden;
+  }
+  .hero .inner { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-block;
+    font-size: 14px; font-weight: 600; color: #212121;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 60px; font-weight: 900; color: #212121;
+    line-height: 1.15; margin-bottom: 20px;
+  }
+  .hero-desc {
+    font-size: 18px; font-weight: 400; color: #66666b;
+    line-height: 30px; max-width: 760px;
+    margin-bottom: 34px;
+  }
+  .hero-buttons { display: flex; gap: 12px; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #212121; color: #fff;
+    padding: 16px 26px 16px 30px;
+    border-radius: 40px; font-size: 16px; font-weight: 600;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #0052db; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: #212121;
+    border: 1px solid #cccfd4;
+    padding: 16px 26px 16px 30px;
+    border-radius: 40px; font-size: 16px; font-weight: 600;
+    transition: border-color 0.2s;
+  }
+  .btn-secondary:hover { border-color: #212121; }
+
+  /* PROBLEM */
+  .section-problem { padding: 100px 0 0; }
+  .section-problem h2 {
+    font-size: 34px; font-weight: 700; color: #212121;
+    line-height: 48px; margin-bottom: 24px;
+  }
+  .section-problem p {
+    font-size: 18px; font-weight: 400; color: #66666b;
+    line-height: 32px;
+  }
+
+  /* BENEFITS */
+  .section-benefits {
+    background: #ebebec;
+    padding: 100px 0;
+    margin-top: 100px;
+  }
+  .section-benefits h2 {
+    font-size: 36px; font-weight: 700; color: #212121;
+    margin-bottom: 44px;
+  }
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 44px;
+  }
+  .benefit-card {
+    background: #fff;
+    border: 1px solid #e5e8ed;
+    border-radius: 10px;
+    padding: 32px 28px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .benefit-num { font-size: 22px; font-weight: 700; color: #0052db; }
+  .benefit-title { font-size: 19px; font-weight: 600; color: #212121; line-height: 27px; }
+  .benefit-desc { font-size: 15px; font-weight: 400; color: #66666b; line-height: 24px; }
+  .product-image-placeholder {
+    background: #7c7c7c; border-radius: 14px; height: 440px;
+    display: flex; align-items: center; justify-content: center;
+    color: #999ea8; font-size: 15px;
+  }
+
+  /* LINEUP */
+  .section-lineup { padding: 100px 0 0; }
+  .section-lineup h2 { font-size: 36px; font-weight: 700; color: #212121; margin-bottom: 14px; }
+  .lineup-list { display: flex; flex-direction: column; gap: 16px; margin-top: 43px; }
+  .lineup-item {
+    background: #fff; border: 1px solid #e5e8ed; border-radius: 12px;
+    padding: 28px 36px; display: flex; align-items: center; gap: 32px;
+  }
+  .lineup-name { min-width: 300px; font-size: 20px; font-weight: 600; color: #0052db; }
+  .lineup-desc { font-size: 16px; font-weight: 400; color: #66666b; line-height: 26px; flex: 1; }
+
+  /* AWARDS */
+  .section-awards { padding: 50px 0 0; }
+  .awards-placeholder {
+    background: #7c7c7c; border-radius: 14px; height: 260px;
+    display: flex; align-items: center; justify-content: center;
+    color: #999ea8; font-size: 15px;
+  }
+
+  /* SPEC */
+  .section-spec { padding: 100px 0 0; }
+  .section-spec h2 { font-size: 36px; font-weight: 700; color: #212121; margin-bottom: 14px; }
+  .spec-placeholder {
+    background: #7c7c7c; border-radius: 12px; height: 300px;
+    display: flex; align-items: center; justify-content: center;
+    color: #999ea8; font-size: 15px; margin-top: 43px;
+  }
+
+  /* FAQ */
+  .section-faq { background: #ebebec; padding: 100px 0; margin-top: 100px; }
+  .section-faq h2 { font-size: 36px; font-weight: 700; color: #212121; margin-bottom: 40px; }
+  .faq-list { display: flex; flex-direction: column; gap: 16px; }
+  .faq-item {
+    background: #fff; border: 1px solid #e5e8ed; border-radius: 12px;
+    padding: 30px 36px; cursor: pointer; transition: box-shadow 0.2s;
+  }
+  .faq-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .faq-question { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+  .faq-q-label { font-size: 20px; font-weight: 700; color: #0052db; flex-shrink: 0; }
+  .faq-q-text { font-size: 19px; font-weight: 600; color: #212121; line-height: 28px; }
+  .faq-answer { font-size: 16px; font-weight: 400; color: #66666b; line-height: 27px; padding-left: 30px; }
+
+  /* FOOTER */
+  footer { padding: 50px 0 60px; border-top: 1px solid #ccc; }
+  .footer-columns {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px;
+    padding-bottom: 40px; border-bottom: 1px solid #ccc;
+  }
+  .footer-col h4 {
+    font-size: 18px; font-weight: 800; color: #222;
+    margin-bottom: 8px; padding-bottom: 10px; position: relative;
+  }
+  .footer-col h4::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    width: 42px; height: 1px; background: #222;
+  }
+  .footer-col ul { list-style: none; padding-top: 14px; }
+  .footer-col li { font-size: 14px; font-weight: 500; color: #222; margin-bottom: 10px; }
+  .footer-col li a:hover { opacity: 0.6; }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-top: 40px;
+  }
+  .footer-logo { font-size: 20px; font-weight: 900; }
+  .footer-right { text-align: right; }
+  .footer-links { font-size: 18px; font-weight: 500; color: #222; margin-bottom: 16px; }
+  .footer-links a:hover { opacity: 0.6; }
+  .footer-info { font-size: 16px; font-weight: 400; color: #222; line-height: 24px; }
+  .footer-privacy { margin-top: 16px; font-size: 16px; color: #222; }
+  .footer-privacy a { text-decoration: underline; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1280px) {
+    .inner { padding: 0 40px; }
+    .section-benefits .inner, .section-faq .inner { padding: 0 40px; }
+  }
+  @media (max-width: 1024px) {
+    .hero h1 { font-size: 42px; }
+    .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+    .lineup-item { flex-direction: column; align-items: flex-start; }
+    .lineup-name { min-width: auto; }
+    .footer-columns { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero h1 { font-size: 32px; }
+    .section-problem h2 { font-size: 26px; line-height: 38px; }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .footer-columns { grid-template-columns: repeat(2, 1fr); }
+    .footer-bottom { flex-direction: column; gap: 30px; }
+    .footer-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-bar inner">
+    <a href="#" class="logo">Penta<span>security</span></a>
+    <nav class="nav-links">
+      <a href="#">Products</a>
+      <a href="#">Solutions</a>
+      <a href="#">Resources</a>
+      <a href="#">Support</a>
+      <a href="#">Company</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#" class="nav-contact">Contact Us</a>
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="1.8"><circle cx="9" cy="9" r="7"/><line x1="14" y1="14" x2="19" y2="19"/></svg>
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="#222" stroke-width="1.8"><line x1="2" y1="5" x2="18" y2="5"/><line x1="2" y1="10" x2="18" y2="10"/><line x1="2" y1="15" x2="18" y2="15"/></svg>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="inner">
+    <p class="hero-badge">전 계층 데이터 암호화 솔루션</p>
+    <h1>국내 최초 암호 플랫폼, D.AMO</h1>
+    <p class="hero-desc">
+      국내 최초 암호 플랫폼으로 20년 이상 공공조달 점유율 1위를 기록하며,<br>
+      국내 대기업, 금융, 공공기관 등 20,000여 개 레퍼런스로 그 기술성을 입증받았습니다.
+    </p>
+    <div class="hero-buttons">
+      <a href="#" class="btn-primary">문의하기 <span>&rarr;</span></a>
+      <a href="#" class="btn-secondary">자료 다운로드 <span>&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section-problem">
+  <div class="inner">
+    <h2>연이어 터지는 대규모 데이터 유출 사고,<br>이를 방지하기 위한 법적 규제 역시 강화되고 있습니다.</h2>
+    <p>
+      데이터 유출은 단순 서비스 방해를 넘어 기업과 개인에게 영구적 손실을 입히는 심각한 위협입니다.<br>
+      D.AMO는 개인정보를 보호하고 기업의 신뢰와 브랜드 평판을 유지하는 동시에, 정부 및 규제기관의 법규 준수를 위한 모든 방안을 제시합니다.
+    </p>
+  </div>
+</section>
+
+<section class="section-benefits">
+  <div class="inner">
+    <h2>D.AMO를 선택하는 이유</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <span class="benefit-num">01</span>
+        <h3 class="benefit-title">모든 환경에 최적화된 암호화 제공</h3>
+        <p class="benefit-desc">Application, DB, OS 등 고객의 시스템 아키텍처에 따라 성능과 보안성을 최적화하여 적용할 수 있는 다양한 제품을 보유하고 있습니다.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-num">02</span>
+        <h3 class="benefit-title">국내외 컴플라이언스 100% 만족</h3>
+        <p class="benefit-desc">개인정보보호법, 전자금융감독규정, ISMS-P, GDPR, PCI-DSS 등 20년간 검증된 기술력으로 국내외 컴플라이언스를 만족하며 기업의 중요 정보를 안전하게 보호합니다.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-num">03</span>
+        <h3 class="benefit-title">강력한 키 관리 시스템 제공</h3>
+        <p class="benefit-desc">전용 Appliance 장비와 Cloud 시스템을 지원하며, 키 라이프사이클 관리, 감사, 접근제어 등 국내외 모든 암호화 솔루션과 연동 가능한 키 관리를 제공합니다.</p>
+      </div>
+      <div class="benefit-card">
+        <span class="benefit-num">04</span>
+        <h3 class="benefit-title">국정원 검증 암호 모듈 및 양자내성 알고리즘 지원</h3>
+        <p class="benefit-desc">국가정보원 KCMVP 인증을 획득하고 국내외 표준(NIST, KPQC) 양자내성 암호 알고리즘을 탑재한 자체 개발 암호 모듈을 제공합니다.</p>
+      </div>
+    </div>
+    <div class="product-image-placeholder">D.AMO 제품 이미지</div>
+  </div>
+</section>
+
+<section class="section-lineup">
+  <div class="inner">
+    <h2>적용 환경별 D.AMO 라인업</h2>
+    <div class="lineup-list">
+      <div class="lineup-item">
+        <div class="lineup-name">D.AMO onApplication</div>
+        <p class="lineup-desc">Application 서버에 설치한 API를 이용하여 암호화 수행 후 DBMS에 쿼리를 전송하는 방식으로 암/복호화 시 DBMS 부하를 최소화하며, 다양한 OS 및 DBMS를 지원하는 등 뛰어난 호환성을 지니고 있습니다.</p>
+      </div>
+      <div class="lineup-item">
+        <div class="lineup-name">D.AMO onDB</div>
+        <p class="lineup-desc">DB서버에 Package, Engine, DBMS API 등의 형태로 Agent를 설치하여 암/복호화를 수행하고, 접근 제어, 감사 기록, 권한 분리 등의 기능을 통해 통합 DB보안을 제공합니다.</p>
+      </div>
+      <div class="lineup-item">
+        <div class="lineup-name">D.AMO onOS</div>
+        <p class="lineup-desc">OS 커널 레벨에 Agent를 설치하여 정형/비정형 데이터의 암호화를 수행합니다. 파일 시스템 레벨에서 데이터를 보호하여 다양한 형태의 데이터 보안을 지원합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-awards">
+  <div class="inner">
+    <div class="awards-placeholder">이미지 (수상 / 인증)</div>
+  </div>
+</section>
+
+<section class="section-spec">
+  <div class="inner">
+    <h2>제품 구성</h2>
+    <div class="spec-placeholder">제품 구성 / 사양 표</div>
+  </div>
+</section>
+
+<section class="section-faq">
+  <div class="inner">
+    <h2>FAQs</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-label">Q</span>
+          <span class="faq-q-text">D.AMO는 무엇인가요?</span>
+        </div>
+        <div class="faq-answer">D.AMO는 데이터베이스에 저장된 중요한 정보에 대하여 접근 제어 및 암호화를 실행하는 데이터 보안 솔루션입니다. 기존 응용 프로그램을 수정하지 않고도 암호화를 적용할 수 있으며, 데이터베이스 사용자를 세분화하여 민감한 데이터를 보호합니다. 1차적으로 DB 사용자 단위의 로그인 권한을 클라이언트 IP별, 허용 시간대별, 접근 응용 프로그램별로 제어하고, 2차적으로 암호화 컬럼에 대한 암복호화 권한을 부여하여 데이터를 안전하게 보호합니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-label">Q</span>
+          <span class="faq-q-text">암호화가 꼭 필요한가요? 접근 제어나 마스킹만으로는 부족한가요?</span>
+        </div>
+        <div class="faq-answer">접근 제어, 마스킹, 토큰 등 다양한 조치가 있지만 암호화는 데이터에 대한 근본적인 보호를 제공하는 동시에, 원본을 복원할 수 있는 유일한 보호 기법입니다. 수학적 처리를 통해 알아볼 수 없게 변환된 데이터는 업무 처리에 활용될 때만 철저한 정책에 따라 원본을 복원할 수 있어 정보 보안 법규를 준수하는 동시에 안전한 데이터 활용을 가능하게 합니다. 이러한 암호화 기술은 정보 보안의 표준이 되어 국내외 개인정보보호법 등 다양한 컴플라이언스에서 의무 사항으로 규정되고 있습니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-label">Q</span>
+          <span class="faq-q-text">D.AMO 설치 후 기존 프로그램을 수정해야 하나요?</span>
+        </div>
+        <div class="faq-answer">아니요, 수정할 필요가 없습니다. D.AMO를 설치하여 중요 데이터를 암호화하게 되더라도 기존 프로그램에서는 동일한 테이블 명과 컬럼 명으로 데이터베이스 접근이 가능하므로 아무런 변경 작업 없이 사용 가능합니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-label">Q</span>
+          <span class="faq-q-text">암호화 적용 후 데이터 백업에 문제가 없나요?</span>
+        </div>
+        <div class="faq-answer">네, 문제없습니다. 암호화된 데이터를 포함한 모든 오브젝트를 백업하고 복구할 경우 D.AMO가 설치된 환경에서 이전 상태 그대로 복원됩니다. 단, 별도 스크립트로 테이블 단위 백업 시에는 변경된 테이블 이름으로 백업해야 합니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-label">Q</span>
+          <span class="faq-q-text">D.AMO는 어떤 보안 기능을 제공하나요?</span>
+        </div>
+        <div class="faq-answer">D.AMO는 암호화, 접근 제어, 감사, 리포팅을 모두 제공하는 통합 DB 보안 솔루션입니다. 암호화: 중요 데이터를 안전하게 보호합니다. 접근 제어: 2단계로 진행됩니다. 1차는 로그인 시 IP 주소, 서비스명, 시간대에 따라 접근을 제어하고, 2차는 암호화된 컬럼 접근 시 IP 주소와 서비스명을 기준으로 필요한 경우에만 허용합니다. 감사: 정책 설정·변경·삭제는 물론 암호화 컬럼 접근 이력까지 상세히 기록합니다. 이를 통해 비정상적인 접근 시도를 감지하고 세션을 차단할 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="inner">
+    <div class="footer-columns">
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="#">Data Security</a></li>
+          <li><a href="#">Web Security</a></li>
+          <li><a href="#">Authentication Security</a></li>
+          <li><a href="#">SaaS</a></li>
+          <li><a href="#">Cryptography</a></li>
+          <li><a href="#">Individual Security</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Solutions</h4>
+        <ul>
+          <li><a href="#">Enterprise</a></li>
+          <li><a href="#">Compliance</a></li>
+          <li><a href="#">Industry</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Insight</a></li>
+          <li><a href="#">뉴스레터</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">문의하기</a></li>
+          <li><a href="#">자료 다운로드</a></li>
+          <li><a href="#">파트너십</a></li>
+          <li><a href="#">Product Lifecycle Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">회사 소개</a></li>
+          <li><a href="#">회사 소식</a></li>
+          <li><a href="#">인재 채용</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>
+        <p class="footer-logo">Penta<span style="font-weight:400;font-size:14px;color:#666">security</span></p>
+        <p class="footer-privacy" style="margin-top:20px;"><a href="#">개인정보 취급방침</a></p>
+      </div>
+      <div class="footer-right">
+        <p class="footer-links">
+          <a href="#">문의하기</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#">채용 정보</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="#">공식 블로그</a>
+        </p>
+        <p class="footer-info">
+          펜타시큐리티(주) 사업자 등록번호 : 116-81-65189, 대표 김태균<br>
+          ISO 9001:2015 &nbsp;|&nbsp; ISO 14001:2015 &nbsp;|&nbsp; ISO 27001:2022<br>
+          &copy; 2024 Penta Security Inc. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

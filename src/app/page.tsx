@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <>
-      <SiteHeader navigation={content.navigation} />
+      <SiteHeader navigation={content.navigation} footer={content.footer} />
       <main>
         {sections.map((section) => (
           <SectionRenderer key={section.id} section={section} />

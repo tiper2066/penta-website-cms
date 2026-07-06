@@ -1,7 +1,5 @@
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PrimaryCtaLink } from "@/components/ui/primary-cta-link";
 import type { SubscribeItem, SubscribeSection } from "@/lib/content/types";
 
 type SubscribeSectionProps = {
@@ -25,14 +23,9 @@ function SubscribeControl({ item }: { item: SubscribeItem }) {
   }
 
   return (
-    <Button
-      asChild
-      className="h-[50px] rounded-[6px] px-[28px] text-[18px] font-semibold text-white! hover:text-white! **:text-white!"
-    >
-      <Link href={item.href} className="text-white!">
-        {item.label}
-      </Link>
-    </Button>
+    <PrimaryCtaLink href={item.href} className="h-[50px] rounded-[6px] px-[28px] text-[18px]">
+      {item.label}
+    </PrimaryCtaLink>
   );
 }
 

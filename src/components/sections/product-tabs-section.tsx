@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { PrimaryCtaLink } from "@/components/ui/primary-cta-link";
 import { ProductVisual } from "@/components/visuals/figma-visuals";
 import { cn } from "@/lib/utils";
 import type { ProductTabsSection } from "@/lib/content/types";
@@ -81,15 +80,13 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
             <p className="text-(--color-text-primary) mt-[42px] max-w-[560px] whitespace-pre-line text-[20px] font-normal leading-[1.7] tracking-[-0.02em]">
               {activeTab.description}
             </p>
-            <Button
-              asChild
-              className="mt-[30px] h-[66px] rounded-[4px] px-[24px] text-[20px] font-medium text-white! hover:text-white! **:text-white!"
+            <PrimaryCtaLink
+              href={activeTab.button.href}
+              className="mt-[30px] h-[66px] rounded-[4px] px-[24px] text-[20px] font-medium"
             >
-              <Link href={activeTab.button.href} className="text-white!">
-                {activeTab.button.label}
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
+              {activeTab.button.label}
+              <ChevronRight className="h-4 w-4" />
+            </PrimaryCtaLink>
           </div>
 
           <div

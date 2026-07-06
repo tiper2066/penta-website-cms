@@ -106,13 +106,19 @@ penta-cms/
 목표:
 
 - 2단계에서 완성한 데스크톱 공개 페이지 디자인을 유지하면서 모바일/태블릿 사용성을 보강한다.
-- Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal에 breakpoint별 레이아웃을 정의한다.
-- 데모 미팅 전 모바일 화면에서도 주요 콘텐츠 탐색, 제품 탭 전환, 수상 Carousel 확인이 가능하게 한다.
+- 반응형 대상 범위를 메인 페이지 1개와 데모용 D.AMO 서브 페이지 2개로 확장한다.
+  - 메인 페이지: `/`
+  - D.AMO 개요 페이지: `/products/data-security`
+  - D.AMO 라인업 상세 페이지: `/products/data-security/on-application`, `/products/data-security/on-db`, `/products/data-security/on-os`
+- Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal과 서브 페이지 Hero, Benefits, Lineup, Detail tabs/cards, FAQ에 breakpoint별 레이아웃을 정의한다.
+- 데모 미팅 전 모바일 화면에서도 주요 콘텐츠 탐색, 제품 탭 전환, 라인업 상세 탭 전환, 수상 Carousel 확인이 가능하게 한다.
 
 구현 방향:
 
-- Header는 모바일에서 햄버거 버튼과 sheet 메뉴를 사용한다.
+- Header는 모바일에서 햄버거 버튼과 sheet/drawer 메뉴를 사용하며, 데스크톱 full down wide menu와 같은 메뉴 구조를 재사용한다.
 - ProductTabs는 모바일에서 탭, 제품 설명, 비주얼 순서로 배치하고 제품 비주얼은 축소해 아래에 배치한다.
+- D.AMO 개요 페이지는 모바일에서 Hero 비주얼, Benefits 카드, 라인업 링크 카드, FAQ가 1열 중심으로 자연스럽게 흐르도록 조정한다.
+- D.AMO 상세 페이지는 공통 `TabLink` 기준으로 탭을 좌측 정렬/자동 줄바꿈하고, 상세 카드 본문은 작은 화면에서 padding과 타이포를 줄인다.
 - Awards Carousel은 모바일에서 한 번에 1개 아이템을 보여주는 구조를 우선 검토한다.
 - Footer 메뉴는 모바일에서 accordion 구조를 우선 후보로 둔다.
 
