@@ -99,6 +99,27 @@ penta-cms/
 - 콘텐츠는 `src/content/demo-site.json`에서 계속 관리하며, 뉴스/제품 설명/수상/푸터 메뉴 텍스트를 데모 기준으로 갱신했습니다.
 - 검증: `npm run typecheck` 통과. 커밋 전 `npm run lint`, `npm run build`를 추가 확인합니다.
 
+### 2.5단계: 공개 페이지 반응형 보정
+
+상태: 계획 수립
+
+목표:
+
+- 2단계에서 완성한 데스크톱 공개 페이지 디자인을 유지하면서 모바일/태블릿 사용성을 보강한다.
+- Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal에 breakpoint별 레이아웃을 정의한다.
+- 데모 미팅 전 모바일 화면에서도 주요 콘텐츠 탐색, 제품 탭 전환, 수상 Carousel 확인이 가능하게 한다.
+
+구현 방향:
+
+- Header는 모바일에서 햄버거 버튼과 sheet 메뉴를 사용한다.
+- ProductTabs는 모바일에서 탭, 제품 설명, 비주얼 순서로 배치하고 제품 비주얼은 축소해 아래에 배치한다.
+- Awards Carousel은 모바일에서 한 번에 1개 아이템을 보여주는 구조를 우선 검토한다.
+- Footer 메뉴는 모바일에서 accordion 구조를 우선 후보로 둔다.
+
+상세 계획:
+
+- `docs/RESPONSIVE_IMPLEMENTATION_PLAN.md`에서 섹션별 현재 문제점, 권장 모바일 UI, 선택 가능한 대안, 구현 우선순위, 검증 기준을 관리한다.
+
 ### 3단계: 관리자 데모
 
 목표:
@@ -190,6 +211,7 @@ flowchart LR
 | 문서/설계 | 1~2일 | 범위와 모델 확정 |
 | 데모 스캐폴딩 | 1일 | Next.js 구조와 JSON 로더 |
 | 공개 페이지 데모 | 2~4일 | Figma 기반 메인 페이지 |
+| 공개 페이지 반응형 보정 | 1~2일 | 모바일/태블릿 공개 페이지 |
 | 관리자 데모 | 2~4일 | 편집 가능한 데모 UI |
 | 미팅/요구사항 정리 | 1~2일 | 실제 CMS 범위 확정 |
 | 실제 CMS 구축 | 3~6주 | Payload + DB + Storage |
