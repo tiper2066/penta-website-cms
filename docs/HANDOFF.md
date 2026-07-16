@@ -16,6 +16,8 @@
 - `ref-image/main_01.png`와 `ref-image/main_01.html`을 기준으로 Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal 정밀 보정을 완료했습니다.
 - `ref-image/sub-page/sub-damo.html`, `ref-image/sub-page/sub-damo-detail.html`을 기준으로 D.AMO 개요/상세 페이지 데스크톱 구현을 완료했습니다.
 - 2.5단계 공개 페이지 반응형 보정은 완료되었습니다. 공통 Header/Footer, 메인 페이지 섹션, D.AMO 개요/상세 페이지의 모바일/태블릿 레이아웃을 보정했고, 모바일 테스트 피드백까지 반영했습니다.
+- 3단계 관리자 데모(`/admin-demo`) 편집 UI 구현은 완료되었습니다. 좌측 편집 패널과 우측 실시간 미리보기(iframe) 구조로, 공개 페이지 JSON 전 항목을 편집하고 즉시 미리볼 수 있습니다.
+- 3.5단계(관리자 속성 패널 개편) 구현 계획을 수립하고 `docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 문서화했습니다. 아직 구현 전이며 다음 세션에서 Phase A부터 진행합니다.
 - Hero 및 제품 비주얼은 `ref-image/hero-visual/*.html`, `ref-image/products-visual/*.html`의 Figma HTML을 참고해 `src/components/visuals/figma-visuals.tsx`로 React 컴포넌트화했습니다.
 - Cloudbric 구름 비주얼은 `ref-image/products-visual/mask-cloud.png`를 CSS mask로 사용합니다.
 - Awards는 `src/components/sections/awards-carousel.tsx` 클라이언트 컴포넌트로 분리되어 자동 Carousel, hover pause, dot navigation을 제공합니다.
@@ -33,6 +35,8 @@
 - `docs/CMS_CONTENT_MODEL.md`: JSON 기반 콘텐츠 모델과 Payload 전환 방향
 - `docs/LOCAL_AND_DOCKER.md`: 로컬 개발과 Docker 운영 전환 기준
 - `docs/REQUIREMENTS_WORKSHOP.md`: 데모 미팅 질문과 체크리스트
+- `docs/RESPONSIVE_IMPLEMENTATION_PLAN.md`: 2.5단계 공개 페이지 반응형 상세 계획
+- `docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`: 3.5단계 관리자 속성 패널 개편 상세 계획
 
 ## Figma 정보
 
@@ -256,11 +260,44 @@ penta-cms/
 - D.AMO 상세 페이지
   - Hero 타이포, `TabLink` stack/wrap, 상세 카드 padding과 bullet 영역을 모바일 기준으로 보정했습니다.
 
+## 3단계 관리자 데모 구현 기준
+
+완료된 관리자 데모 편집 UI 구현 기준입니다.
+
+- `/admin-demo`
+  - 좌측 편집 패널 + 우측 실시간 미리보기(iframe) 2열 레이아웃입니다.
+  - 편집 카테고리: 네비게이션, 섹션 순서, Hero, News, Subscribe, Product Tabs, Stats, Awards, Footer.
+  - 반복 항목(뉴스/통계/수상/메뉴/제품 탭/구독 요소/섹션)은 위·아래 이동, 추가·삭제를 지원하며 섹션은 노출 토글을 제공합니다.
+  - 상단에 자동 저장 상태 표시, 초기화(기본 JSON 복원), `demo-site.json` 내보내기, 공개 페이지 링크를 제공합니다.
+  - 미리보기는 데스크톱/태블릿/모바일 폭 토글을 제공합니다.
+- `/admin-demo/preview`
+  - 편집 상태를 반영하는 미리보기 전용 라우트입니다. 실제 공개 페이지 컴포넌트(`SiteHeader`, `SectionRenderer`, `SiteFooter`)를 재사용합니다.
+- `src/lib/content/admin-store.ts`
+  - `localStorage` + `BroadcastChannel` + `storage` 이벤트 기반 클라이언트 편집 스토어입니다.
+  - 편집기와 미리보기가 `useSyncExternalStore`로 같은 스냅샷을 구독하므로, 편집 즉시 미리보기에 반영됩니다.
+- `src/components/admin/admin-editor.tsx`, `admin-panels.tsx`, `admin-fields.tsx`
+  - 각각 편집기 셸/레이아웃, 카테고리별 편집 패널, 재사용 입력·반복 컨트롤을 담당합니다.
+- `src/components/ui/textarea.tsx`, `src/components/ui/label.tsx`
+  - 편집 폼에 사용하는 추가 UI 프리미티브입니다.
+- 데모 범위에서 실제 DB 저장, 인증, 권한, 이메일 발송, 파일 업로드는 제외했습니다.
+
+## 3.5단계 관리자 속성 패널 개편 계획
+
+`docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 상세 계획을 문서화했으며, 아직 구현 전입니다. 확정된 결정사항 요약:
+
+- 좌측 상단 카테고리 탭을 "편집 대상" 드롭다운으로 대체합니다. 드롭다운은 `공통 요소`를 맨 위, 그 아래 페이지 목록(현재 `홈`)을 둡니다.
+- 선택한 대상의 섹션들을 아코디언으로 펼쳐 편집합니다(shadcn `Accordion`, 다중 펼침).
+- 드롭다운/아코디언 등 신규 UI는 shadcn 컴포넌트 라이브러리(Radix 기반)로 도입합니다.
+- 미리보기에서 편집 중인 영역을 오버레이로 하이라이트합니다. 여러 아코디언이 펼쳐져 있어도 하이라이트는 마지막으로 펼친 하나만 표시하며, 헤더/푸터 전역 요소도 동일하게 하이라이트합니다.
+- 편집기→미리보기 하이라이트 통신은 콘텐츠 스토어와 분리해 iframe `postMessage`로 처리합니다.
+- 선택한 편집 대상과 아코디언 펼침 상태를 `localStorage`에 저장해 새로고침 후에도 유지합니다.
+- 구현 순서(3.5 범위): Phase A(드롭다운+아코디언) → Phase B(섹션 구동형 아코디언·순서 통합) → Phase C(미리보기 하이라이트). 멀티 페이지 데이터 모델(`pages` 맵 → 배열) 전환은 Phase D로 분리했으며 3.5 범위 밖입니다.
+
 다음 세션 시작 시 권장 작업:
 
-1. 2.5단계 반응형 결과를 이해관계자에게 공유한 뒤 `docs/REQUIREMENTS_WORKSHOP.md` 기준으로 CMS 편집 범위와 승인/다국어/뉴스 운영 요구사항을 확정합니다.
-2. 3단계 관리자 데모(`/admin-demo`)의 편집 UI를 실제 공개 페이지 JSON 구조에 맞춰 보강합니다.
-3. 데모 공유 전 `npm run typecheck`, `npm run lint`, `npm run build`를 다시 실행하고 브라우저에서 `http://localhost:3000`, `http://localhost:3000/products/data-security`, `http://localhost:3000/admin-demo`를 확인합니다.
+1. `docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`를 기준으로 3.5단계 Phase A(편집 대상 드롭다운 + shadcn 아코디언, 선택/펼침 상태 localStorage 유지)부터 구현합니다.
+2. Phase A 완료 후 Phase B(섹션 구동형 아코디언, 순서/토글/삭제 헤더 통합), Phase C(미리보기 하이라이트, iframe `postMessage`)를 순차 진행합니다.
+3. 각 Phase 완료 시 `npm run typecheck`, `npm run lint`, `npm run build`를 실행하고 브라우저에서 `http://localhost:3000/admin-demo`, `http://localhost:3000/admin-demo/preview`를 확인합니다.
 
 ## 관리자 데모 편집 항목
 
@@ -294,6 +331,6 @@ penta-cms/
 새 채팅에서는 아래처럼 시작하면 됩니다.
 
 ```txt
-docs/HANDOFF.md와 docs/PROJECT_PLAN.md를 기준으로 2단계 공개 페이지 정밀 보정을 이어가 주세요.
-ref-image/main_01.png와 ref-image/main_01.html을 기준으로 Hero부터 섹션별로 수정하고, 각 섹션 완료 후 실행/구조 검증을 해주세요.
+docs/HANDOFF.md와 docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md를 기준으로 3.5단계 Phase A(편집 대상 드롭다운 + shadcn 아코디언)부터 구현해 주세요.
+확정된 결정사항(공통 요소 최상단, 다중 펼침, 마지막 펼침 하나만 하이라이트, Phase B 포함, 상태 localStorage 유지)을 반영하고, Phase 완료 후 typecheck/lint/build 검증을 해주세요.
 ```

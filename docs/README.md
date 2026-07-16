@@ -12,6 +12,8 @@
 - [CMS_CONTENT_MODEL.md](./CMS_CONTENT_MODEL.md): JSON 기반 데모 콘텐츠 모델과 Payload CMS 전환 방향
 - [LOCAL_AND_DOCKER.md](./LOCAL_AND_DOCKER.md): 로컬 개발, Docker 검증, 사내망 운영 전환 기준
 - [REQUIREMENTS_WORKSHOP.md](./REQUIREMENTS_WORKSHOP.md): 데모 미팅에서 확인할 질문과 의사결정 체크리스트
+- [RESPONSIVE_IMPLEMENTATION_PLAN.md](./RESPONSIVE_IMPLEMENTATION_PLAN.md): 공개 페이지 반응형 보정(2.5단계) 상세 계획
+- [ADMIN_PANEL_IMPLEMENTATION_PLAN.md](./ADMIN_PANEL_IMPLEMENTATION_PLAN.md): 관리자 속성 패널 개편(3.5단계) 상세 계획
 
 ## 기본 방향
 

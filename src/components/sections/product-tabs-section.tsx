@@ -65,7 +65,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
         </div>
 
         <div className="relative mt-10 grid min-h-0 items-start gap-10 lg:mt-[56px] lg:min-h-[360px] lg:grid-cols-[0.58fr_0.42fr]">
-          <div>
+          <div key={`text-${activeTab.id}`} className="animate-fade-in-up">
             <p className="text-(--color-text-primary) text-[18px] font-bold tracking-tight lg:text-[22px]">
               {activeTab.category}
             </p>
@@ -90,8 +90,9 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
           </div>
 
           <div
+            key={`visual-${activeTab.id}`}
             className={cn(
-              "flex min-h-[220px] items-start justify-center overflow-hidden lg:justify-end lg:overflow-visible",
+              "flex min-h-[220px] animate-fade-in items-start justify-center overflow-hidden lg:justify-end lg:overflow-visible",
               activeTab.id === "damo" &&
                 "lg:pointer-events-none lg:absolute lg:left-[786px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
               activeTab.id === "wapples" &&

@@ -14,7 +14,8 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ navigation, footer }: SiteHeaderProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuMounted, setIsMenuMounted] = useState(false);
+  const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
@@ -28,18 +29,31 @@ export function SiteHeader({ navigation, footer }: SiteHeaderProps) {
     return () => window.removeEventListener("scroll", updateScrollState);
   }, []);
 
+  function openMenu() {
+    setIsMenuClosing(false);
+    setIsMenuMounted(true);
+  }
+
   function closeMenu() {
-    setIsMenuOpen(false);
+    setIsMenuClosing(true);
+  }
+
+  function handleDrawerAnimationEnd(event: React.AnimationEvent<HTMLElement>) {
+    if (event.target === event.currentTarget && isMenuClosing) {
+      setIsMenuMounted(false);
+      setIsMenuClosing(false);
+    }
   }
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 border-b border-white/40 bg-background/82 py-5 backdrop-blur-xl transition-shadow duration-200 lg:py-[30px]",
-        hasScrolled && "shadow-[0_10px_30px_rgba(0,0,0,0.06)]",
-      )}
-    >
-      <div className="penta-container flex h-9 items-center justify-between gap-5 lg:gap-8">
+    <header className="sticky top-0 z-30">
+      <div
+        className={cn(
+          "border-b border-white/40 bg-background/82 py-5 backdrop-blur-xl transition-shadow duration-200 lg:py-[30px]",
+          hasScrolled && "shadow-[0_10px_30px_rgba(0,0,0,0.06)]",
+        )}
+      >
+        <div className="penta-container flex h-9 items-center justify-between gap-5 lg:gap-8">
         <Link href={navigation.logo.href} className="flex items-center">
           <Image
             src={navigation.logo.image}
@@ -115,20 +129,32 @@ export function SiteHeader({ navigation, footer }: SiteHeaderProps) {
             type="button"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#222] text-(--color-text-primary) transition-colors hover:bg-white/50 lg:hidden"
             aria-label="전체 메뉴 열기"
-            aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen(true)}
+            aria-expanded={isMenuMounted}
+            onClick={openMenu}
           >
             <Menu className="h-5 w-5" />
           </button>
         </div>
+        </div>
       </div>
 
-      {isMenuOpen ? (
+      {isMenuMounted ? (
         <>
-          <div className="fixed inset-0 z-40 bg-black/30 lg:hidden" aria-hidden="true" onClick={closeMenu} />
+          <div
+            className={cn(
+              "fixed inset-0 z-40 bg-black/30 lg:hidden",
+              isMenuClosing ? "animate-fade-out" : "animate-fade-in",
+            )}
+            aria-hidden="true"
+            onClick={closeMenu}
+          />
           <aside
-            className="fixed bottom-0 right-0 top-0 z-50 w-[min(86vw,360px)] overflow-y-auto bg-background px-6 py-6 shadow-[-24px_0_48px_rgba(0,0,0,0.14)] lg:hidden"
+            className={cn(
+              "fixed bottom-0 right-0 top-0 z-50 w-[min(86vw,360px)] overflow-y-auto bg-background px-6 py-6 shadow-[-24px_0_48px_rgba(0,0,0,0.14)] lg:hidden",
+              isMenuClosing ? "animate-slide-out-right" : "animate-slide-in-right",
+            )}
             aria-label="모바일 전체 메뉴"
+            onAnimationEnd={handleDrawerAnimationEnd}
           >
             <div className="flex items-center justify-between gap-4">
               <Image

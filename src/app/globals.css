@@ -65,14 +65,16 @@ body {
   font-family: var(--font-sans);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-button,
-input {
-  font: inherit;
+  button,
+  input {
+    font: inherit;
+  }
 }
 
 .penta-container {
@@ -82,4 +84,101 @@ input {
 
 .penta-section {
   padding-block: clamp(72px, 8vw, var(--layout-section-gap));
+}
+
+@keyframes penta-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes penta-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes penta-fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes penta-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes penta-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes penta-slide-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-fade-in {
+  animation: penta-fade-in 0.35s ease-out both;
+}
+
+.animate-fade-in-up {
+  animation: penta-fade-in-up 0.4s ease-out both;
+}
+
+.animate-fade-in-scale {
+  animation: penta-fade-in-scale 0.28s ease-out both;
+}
+
+.animate-page-in {
+  animation: penta-fade-in 0.4s ease-out both;
+}
+
+.animate-fade-out {
+  animation: penta-fade-out 0.28s ease-in both;
+}
+
+.animate-slide-in-right {
+  animation: penta-slide-in-right 0.3s ease-out both;
+}
+
+.animate-slide-out-right {
+  animation: penta-slide-out-right 0.28s ease-in both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
