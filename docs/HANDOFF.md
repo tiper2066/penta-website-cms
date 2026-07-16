@@ -12,7 +12,10 @@
 - `src/content/demo-site.json`과 `src/lib/content` JSON 로더를 기준으로 공개 페이지와 관리자 데모가 같은 콘텐츠 스키마를 사용합니다.
 - 공개 메인 페이지 `/`와 관리자 데모 `/admin-demo`가 생성되어 있습니다.
 - 2단계 공개 페이지 데모 구현은 완료되었습니다.
+- 데모용 D.AMO 개요 페이지 `/products/data-security`와 라인업 상세 페이지 `/products/data-security/on-application`, `/products/data-security/on-db`, `/products/data-security/on-os`가 추가되었습니다.
 - `ref-image/main_01.png`와 `ref-image/main_01.html`을 기준으로 Header, Hero, News, Subscribe, ProductTabs, Stats, Awards, FooterNavigation, FooterLegal 정밀 보정을 완료했습니다.
+- `ref-image/sub-page/sub-damo.html`, `ref-image/sub-page/sub-damo-detail.html`을 기준으로 D.AMO 개요/상세 페이지 데스크톱 구현을 완료했습니다.
+- 2.5단계 공개 페이지 반응형 보정은 완료되었습니다. 공통 Header/Footer, 메인 페이지 섹션, D.AMO 개요/상세 페이지의 모바일/태블릿 레이아웃을 보정했고, 모바일 테스트 피드백까지 반영했습니다.
 - Hero 및 제품 비주얼은 `ref-image/hero-visual/*.html`, `ref-image/products-visual/*.html`의 Figma HTML을 참고해 `src/components/visuals/figma-visuals.tsx`로 React 컴포넌트화했습니다.
 - Cloudbric 구름 비주얼은 `ref-image/products-visual/mask-cloud.png`를 CSS mask로 사용합니다.
 - Awards는 `src/components/sections/awards-carousel.tsx` 클라이언트 컴포넌트로 분리되어 자동 Carousel, hover pause, dot navigation을 제공합니다.
@@ -55,6 +58,10 @@
 - `ref-image/main_03.png`
 - `ref-image/main_04.png`
 - `ref-image/main_01.html`: Figma 기준 전체 페이지 구현 참고 HTML
+- `ref-image/sub-page/sub-damo.html`: D.AMO 개요 페이지 참고 HTML
+- `ref-image/sub-page/sub-damo-detail.html`: D.AMO 라인업 상세 페이지 참고 HTML
+- `ref-image/sub-page/sub-damo.png`: D.AMO 개요 페이지 참고 이미지
+- `ref-image/sub-page/sub-damo-detail.png`: D.AMO 라인업 상세 페이지 참고 이미지
 
 이 이미지는 Figma 4개 프레임의 시각 기준으로 사용합니다.
 
@@ -209,11 +216,51 @@ penta-cms/
 - FooterNavigation/FooterLegal은 메뉴 분리선, Company 컬럼 폭, 회사 로고/개인정보/우측 링크/회사 정보 3줄 레이아웃을 조정했습니다.
 - `src/components/visuals/figma-visuals.tsx`에서 Hero와 D.AMO/WAPPLES/iSIGN/Cloudbric 제품 비주얼을 CSS 도형으로 렌더링합니다.
 
+## 추가 공개 페이지 구현 기준
+
+데모용 서브 페이지 구현 기준입니다.
+
+- `/products/data-security`
+  - D.AMO Hero, 문제 제기, 선택 이유, 라인업 카드, 수상/인증 placeholder, 제품 구성 placeholder, FAQ를 렌더링합니다.
+  - 라인업 카드 3개는 상세 페이지로 이동하는 전체 카드 링크입니다.
+- `/products/data-security/[lineup]`
+  - `on-application`, `on-db`, `on-os` slug를 지원합니다.
+  - URL에 맞는 D.AMO 라인업 탭과 상세 콘텐츠가 활성화됩니다.
+- `src/components/ui/primary-cta-link.tsx`
+  - 검은 배경 CTA의 흰색 텍스트를 컴포넌트 내부에서 보장합니다.
+- `src/components/ui/tab-link.tsx`
+  - 라인업 상세 탭의 최대 폭, 좌측 정렬, 활성 탭 텍스트 색상을 공통 처리합니다.
+
+## 2.5단계 반응형 구현 기준
+
+완료된 반응형 보정입니다.
+
+- Header
+  - 데스크톱 full down wide menu는 유지합니다.
+  - 모바일에서는 햄버거 버튼과 우측 drawer 메뉴를 제공합니다.
+  - drawer 메뉴는 `footer.groups` 기반 전체 메뉴 구조를 재사용합니다.
+  - 스크롤 시 sticky header에 shadow와 backdrop blur가 적용됩니다.
+- Footer
+  - 데스크톱 5열 메뉴는 유지합니다.
+  - 모바일에서는 메뉴 그룹을 accordion 형태로 표시하고 회사 정보를 세로 배치합니다.
+  - 430px 이하에서는 사업자 등록번호 줄을 `:` 기준으로 줄바꿈합니다.
+- 메인 페이지
+  - Hero 타이틀과 장식 비주얼을 모바일에서 축소하고, 데스크톱 배치 비율에 가깝게 재배치했습니다.
+  - News는 모바일 세로 목록으로 전환했습니다.
+  - Subscribe는 모바일에서 text/input/button stack과 full width 입력/CTA를 사용합니다.
+  - ProductTabs는 모바일 2열 탭, 설명 하단 비주얼, 축소된 제품 비주얼을 사용합니다.
+  - Stats는 모바일 2열 카드 grid로 전환했습니다.
+  - Awards Carousel은 viewport에 따라 mobile 1개, tablet 2개, desktop 3개 노출로 동작합니다.
+- D.AMO 개요 페이지
+  - Hero padding, 제목 크기, CTA stack, Benefits 카드, Lineup 카드, placeholder, FAQ를 모바일 기준으로 보정했습니다.
+- D.AMO 상세 페이지
+  - Hero 타이포, `TabLink` stack/wrap, 상세 카드 padding과 bullet 영역을 모바일 기준으로 보정했습니다.
+
 다음 세션 시작 시 권장 작업:
 
-1. 2단계 공개 페이지 데모를 이해관계자에게 공유하고 `docs/REQUIREMENTS_WORKSHOP.md` 기준으로 CMS 편집 범위와 승인/다국어/뉴스 운영 요구사항을 확정합니다.
+1. 2.5단계 반응형 결과를 이해관계자에게 공유한 뒤 `docs/REQUIREMENTS_WORKSHOP.md` 기준으로 CMS 편집 범위와 승인/다국어/뉴스 운영 요구사항을 확정합니다.
 2. 3단계 관리자 데모(`/admin-demo`)의 편집 UI를 실제 공개 페이지 JSON 구조에 맞춰 보강합니다.
-3. 데모 공유 전 `npm run typecheck`, `npm run lint`, `npm run build`를 다시 실행하고 브라우저에서 `http://localhost:3000`과 `http://localhost:3000/admin-demo`를 확인합니다.
+3. 데모 공유 전 `npm run typecheck`, `npm run lint`, `npm run build`를 다시 실행하고 브라우저에서 `http://localhost:3000`, `http://localhost:3000/products/data-security`, `http://localhost:3000/admin-demo`를 확인합니다.
 
 ## 관리자 데모 편집 항목
 

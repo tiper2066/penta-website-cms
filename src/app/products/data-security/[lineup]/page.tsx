@@ -352,13 +352,13 @@ export default async function DataSecurityLineupPage({
     <div className="bg-[#f2f2f2] text-(--color-text-primary)">
       <SiteHeader navigation={content.navigation} footer={content.footer} />
 
-      <main className="bg-[#f2f2f2] pb-[100px]">
-        <section className="bg-[#f2f2f2] pb-[50px] pt-[110px]">
+      <main className="bg-[#f2f2f2] pb-16 md:pb-[100px]">
+        <section className="bg-[#f2f2f2] pb-10 pt-16 md:pb-[50px] md:pt-[110px]">
           <div className="penta-container">
-            <h1 className="text-balance text-[42px] font-black leading-[1.15] tracking-[-0.03em] text-(--color-text-primary) md:text-[60px]">
+            <h1 className="text-balance text-[38px] font-black leading-[1.15] tracking-[-0.03em] text-(--color-text-primary) md:text-[60px]">
               적용 환경별 D.AMO 라인업
             </h1>
-            <p className="mt-[18px] text-[18px] leading-[30px] text-(--color-text-sub)">
+            <p className="mt-[18px] max-w-[900px] text-[16px] leading-[26px] text-(--color-text-sub) md:text-[18px] md:leading-[30px]">
               고객의 시스템 아키텍처에 따라 onApplication · onDB · onOS 세 가지 방식으로 전 계층 데이터를
               암호화합니다.
             </p>
@@ -367,7 +367,7 @@ export default async function DataSecurityLineupPage({
 
         <section className="bg-[#f2f2f2]">
           <div className="penta-container">
-            <div className="flex flex-wrap justify-start gap-5" role="tablist" aria-label="D.AMO 라인업">
+            <div className="flex flex-wrap justify-start gap-3 md:gap-5" role="tablist" aria-label="D.AMO 라인업">
               {lineups.map((lineup) => {
                 const isActive = lineup.slug === activeLineup.slug;
 
@@ -384,19 +384,19 @@ export default async function DataSecurityLineupPage({
             </div>
 
             <div className="mt-7">
-              <p className="mb-7 text-[24px] font-bold leading-[38px] text-(--color-text-primary) md:text-[26px]">
+              <p className="mb-7 text-[20px] font-bold leading-[32px] text-(--color-text-primary) md:text-[26px] md:leading-[38px]">
                 {activeLineup.description}
               </p>
 
               <div className="flex flex-col gap-4">
                 {activeLineup.cards.map((card) => (
-                  <article key={card.title} className="rounded-xl border border-[#e5e8ed] bg-[#fafbfc] px-7 py-8 md:px-9">
+                  <article key={card.title} className="rounded-xl border border-[#e5e8ed] bg-[#fafbfc] px-5 py-6 md:px-9 md:py-8">
                     <div className="mb-[18px] flex items-center gap-4">
                       <span className="h-6 w-1 shrink-0 rounded-sm bg-(--color-text-accent)" aria-hidden="true" />
-                      <h2 className="text-[22px] font-bold text-(--color-text-primary)">{card.title}</h2>
+                      <h2 className="text-[20px] font-bold text-(--color-text-primary) md:text-[22px]">{card.title}</h2>
                     </div>
 
-                    <div className="space-y-4 pl-5 text-[15px] leading-[26px] text-(--color-text-sub)">
+                    <div className="space-y-4 pl-0 text-[15px] leading-[25px] text-(--color-text-sub) md:pl-5 md:leading-[26px]">
                       {card.blocks.map((block, index) => (
                         <section key={`${card.title}-${block.heading ?? index}`}>
                           {block.heading ? (

@@ -8,8 +8,23 @@ import { cn } from "@/lib/utils";
 
 type AwardItem = AwardsSection["data"]["items"][number];
 
-const visibleItems = 3;
 const autoScrollMs = 3500;
+
+function getVisibleItems() {
+  if (typeof window === "undefined") {
+    return 3;
+  }
+
+  if (window.matchMedia("(min-width: 1024px)").matches) {
+    return 3;
+  }
+
+  if (window.matchMedia("(min-width: 768px)").matches) {
+    return 2;
+  }
+
+  return 1;
+}
 
 function AwardCard({ item }: { item: AwardItem }) {
   const [titleLine, nameLine] = item.title.split("\n");
@@ -18,21 +33,21 @@ function AwardCard({ item }: { item: AwardItem }) {
 
   return (
     <article className="text-center">
-      <div className="flex h-[118px] items-center justify-center">
+      <div className="flex h-[96px] items-center justify-center lg:h-[118px]">
         <Image
           src={item.logo}
           alt={item.title}
           width={170}
           height={52}
           className="h-auto w-auto object-contain"
-          style={logoHeight ? { height: `${logoHeight}px`, width: "auto" } : undefined}
+          style={logoHeight ? { height: `${logoHeight}px`, maxHeight: "100%", width: "auto" } : undefined}
         />
       </div>
-      <h3 className="text-(--color-text-primary) mx-auto mt-7 max-w-[300px] text-center tracking-[-0.02em]">
-        <span className="block text-[18px] font-medium leading-[1.45]">{titleLine}</span>
-        <span className="mt-1 block text-[22px] font-bold leading-[1.35]">{nameLine}</span>
+      <h3 className="text-(--color-text-primary) mx-auto mt-5 max-w-[300px] text-center tracking-[-0.02em] lg:mt-7">
+        <span className="block text-[16px] font-medium leading-[1.45] lg:text-[18px]">{titleLine}</span>
+        <span className="mt-1 block text-[20px] font-bold leading-[1.35] lg:text-[22px]">{nameLine}</span>
       </h3>
-      <p className="text-(--color-text-faint) mx-auto mt-5 max-w-[360px] whitespace-pre-line text-center text-[18px] font-normal leading-[1.45] tracking-[-0.02em]">
+      <p className="text-(--color-text-faint) mx-auto mt-4 max-w-[360px] whitespace-pre-line text-center text-[16px] font-normal leading-normal tracking-[-0.02em] lg:mt-5 lg:text-[18px] lg:leading-[1.45]">
         {item.description}
       </p>
     </article>
@@ -40,14 +55,27 @@ function AwardCard({ item }: { item: AwardItem }) {
 }
 
 export function AwardsCarousel({ items }: { items: AwardItem[] }) {
+  const [visibleItems, setVisibleItems] = useState(3);
   const shouldCarousel = items.length > visibleItems;
   const carouselItems = useMemo(
     () => (shouldCarousel ? [...items, ...items.slice(0, visibleItems)] : items),
-    [items, shouldCarousel],
+    [items, shouldCarousel, visibleItems],
   );
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(true);
+
+  useEffect(() => {
+    function updateVisibleItems() {
+      setVisibleItems(getVisibleItems());
+      setActiveIndex(0);
+    }
+
+    updateVisibleItems();
+    window.addEventListener("resize", updateVisibleItems);
+
+    return () => window.removeEventListener("resize", updateVisibleItems);
+  }, []);
 
   useEffect(() => {
     if (!shouldCarousel || isPaused) {
@@ -82,7 +110,11 @@ export function AwardsCarousel({ items }: { items: AwardItem[] }) {
           onTransitionEnd={handleTransitionEnd}
         >
           {carouselItems.map((item, index) => (
-            <div key={`${item.id}-${index}`} className="shrink-0 basis-1/3 px-4">
+            <div
+              key={`${item.id}-${index}`}
+              className="shrink-0 px-2 md:px-3 lg:px-4"
+              style={{ flexBasis: `${100 / visibleItems}%` }}
+            >
               <AwardCard item={item} />
             </div>
           ))}

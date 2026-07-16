@@ -13,6 +13,7 @@ export function PrimaryCtaLink({ className, children, style, ...props }: Primary
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-full bg-primary font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         "hover:bg-primary/90",
+        "min-h-11",
         className,
         "[&]:text-white [&:hover]:text-white [&_svg]:text-white",
       )}

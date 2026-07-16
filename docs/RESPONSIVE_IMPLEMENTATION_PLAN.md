@@ -2,6 +2,18 @@
 
 이 문서는 2단계에서 완성한 데스크톱 공개 페이지를 모바일/태블릿에서도 자연스럽게 사용할 수 있도록 보정하기 위한 실행 계획입니다.
 
+## 진행 상태
+
+상태: 완료
+
+완료 요약:
+
+- 공통 Header/Footer 모바일 레이아웃을 구현했습니다.
+- 메인 페이지의 Hero, News, Subscribe, ProductTabs, Stats, Awards Carousel을 모바일/태블릿 기준으로 보정했습니다.
+- D.AMO 개요 페이지와 D.AMO 라인업 상세 페이지의 Hero, CTA, Lineup cards, `TabLink`, 상세 카드, FAQ를 모바일 기준으로 보정했습니다.
+- 모바일 테스트 피드백을 반영해 Hero 도형 비주얼 위치/크기, Footer 회사 정보 줄바꿈, Header scroll shadow/backdrop blur를 추가 보정했습니다.
+- 검증 명령어 `npm run lint`, `npm run typecheck`, `npm run build`가 통과했습니다.
+
 ## 목표
 
 - 데스크톱 기준 `ref-image/main_01.png` 재현 결과는 유지한다.

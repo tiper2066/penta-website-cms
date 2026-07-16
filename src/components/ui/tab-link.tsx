@@ -13,7 +13,7 @@ export function TabLink({ active = false, className, children, style, ...props }
       role="tab"
       aria-selected={active}
       className={cn(
-        "flex h-[84px] w-full max-w-[285px] items-center justify-center rounded-[5px] px-6 text-center text-[20px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex h-16 w-full max-w-none items-center justify-center rounded-[5px] px-5 text-center text-[16px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:h-[84px] md:max-w-[285px] md:px-6 md:text-[20px]",
         active ? "bg-primary [&]:text-white [&:hover]:text-white" : "bg-white hover:bg-white/70",
         className,
       )}

@@ -7,7 +7,7 @@ type AwardsSectionProps = {
 
 export function AwardsSectionView({ section }: AwardsSectionProps) {
   return (
-    <section className="pb-[94px] pt-[56px]">
+    <section className="pb-16 pt-10 lg:pb-[94px] lg:pt-[56px]">
       <div className="penta-container">
         <AwardsCarousel items={section.data.items} />
       </div>

@@ -13,11 +13,11 @@ const glassStyle = {
 
 export function HeroMainVisual() {
   return (
-    <div className="relative h-full min-h-[720px] w-full" aria-hidden="true">
-      <div className="absolute left-[320px] top-[96px] h-[396px] w-[396px] rounded-full bg-brand-yellow shadow-[34px_34px_56px_rgba(254,203,9,0.28)] max-lg:left-[22%] max-lg:top-[130px]" />
-      <div className="absolute right-0 top-[178px] h-[253px] w-[253px] bg-brand-blue max-lg:right-[-70px]" />
+    <div className="relative h-full min-h-[520px] w-full lg:min-h-[720px]" aria-hidden="true">
+      <div className="absolute left-[21%] top-[218px] h-[214px] w-[214px] rounded-full bg-brand-yellow opacity-80 shadow-[24px_24px_42px_rgba(254,203,9,0.24)] sm:left-[27%] lg:left-[320px] lg:top-[96px] lg:h-[396px] lg:w-[396px] lg:opacity-100 lg:shadow-[34px_34px_56px_rgba(254,203,9,0.28)]" />
+      <div className="absolute left-[76%] top-[274px] h-[136px] w-[136px] bg-brand-blue opacity-80 sm:left-[72%] lg:left-auto lg:right-0 lg:top-[178px] lg:h-[253px] lg:w-[253px] lg:opacity-100" />
       <div
-        className="absolute left-[592px] top-[154px] h-[387px] w-[387px] border border-white/50 bg-white/30 shadow-[42px_34px_62px_rgba(39,67,143,0.28),0_8px_34px_rgba(0,0,0,0.08)] max-lg:left-[48%]"
+        className="absolute left-[36%] top-[252px] h-[210px] w-[210px] border border-white/50 bg-white/30 opacity-80 shadow-[28px_24px_44px_rgba(39,67,143,0.22),0_8px_28px_rgba(0,0,0,0.08)] sm:left-[42%] lg:left-[592px] lg:top-[154px] lg:h-[387px] lg:w-[387px] lg:opacity-100 lg:shadow-[42px_34px_62px_rgba(39,67,143,0.28),0_8px_34px_rgba(0,0,0,0.08)]"
         style={{
           ...glassStyle,
           clipPath: "polygon(0% 0%, 79% 0%, 100% 21%, 100% 100%, 0% 100%)",
@@ -26,7 +26,7 @@ export function HeroMainVisual() {
         <div className="absolute inset-0 opacity-25" style={{ backgroundImage: noise300 }} />
       </div>
       <div
-        className="absolute left-[118px] top-[330px] h-[82px] w-[82px] bg-brand-cyan"
+        className="absolute left-[7%] top-[356px] h-[42px] w-[42px] bg-brand-cyan sm:left-[12%] lg:left-[118px] lg:top-[330px] lg:h-[82px] lg:w-[82px]"
         style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", transform: "scaleX(-1) rotate(-45deg)" }}
       />
     </div>

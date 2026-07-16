@@ -101,7 +101,7 @@ penta-cms/
 
 ### 2.5단계: 공개 페이지 반응형 보정
 
-상태: 계획 수립
+상태: 완료
 
 목표:
 
@@ -125,6 +125,14 @@ penta-cms/
 상세 계획:
 
 - `docs/RESPONSIVE_IMPLEMENTATION_PLAN.md`에서 섹션별 현재 문제점, 권장 모바일 UI, 선택 가능한 대안, 구현 우선순위, 검증 기준을 관리한다.
+
+완료 메모:
+
+- 공통 Header는 모바일 햄버거/우측 drawer 메뉴, sticky header, scroll 이후 shadow, backdrop blur를 제공합니다.
+- 공통 Footer는 모바일 accordion 메뉴와 세로형 회사 정보 레이아웃을 제공합니다.
+- 메인 페이지는 Hero, News, Subscribe, ProductTabs, Stats, Awards Carousel을 모바일/태블릿 기준으로 보정했습니다.
+- D.AMO 개요 페이지와 D.AMO 라인업 상세 페이지는 모바일에서 1열 흐름, 터치 가능한 카드/탭, 축소된 타이포와 padding을 적용했습니다.
+- 검증: `npm run lint`, `npm run typecheck`, `npm run build` 통과.
 
 ### 3단계: 관리자 데모
 

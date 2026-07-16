@@ -93,7 +93,7 @@ const faqs = [
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-[30px] font-bold leading-tight text-(--color-text-primary) md:text-[36px]">
+    <h2 className="text-[28px] font-bold leading-tight text-(--color-text-primary) md:text-[36px]">
       {children}
     </h2>
   );
@@ -107,27 +107,27 @@ export default function DataSecurityPage() {
       <SiteHeader navigation={content.navigation} footer={content.footer} />
 
       <main>
-        <section className="bg-[#f2f2f2] pb-[200px] pt-[110px]">
+        <section className="bg-[#f2f2f2] pb-24 pt-16 md:pb-[200px] md:pt-[110px]">
           <div className="penta-container grid items-start gap-10 md:grid-cols-[1fr_240px]">
             <div>
-              <h1 className="text-balance text-[42px] font-black leading-[1.15] tracking-[-0.03em] text-(--color-text-primary) md:text-[60px]">
+              <h1 className="text-balance text-[38px] font-black leading-[1.15] tracking-[-0.03em] text-(--color-text-primary) md:text-[60px]">
                 국내 최초 암호 플랫폼, D.AMO
               </h1>
-              <p className="mt-5 text-[30px] font-bold leading-tight text-(--color-text-primary)">
+              <p className="mt-5 text-[24px] font-bold leading-tight text-(--color-text-primary) md:text-[30px]">
                 전 계층 데이터 암호화 솔루션
               </p>
-              <p className="mt-5 max-w-[760px] whitespace-pre-line text-[18px] leading-[30px] text-(--color-text-sub)">
+              <p className="mt-5 max-w-[760px] whitespace-pre-line text-[16px] leading-[26px] text-(--color-text-sub) md:text-[18px] md:leading-[30px]">
                 {"국내 최초 암호 플랫폼으로 20년 이상 공공조달 점유율 1위를 기록하며,\n국내 대기업, 금융, 공공기관 등 20,000여 개 레퍼런스로 그 기술성을 입증받았습니다."}
               </p>
-              <div className="mt-[34px] flex flex-wrap gap-3">
-                <PrimaryCtaLink href="/support/contact" className="h-14 px-[30px] text-[16px]">
+              <div className="mt-[34px] flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <PrimaryCtaLink href="/support/contact" className="h-14 w-full px-[30px] text-[16px] sm:w-auto">
                   문의하기
                   <ArrowRight className="h-4 w-4" />
                 </PrimaryCtaLink>
                 <Button
                   asChild
                   variant="outline"
-                  className="h-14 border-[#cccfd4] bg-white px-[30px] text-[16px] hover:border-primary"
+                  className="h-14 w-full border-[#cccfd4] bg-white px-[30px] text-[16px] hover:border-primary sm:w-auto"
                 >
                   <Link href="/resources/downloads">
                     자료 다운로드
@@ -152,23 +152,23 @@ export default function DataSecurityPage() {
           <div className="penta-container">
             <h2 className="text-balance text-[28px] font-bold leading-[1.42] text-(--color-text-primary) md:text-[34px]">
               연이어 터지는 대규모 데이터 유출 사고,
-              <br />
+              <br className="hidden md:block" />
               이를 방지하기 위한 법적 규제 역시 강화되고 있습니다.
             </h2>
-            <p className="mt-6 max-w-[1060px] whitespace-pre-line text-[18px] leading-8 text-(--color-text-sub)">
+            <p className="mt-6 max-w-[1060px] whitespace-pre-line text-[16px] leading-[28px] text-(--color-text-sub) md:text-[18px] md:leading-8">
               {"데이터 유출은 단순 서비스 방해를 넘어 기업과 개인에게 영구적 손실을 입히는 심각한 위협입니다.\nD.AMO는 개인정보를 보호하고 기업의 신뢰와 브랜드 평판을 유지하는 동시에, 정부 및 규제기관의 법규 준수를 위한 모든 방안을 제시합니다."}
             </p>
           </div>
         </section>
 
-        <section className="bg-[#f2f2f2] py-[100px]">
+        <section className="bg-[#f2f2f2] py-16 md:py-[100px]">
           <div className="penta-container">
             <SectionHeading>D.AMO를 선택하는 이유</SectionHeading>
-            <div className="mt-11 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-8 grid gap-5 md:mt-11 md:grid-cols-2 md:gap-6 xl:grid-cols-4">
               {benefits.map((benefit) => (
                 <article
                   key={benefit.number}
-                  className="min-h-[260px] rounded-[10px] border border-[#e5e8ed] bg-white px-7 py-8"
+                  className="min-h-0 rounded-[10px] border border-[#e5e8ed] bg-white p-6 md:min-h-[260px] md:px-7 md:py-8"
                 >
                   <span className="text-[22px] font-bold text-(--color-text-accent)">{benefit.number}</span>
                   <h3 className="mt-3.5 text-[19px] font-semibold leading-[27px] text-(--color-text-primary)">
@@ -178,23 +178,23 @@ export default function DataSecurityPage() {
                 </article>
               ))}
             </div>
-            <div className="mt-11 flex min-h-[440px] items-center justify-center overflow-hidden rounded-[14px] bg-[#7c7c7c] p-10 text-[15px] text-[#d6d9de]">
+            <div className="mt-8 flex min-h-[200px] items-center justify-center overflow-hidden rounded-[14px] bg-[#7c7c7c] p-8 text-[15px] text-[#d6d9de] md:mt-11 md:min-h-[440px] md:p-10">
               D.AMO 제품 이미지
             </div>
           </div>
         </section>
 
-        <section className="bg-[#f2f2f2] pb-[100px]">
+        <section className="bg-[#f2f2f2] pb-16 md:pb-[100px]">
           <div className="penta-container">
             <SectionHeading>적용 환경별 D.AMO 라인업</SectionHeading>
-            <div className="mt-[43px] flex flex-col gap-4">
+            <div className="mt-8 flex flex-col gap-4 md:mt-[43px]">
               {lineups.map((lineup) => (
                 <Link
                   key={lineup.name}
                   href={`/products/data-security/${lineup.slug}`}
-                  className="flex flex-col gap-4 rounded-xl border border-[#e5e8ed] bg-white px-7 py-7 md:flex-row md:items-center md:gap-8 md:px-9"
+                  className="flex flex-col gap-4 rounded-xl border border-[#e5e8ed] bg-white px-5 py-6 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:flex-row md:items-center md:gap-8 md:px-9 md:py-7 md:hover:border-(--color-text-accent)"
                 >
-                  <h3 className="rounded-[6px] bg-[#edf2ff] px-6 py-4 text-center text-[20px] font-semibold text-(--color-text-accent) md:min-w-[300px]">
+                  <h3 className="w-full rounded-[6px] bg-[#edf2ff] px-6 py-4 text-center text-[18px] font-semibold text-(--color-text-accent) md:min-w-[300px] md:text-[20px]">
                     {lineup.name}
                   </h3>
                   <p className="text-[16px] leading-[26px] text-(--color-text-sub)">{lineup.description}</p>
@@ -206,37 +206,36 @@ export default function DataSecurityPage() {
 
         <section className="bg-[#f2f2f2]">
           <div className="penta-container">
-            <div className="flex h-[260px] items-center justify-center rounded-[14px] bg-[#7c7c7c] text-[15px] text-[#d6d9de]">
+            <div className="flex h-[200px] items-center justify-center rounded-[14px] bg-[#7c7c7c] text-[15px] text-[#d6d9de] md:h-[260px]">
               이미지 (수상 / 인증)
             </div>
           </div>
         </section>
 
-        <section className="bg-[#f2f2f2] py-[100px]">
+        <section className="bg-[#f2f2f2] py-16 md:py-[100px]">
           <div className="penta-container">
             <SectionHeading>제품 구성</SectionHeading>
-            <div className="flex mt-[43px] h-[260px] items-center justify-center rounded-[14px] bg-[#7c7c7c] text-[15px] text-[#d6d9de]">
+            <div className="mt-8 flex h-[200px] items-center justify-center rounded-[14px] bg-[#7c7c7c] text-[15px] text-[#d6d9de] md:mt-[43px] md:h-[260px]">
               제품 구성 / 사양표
             </div>
           </div>
         </section>
 
-        <section className="bg-[#f2f2f2] py-[100px]">
+        <section className="bg-[#f2f2f2] py-16 md:py-[100px]">
           <div className="penta-container">
             <SectionHeading>FAQs</SectionHeading>
             <div className="mt-10 flex flex-col gap-4">
               {faqs.map((faq) => (
-                <article
-                  key={faq.question}
-                  className="rounded-xl border border-[#e5e8ed] bg-white px-7 py-[30px] md:px-9"
-                >
+                <article key={faq.question} className="rounded-xl border border-[#e5e8ed] bg-white px-5 py-6 md:px-9 md:py-[30px]">
                   <div className="flex items-start gap-3.5">
                     <span className="shrink-0 text-[20px] font-bold text-(--color-text-accent)">Q</span>
-                    <h3 className="text-[19px] font-semibold leading-7 text-(--color-text-primary)">
+                    <h3 className="text-[17px] font-semibold leading-7 text-(--color-text-primary) md:text-[19px]">
                       {faq.question}
                     </h3>
                   </div>
-                  <p className="mt-3.5 pl-[30px] text-[16px] leading-[27px] text-(--color-text-sub)">{faq.answer}</p>
+                  <p className="mt-3.5 pl-0 text-[15px] leading-[26px] text-(--color-text-sub) md:pl-[30px] md:text-[16px] md:leading-[27px]">
+                    {faq.answer}
+                  </p>
                 </article>
               ))}
             </div>

@@ -28,9 +28,9 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
   const headlineSuffix = headlineRest.join("\n");
 
   return (
-    <section className="pb-[78px] pt-[58px]">
+    <section className="pb-12 pt-10 lg:pb-[78px] lg:pt-[58px]">
       <div className="penta-container">
-        <h2 className="text-(--color-text-primary) w-full whitespace-pre-line text-[54px] leading-[1.18] tracking-[-0.055em]">
+        <h2 className="text-(--color-text-primary) w-full whitespace-pre-line text-[34px] leading-[1.15] tracking-[-0.055em] md:text-[42px] lg:text-[54px] lg:leading-[1.18]">
           <span className="font-bold">{headlineLead}</span>
           {headlineSuffix ? (
             <>
@@ -41,7 +41,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
         </h2>
 
         <div
-          className="mt-[42px] grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:mt-[42px] lg:grid-cols-4 lg:gap-6"
           role="tablist"
           aria-label="제품 보안 영역"
         >
@@ -53,7 +53,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
               role="tab"
               aria-selected={activeTab.id === tab.id}
               className={cn(
-                "h-[84px] rounded-[4px] px-6 text-[20px]! font-bold! leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                "h-[58px] rounded-[4px] px-4 text-[16px]! font-bold! leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:h-[84px] lg:px-6 lg:text-[20px]!",
                 activeTab.id === tab.id
                   ? "text-(--color-text-inverse) bg-primary"
                   : "text-(--color-text-dark) bg-card hover:bg-white/70",
@@ -64,9 +64,9 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
           ))}
         </div>
 
-        <div className="relative mt-[56px] grid min-h-[360px] items-start gap-10 lg:grid-cols-[0.58fr_0.42fr]">
+        <div className="relative mt-10 grid min-h-0 items-start gap-10 lg:mt-[56px] lg:min-h-[360px] lg:grid-cols-[0.58fr_0.42fr]">
           <div>
-            <p className="text-(--color-text-primary) text-[22px] font-bold tracking-tight">
+            <p className="text-(--color-text-primary) text-[18px] font-bold tracking-tight lg:text-[22px]">
               {activeTab.category}
             </p>
             <Image
@@ -74,15 +74,15 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
               alt={activeTab.productName}
               width={220}
               height={64}
-              className="mt-3 h-[52px] w-auto object-contain"
+              className="mt-3 h-[42px] w-auto object-contain lg:h-[52px]"
             />
-            <div className="mt-[42px] h-px w-[42px] bg-(--color-text-primary)" />
-            <p className="text-(--color-text-primary) mt-[42px] max-w-[560px] whitespace-pre-line text-[20px] font-normal leading-[1.7] tracking-[-0.02em]">
+            <div className="mt-8 h-px w-[42px] bg-(--color-text-primary) lg:mt-[42px]" />
+            <p className="text-(--color-text-primary) mt-8 max-w-[560px] whitespace-pre-line text-[17px] font-normal leading-[1.65] tracking-[-0.02em] lg:mt-[42px] lg:text-[20px] lg:leading-[1.7]">
               {activeTab.description}
             </p>
             <PrimaryCtaLink
               href={activeTab.button.href}
-              className="mt-[30px] h-[66px] rounded-[4px] px-[24px] text-[20px] font-medium"
+              className="mt-[30px] h-14 w-full rounded-[4px] px-[24px] text-[17px] font-medium sm:w-auto lg:h-[66px] lg:text-[20px]"
             >
               {activeTab.button.label}
               <ChevronRight className="h-4 w-4" />
@@ -91,7 +91,7 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
 
           <div
             className={cn(
-              "flex min-h-[240px] items-start justify-center lg:justify-end",
+              "flex min-h-[220px] items-start justify-center overflow-hidden lg:justify-end lg:overflow-visible",
               activeTab.id === "damo" &&
                 "lg:pointer-events-none lg:absolute lg:left-[786px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
               activeTab.id === "wapples" &&
@@ -102,7 +102,9 @@ export function ProductTabsSectionView({ section }: ProductTabsSectionProps) {
                 "lg:pointer-events-none lg:absolute lg:left-[730px] lg:top-1/2 lg:min-h-0 lg:-translate-y-1/2",
             )}
           >
-            <ProductVisual productId={activeTab.id} />
+            <div className="origin-top scale-[0.78] sm:scale-90 lg:scale-100">
+              <ProductVisual productId={activeTab.id} />
+            </div>
           </div>
         </div>
       </div>
