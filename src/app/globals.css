@@ -144,6 +144,24 @@ body {
   }
 }
 
+@keyframes penta-accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes penta-accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
 .animate-fade-in {
   animation: penta-fade-in 0.35s ease-out both;
 }
@@ -170,6 +188,14 @@ body {
 
 .animate-slide-out-right {
   animation: penta-slide-out-right 0.28s ease-in both;
+}
+
+.animate-accordion-down {
+  animation: penta-accordion-down 0.2s ease-out;
+}
+
+.animate-accordion-up {
+  animation: penta-accordion-up 0.2s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {

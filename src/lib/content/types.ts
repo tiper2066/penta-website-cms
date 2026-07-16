@@ -3,6 +3,10 @@ export type LinkItem = {
   href: string;
 };
 
+export type IdentifiedLink = LinkItem & {
+  id: string;
+};
+
 export type SiteContent = {
   site: {
     name: string;
@@ -21,7 +25,7 @@ export type NavigationContent = {
     image: string;
     href: string;
   };
-  items: LinkItem[];
+  items: IdentifiedLink[];
   search: {
     enabled: boolean;
     placeholder: string;
@@ -147,12 +151,13 @@ export type AwardsSection = BaseSection<
 
 export type FooterContent = {
   groups: Array<{
+    id: string;
     title: string;
-    items: LinkItem[];
+    items: IdentifiedLink[];
   }>;
   legal: {
     privacy: LinkItem;
-    utilityLinks: LinkItem[];
+    utilityLinks: IdentifiedLink[];
     companyInfo: string;
     copyright: string;
   };

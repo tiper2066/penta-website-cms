@@ -380,6 +380,53 @@ src/content/demo-site.json
 | `logo`, `visual`, `award.logo` | Upload Collection `Media` | MinIO 연동 |
 | `products.tabs[]` | Block 내부 array 또는 Collection `Products` | 제품 페이지 확장 여부에 따라 결정 |
 
+## Asset Manager (미디어 관리) 전환 방향
+
+데모에서는 이미지/에셋을 "경로 문자열"로만 참조하고 관리자 화면에서도 경로를 직접 입력/수정합니다. 실제 프로젝트에서는 사용자가 로컬 파일을 선택해 업로드하고, 업로드된 모든 파일을 한 곳에서 관리·재사용하는 **Asset Manager**로 전환합니다.
+
+### 데모와 실제의 차이
+
+| 구분 | 데모(현재) | 실제 프로젝트 |
+|---|---|---|
+| 파일 지정 방식 | 경로 문자열 직접 입력 | 로컬 파일 업로드 또는 미디어 라이브러리에서 선택 |
+| 저장 위치 | `public/` 정적 경로 참조 | MinIO(S3 호환) 버킷 + PostgreSQL 메타데이터 |
+| 관리 UI | 필드별 경로 텍스트 입력 | 중앙 Asset Manager(Payload `Media` 라이브러리 기반) |
+| 참조 값 | `string`(경로) | Media 문서 참조(id/relationship) → 렌더 시 URL resolve |
+
+### 확장이 가능한 이유
+
+- 콘텐츠 필드의 미디어 참조가 모두 단순 문자열(`logo`, `award.logo`, `visual.value`, `backgroundImage` 등)로 추상화되어 있습니다.
+- 섹션 컴포넌트는 JSON을 직접 import하지 않고 "URL 문자열" props만 받아 렌더링하므로, 데이터 소스가 JSON → Media 참조로 바뀌어도 컴포넌트 렌더링 코드는 거의 그대로 유지됩니다.
+- 따라서 전환 작업의 핵심은 "값을 어디서 얻느냐(경로 입력 → 업로드/선택)"이며, 컴포넌트 재작성이 아닙니다.
+
+### Asset Manager 구성 (실제 프로젝트)
+
+- **저장소**: 파일 바이너리는 MinIO 버킷, 메타데이터(파일명, MIME, 크기, alt, 업로드 일시 등)는 PostgreSQL.
+- **관리 UI**: Payload `Media`(Upload) 컬렉션의 미디어 라이브러리를 기본 Asset Manager로 사용하고, 필요 시 이를 감싼 커스텀 관리 UI를 얹습니다. 업로드/검색/미리보기/재사용을 제공합니다.
+- **관리자 편집 화면**: 지금의 "경로 입력 텍스트 필드"를 "파일 선택 / 라이브러리에서 고르기" 컨트롤로 교체합니다.
+- **URL 분리**: 서버 내부 접근용 `S3_ENDPOINT`와 브라우저 공개용 `S3_PUBLIC_URL`을 분리합니다([LOCAL_AND_DOCKER.md](./LOCAL_AND_DOCKER.md) MinIO 주의사항 참고).
+
+### 지원 파일 유형과 취급
+
+| 종류 | 처리 방향 |
+|---|---|
+| 이미지(다양한 포맷, 배경 이미지 포함) | Media 컬렉션 저장, Next.js 이미지 최적화, alt 텍스트 필수 |
+| 동영상(mp4 등) | Media 저장, 포스터 이미지 필드 검토, 스트리밍/용량 정책 확정 후 허용 |
+| 문서(pdf 등) | Media 저장, 다운로드/뷰어 링크로 참조 |
+| 폰트(woff2 등) | 임의 업로드보다 "등록된 폰트 토큰"으로 통제해 디자인 시스템 일관성 유지 |
+| html | XSS/CSP 위험이 크므로 sanitize·격리(iframe sandbox)·접근 제한 등 통제된 방식으로만 허용 |
+
+폰트와 html은 "자유 편집"이 아니라 통제된 편집 범위로 다뤄, 통제된 테마 빌더라는 프로젝트 방향([PROJECT_PLAN.md](./PROJECT_PLAN.md))과 일치시킵니다.
+
+### 함께 설계할 것 (보안·검증)
+
+- 업로드 제한: 허용 확장자 / MIME / 최대 용량 정의
+- 버킷 정책: 공개 이미지와 비공개 파일 분리
+- 업로드 파일 검증, `/admin` 접근 제한, 보안 헤더(CSP, X-Frame-Options 등)
+- 백업/복구: 파일 메타데이터와 실제 파일 간 정합성까지 확인
+
+세부 운영 기준은 [LOCAL_AND_DOCKER.md](./LOCAL_AND_DOCKER.md)를 따르며, 편집 가능 파일 유형과 업로드 정책은 [REQUIREMENTS_WORKSHOP.md](./REQUIREMENTS_WORKSHOP.md) "이미지와 파일" 항목에서 확정합니다.
+
 ## 모델링 원칙
 
 - JSON 필드명은 실제 CMS 필드명으로 그대로 가져갈 수 있게 의미 중심으로 짓습니다.

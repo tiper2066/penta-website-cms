@@ -173,7 +173,7 @@ penta-cms/
 
 ### 3.5단계: 관리자 속성 패널 개편
 
-상태: 계획 수립(구현 대기)
+상태: 완료 (Phase A·B·B+·C 완료 = 3.5 범위 완료, Phase D는 3.5 범위 밖 후속)
 
 목표:
 
@@ -191,6 +191,35 @@ penta-cms/
 상세 계획:
 
 - `docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에서 목표 UI, 데이터 모델 방향, 하이라이트 설계, Phase별 구현 순서, 영향 파일, 검증 기준, 열린 질문을 관리한다.
+
+Phase A 완료 메모:
+
+- 상단 카테고리 버튼을 제거하고 shadcn `Select` 기반 "편집 대상" 드롭다운(`공통 요소` 최상단, 그다음 `홈`)으로 대체했습니다.
+- shadcn `Accordion`(`type="multiple"`, 다중 펼침)을 도입해 `공통 요소`→[네비게이션(헤더), 푸터], `홈`→[섹션 순서, Hero, News, Subscribe, Product Tabs, Stats, Awards]를 한 화면에서 편집합니다. 각 본문은 기존 편집 패널을 그대로 재사용합니다.
+- 선택한 편집 대상과 대상별 아코디언 펼침 상태를 `localStorage`에 저장해 새로고침 후에도 유지합니다. `admin-store.ts`에 UI 상태용 `useSyncExternalStore` 스토어를 추가해 하이드레이션 안전하게 처리했습니다.
+- 신규 파일: `src/components/ui/select.tsx`, `src/components/ui/accordion.tsx`. 의존성: `@radix-ui/react-select`, `@radix-ui/react-accordion`.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인.
+
+Phase B 완료 메모:
+
+- 섹션 타입 → 편집 폼 레지스트리(`SECTION_EDITORS`)를 도입하고, `홈` 대상은 `sections[]` 순서대로 아코디언을 렌더합니다(아코디언 `value`는 섹션 `id`).
+- 아코디언 헤더에 순서 이동(위/아래)·노출 토글·삭제를 통합해 순서 관리와 내용 편집을 일원화했습니다. 별도 "섹션 순서" 패널은 제거했습니다.
+- 헤더 액션 공간 확보를 위해 아코디언 chevron을 좌측으로 이동했습니다. 숨김 섹션은 라벨을 흐리게 표시하고 "숨김" 배지를 붙입니다.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. 세 라우트 200 응답 확인.
+
+Phase B+ 완료 메모(드래그 앤 드롭 정렬):
+
+- 위/아래 화살표 이동을 우측 끝 드래그 핸들(`::`) 방식으로 전면 교체(드래그 전용, 키보드 이동 미지원). `@dnd-kit/*` 도입, 공통 프리미티브 `src/components/admin/sortable.tsx` 신설.
+- 안정 정렬 키를 위해 모델에 `id` 추가(`IdentifiedLink`): `navigation.items`, `footer.groups`(+`items`), `utilityLinks`. 평면 리스트는 `SortableList`+`arrayMove`, 섹션 아코디언은 `SortableSectionItem`.
+- 푸터는 그룹 순서 변경 + 링크의 그룹 간 이동 지원(단일 `DndContext`, `active.id` prefix 구분, `useDroppable` 존, `DragOverlay`).
+
+Phase C 완료 메모(미리보기 하이라이트):
+
+- 편집기→미리보기 iframe `postMessage` 채널(`preview-ready` 핸드셰이크 + `active-target` 전송, `origin`/`source` 검증)로 콘텐츠 스토어와 분리해 처리합니다.
+- 활성 대상 = 현재 대상에서 마지막으로 펼친 아코디언 하나(결정 5). 섹션은 `data-preview-id` 래퍼, 헤더/푸터는 `previewId` prop으로 마킹(헤더 `sticky` 유지).
+- `PreviewHighlight`(신규)가 `requestAnimationFrame`로 위치를 추적해 `fixed` 오버레이(ring + "편집 중" 칩)를 그리고 `scrollIntoView`로 이동, `prefers-reduced-motion` 존중.
+- 검증: `tsc --noEmit`, `npm run lint`, `npm run build` 통과. 세 라우트 200 + `data-preview-id` 마커 렌더 확인.
+- 3.5단계 범위(Phase A~C) 완료. 남은 것은 Phase D(멀티 페이지 모델, 3.5 범위 밖).
 
 ### 4단계: 데모 미팅과 요구사항 확정
 
@@ -222,8 +251,15 @@ penta-cms/
 - `navigation`, `footer` → Payload Globals
 - `pages.home.sections[]` → Payload Blocks
 - `news.items[]` → `news` Collection
-- `media` → Payload Uploads + MinIO
+- `media` → Payload Uploads + MinIO (중앙 Asset Manager)
 - `products` → Product tabs용 Collection 또는 Global
+
+Asset Manager 전환:
+
+- 데모에서 경로 문자열로 참조하던 이미지/에셋을, 로컬 파일 업로드 + 중앙 Asset Manager(Payload `Media` 라이브러리 + MinIO)로 전환한다.
+- 이미지(배경 포함), mp4, PDF, 폰트, HTML 등 텍스트 외 다양한 포맷을 업로드·관리하며, 폰트/HTML은 통제된 방식으로 취급한다.
+- 콘텐츠 필드는 경로 문자열 대신 Media 참조로 바꾸되 컴포넌트 props(URL 문자열)는 유지한다.
+- 상세 방향은 [CMS_CONTENT_MODEL.md](./CMS_CONTENT_MODEL.md) "Asset Manager (미디어 관리) 전환 방향", 지원 파일 유형·업로드 정책은 [REQUIREMENTS_WORKSHOP.md](./REQUIREMENTS_WORKSHOP.md) "이미지와 파일" 항목에서 확정한다.
 
 ### 6단계: Docker 기반 운영 전환
 

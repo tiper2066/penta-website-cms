@@ -165,25 +165,55 @@ const SECTION_EDITORS = {
 작은 단위로 나눠 순차 구현/검증합니다. 각 Phase는 독립적으로 동작 가능해야 합니다.
 
 ### Phase A — 대상 드롭다운 + 아코디언 (모델 변경 없음) · 3.5 범위
-- shadcn `Select` 도입(결정 3).
+
+상태: 완료
+
+- shadcn `Select` 도입(결정 3). → `src/components/ui/select.tsx` 신규.
 - 상단 카테고리 버튼을 제거하고 "편집 대상" 드롭다운으로 대체(`공통 요소` 최상단, 그다음 `홈`).
-- shadcn `Accordion`(`type="multiple"`) 도입(결정 4). `공통 요소`→[네비게이션, 푸터], `홈`→[Hero, News, Subscribe, Product Tabs, Stats, Awards].
+- shadcn `Accordion`(`type="multiple"`) 도입(결정 4). → `src/components/ui/accordion.tsx` 신규. `공통 요소`→[네비게이션(헤더), 푸터], `홈`→[섹션 순서, Hero, News, Subscribe, Product Tabs, Stats, Awards].
+  - `홈`의 `섹션 순서` 항목은 기존 편집 기능 100% 유지를 위해 Phase A에서 아코디언 첫 항목으로 유지합니다. Phase B에서 섹션 구동형 아코디언으로 통합되며 별도 항목은 제거될 예정입니다.
 - 각 아코디언 본문에 기존 패널 폼 그대로 배치.
-- 선택 대상 + 펼침 상태를 `localStorage`에 저장/복원(결정 7).
+- 선택 대상 + 펼침 상태를 `localStorage`에 저장/복원(결정 7). → `admin-store.ts`에 UI 상태용 `useSyncExternalStore` 스토어(`subscribeUi`, `getUiTargetSnapshot`, `getUiExpandedSnapshot`, `writeUiTarget`, `writeUiExpanded`)를 추가해 하이드레이션 안전하게 처리. 펼침 상태는 대상별(`{ common: [], home: [] }`)로 저장.
 - 산출물: 개편된 좌측 패널 UI, 기존 편집 기능 100% 유지.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인.
 
 ### Phase B — 섹션 구동형 아코디언 · 3.5 범위 (결정 6)
-- 섹션 레지스트리 도입(6장), `sections[]` 순서대로 아코디언 렌더.
-- 아코디언 헤더에 위/아래 이동·노출 토글·삭제 통합 → 별도 "섹션 순서" 패널 제거.
+
+상태: 완료
+
+- 섹션 레지스트리 도입(6장). `admin-editor.tsx`에 `SECTION_EDITORS`(hero/news/subscribe/productTabs/stats/awards → 편집 폼) 맵을 두고, `홈` 대상은 `content.pages.home.sections[]`를 순서대로 순회해 아코디언을 렌더합니다. 아코디언 `value`는 각 섹션의 `id`를 사용합니다.
+- 아코디언 헤더에 위/아래 이동·노출 토글(Eye/EyeOff)·삭제(Trash2)를 통합했습니다. 헤더 액션은 트리거 버튼의 형제로 배치해 클릭 시 아코디언이 토글되지 않습니다. 숨김 상태 섹션은 라벨을 흐리게 표시하고 "숨김" 배지를 붙입니다.
+- 별도 "섹션 순서" 패널(`SectionsPanel`)을 제거했습니다. `admin-panels.tsx`에서 함수 삭제, `SECTION_TYPE_LABELS`는 편집기에서 재사용하도록 export.
+- 헤더에 액션 공간을 확보하기 위해 `Accordion` 트리거의 chevron을 좌측으로 이동했습니다.
+- 삭제는 즉시 반영되며, 초기화(기본 JSON 복원)로 되돌릴 수 있습니다. 알 수 없는 섹션 타입에는 폴백 안내 패널을 렌더합니다.
 - 산출물: 순서 관리와 내용 편집 일원화.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인.
+
+### Phase B+ — 드래그 앤 드롭 정렬 (Phase B 후속)
+
+상태: 완료
+
+- 모든 순서 변경 UI를 위/아래 화살표에서 **드래그 핸들(`::`, `GripVertical`)** 방식으로 전환했습니다. 핸들은 각 행/헤더의 우측 끝에 배치합니다. 사용자 요구에 따라 **드래그로만** 이동 가능하며 키보드 이동은 지원하지 않습니다(`PointerSensor`만 사용).
+- 라이브러리: `@dnd-kit/core` · `@dnd-kit/sortable` · `@dnd-kit/modifiers` · `@dnd-kit/utilities`.
+- 공통 프리미티브 `src/components/admin/sortable.tsx` 신설: `SortableList`(단일 리스트 DnD 컨텍스트) · `SortableRow`(핸들+삭제 포함 카드) · `DragHandle` · `RemoveButton` · `usePointerSortSensors`.
+- 안정 정렬 키 확보를 위해 모델에 `id`를 추가했습니다(`types.ts`의 `IdentifiedLink`): `navigation.items`, `footer.groups`(+`items`), `footer.legal.utilityLinks`. `demo-site.json`에도 해당 `id`를 부여했습니다. 공개 컴포넌트 렌더링에는 영향 없음.
+- 평면 리스트(navigation / news / subscribe / productTabs / stats / awards / utilityLinks)는 `SortableList` + `SortableRow`로 전환하고 `@dnd-kit/sortable`의 `arrayMove`로 재정렬합니다.
+- **푸터(중첩)**: 그룹 순서 변경 + **링크의 그룹 간 이동**까지 지원합니다. 단일 `DndContext`에서 `active.id` prefix(`group:` / `link:` / `zone:`)로 대상을 구분하고, 각 그룹에 `useDroppable` 존을 두어 빈 그룹/헤더 영역 드롭도 처리합니다. `DragOverlay`로 드래그 중 라벨 미리보기를 제공합니다.
+- 섹션 아코디언은 `useSortable`로 감싼 `SortableSectionItem`으로 전환하고, 드래그 핸들을 헤더 액션(노출 토글·삭제 옆) 우측 끝에 배치해 토글 버튼과 충돌하지 않게 했습니다.
+- 제거: `admin-fields.tsx`의 `RepeaterItem`·`IconButton`·`moveItem`(화살표 이동 유틸) 삭제.
+- 검증: `npm run typecheck`(=`tsc --noEmit`), `npm run lint`, `npm run build` 통과. `/admin-demo`, `/admin-demo/preview` 200 응답 확인.
 
 ### Phase C — 미리보기 하이라이트 · 3.5 범위 (결정 2)
-- iframe `postMessage` 채널 추가(편집기→미리보기), 미리보기 `message` 구독.
-- 미리보기 섹션/전역 래퍼에 `data-preview-id` 부여.
-- 활성 대상은 **마지막으로 펼친 아코디언 하나**만 전달(결정 5).
-- 하이라이트 오버레이 레이어 + `scrollIntoView` + 리사이즈 재측정.
-- 전역 요소(헤더/푸터) 하이라이트 포함.
-- 산출물: 편집 중 영역이 미리보기에서 시각적으로 강조됨.
+
+상태: 완료
+
+- 편집기→미리보기 iframe `postMessage` 채널 추가(`source: "penta-admin"`). 콘텐츠 스토어와 분리된 일시적 UI 상태로 처리합니다.
+- **핸드셰이크**: 미리보기(`PreviewHighlight`)가 마운트 시 부모에 `preview-ready`를 보내고, 편집기는 이를 받으면 현재 활성 대상을 전송합니다. 이후 활성 대상 변경 시마다 `{ type: "active-target", target, label }`을 전송하며, `iframe.onLoad`에서도 best-effort로 재전송합니다. 수신 측은 `event.origin === location.origin`과 `source`를 검증합니다.
+- **활성 대상 결정(결정 5)**: 현재 편집 대상의 펼친 아코디언 중 **마지막으로 펼친 하나**만 하이라이트합니다. Radix Accordion(multiple)이 새로 펼친 값을 배열 끝에 추가하므로 `expandedItems`의 마지막 원소를 활성으로 사용합니다. 홈 섹션은 `section:<id>`, 공통 요소는 `global:navigation`/`global:footer`로 매핑합니다.
+- **마킹**: 미리보기에서 각 섹션을 `data-preview-id="section:<id>"` 래퍼로 감싸고, `SiteHeader`/`SiteFooter`에는 옵션 `previewId` prop을 추가해 루트 요소에 `data-preview-id="global:navigation|footer"`를 부여합니다(헤더가 `sticky`라 별도 래퍼 대신 prop 사용으로 sticky 유지).
+- **오버레이**: `PreviewHighlight`가 대상 요소를 `requestAnimationFrame` 루프로 측정해 `position: fixed` 오버레이(브랜드 블루 `ring` + "편집 중: <라벨>" 칩, `pointer-events-none`)를 그립니다. 활성 변경 시 `scrollIntoView({ block: "center" })`로 이동하며, `prefers-reduced-motion`이면 부드러운 스크롤을 생략합니다. iframe이 CSS `scale`로 축소돼 있어도 오버레이가 미리보기 문서 내부에 있어 함께 스케일됩니다.
+- 신규 파일: `src/components/admin/preview-highlight.tsx`.
+- 검증: `tsc --noEmit`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 및 `data-preview-id` 마커(섹션 6종 + 헤더/푸터) 렌더 확인.
 
 ### Phase D — 멀티 페이지 데이터 모델 (후속 · 3.5 범위 밖)
 - `pages: PageContent[]`로 전환, `demo-site.json`/로더/미리보기 참조 갱신.

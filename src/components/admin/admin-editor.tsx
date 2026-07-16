@@ -1,37 +1,81 @@
 "use client";
 
+import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   Download,
   ExternalLink,
+  Eye,
+  EyeOff,
   Monitor,
   RotateCcw,
   Smartphone,
   SquareArrowOutUpRight,
   Tablet,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
   type ComponentType,
+  type ReactNode,
 } from "react";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   getContentSnapshot,
   getServerContentSnapshot,
+  getServerUiExpandedSnapshot,
+  getServerUiTargetSnapshot,
+  getUiExpandedSnapshot,
+  getUiTargetSnapshot,
   resetContent,
   subscribeContent,
+  subscribeUi,
   writeContent,
+  writeUiExpanded,
+  writeUiTarget,
 } from "@/lib/content/admin-store";
+import { cn } from "@/lib/utils";
 import type { SiteContent } from "@/lib/content/types";
 
-import type { UpdateContent } from "./admin-fields";
+import { type UpdateContent } from "./admin-fields";
 import {
   AwardsPanel,
   FooterPanel,
@@ -39,30 +83,39 @@ import {
   NavigationPanel,
   NewsPanel,
   ProductTabsPanel,
-  SectionsPanel,
+  SECTION_TYPE_LABELS,
   StatsPanel,
   SubscribePanel,
 } from "./admin-panels";
+import { DragHandle, usePointerSortSensors, arrayMove } from "./sortable";
 
 type PanelComponent = ComponentType<{ content: SiteContent; update: UpdateContent }>;
 
-type Category = {
-  id: string;
-  label: string;
-  Panel: PanelComponent;
+type HomeSection = SiteContent["pages"]["home"]["sections"][number];
+
+const TARGETS: Array<{ id: string; label: string }> = [
+  { id: "common", label: "공통 요소" },
+  { id: "home", label: "홈" },
+];
+
+const COMMON_ENTRIES: Array<{ value: string; label: string; Panel: PanelComponent }> = [
+  { value: "navigation", label: "네비게이션(헤더)", Panel: NavigationPanel },
+  { value: "footer", label: "푸터", Panel: FooterPanel },
+];
+
+// 섹션 타입 → 편집 폼 레지스트리 (공개 측 section-renderer의 타입 스위치와 대칭).
+const SECTION_EDITORS: Record<string, PanelComponent> = {
+  hero: HeroPanel,
+  news: NewsPanel,
+  subscribe: SubscribePanel,
+  productTabs: ProductTabsPanel,
+  stats: StatsPanel,
+  awards: AwardsPanel,
 };
 
-const CATEGORIES: Category[] = [
-  { id: "navigation", label: "네비게이션", Panel: NavigationPanel },
-  { id: "sections", label: "섹션 순서", Panel: SectionsPanel },
-  { id: "hero", label: "Hero", Panel: HeroPanel },
-  { id: "news", label: "News", Panel: NewsPanel },
-  { id: "subscribe", label: "Subscribe", Panel: SubscribePanel },
-  { id: "products", label: "Product Tabs", Panel: ProductTabsPanel },
-  { id: "stats", label: "Stats", Panel: StatsPanel },
-  { id: "awards", label: "Awards", Panel: AwardsPanel },
-  { id: "footer", label: "Footer", Panel: FooterPanel },
-];
+function isValidTarget(value: string): boolean {
+  return TARGETS.some((group) => group.id === value);
+}
 
 type Device = "desktop" | "tablet" | "mobile";
 
@@ -79,6 +132,12 @@ const DEVICE_OPTIONS: Array<{ id: Device; label: string; Icon: typeof Monitor }>
 ];
 
 const PREVIEW_URL = "/admin-demo/preview";
+const MESSAGE_SOURCE = "penta-admin";
+
+type ActivePreview = {
+  id: string;
+  label: string;
+};
 
 function nowLabel(): string {
   return new Date().toLocaleTimeString("ko-KR", {
@@ -94,9 +153,21 @@ export function AdminEditor() {
     getContentSnapshot,
     getServerContentSnapshot,
   );
-  const [activeCategory, setActiveCategory] = useState<string>(CATEGORIES[0].id);
+  const storedTarget = useSyncExternalStore(
+    subscribeUi,
+    getUiTargetSnapshot,
+    getServerUiTargetSnapshot,
+  );
+  const expandedByTarget = useSyncExternalStore(
+    subscribeUi,
+    getUiExpandedSnapshot,
+    getServerUiExpandedSnapshot,
+  );
   const [device, setDevice] = useState<Device>("desktop");
   const [savedAt, setSavedAt] = useState<string | null>(null);
+
+  const target =
+    storedTarget && isValidTarget(storedTarget) ? storedTarget : TARGETS[0].id;
 
   const update = useCallback<UpdateContent>((mutator) => {
     const draft = structuredClone(getContentSnapshot());
@@ -106,12 +177,6 @@ export function AdminEditor() {
   }, []);
 
   const handleReset = useCallback(() => {
-    if (typeof window !== "undefined") {
-      const confirmed = window.confirm("모든 편집 내용을 초기 JSON 상태로 되돌립니다. 계속할까요?");
-      if (!confirmed) {
-        return;
-      }
-    }
     resetContent();
     setSavedAt(nowLabel());
   }, []);
@@ -137,6 +202,8 @@ export function AdminEditor() {
   }, []);
 
   const previewAreaRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const previewReadyRef = useRef(false);
   const [previewArea, setPreviewArea] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -160,10 +227,117 @@ export function AdminEditor() {
   const scale = previewArea.width > 0 ? Math.min(1, previewArea.width / frameWidth) : 1;
   const frameHeight = previewArea.height > 0 ? previewArea.height / scale : 800;
 
-  const ActivePanel = useMemo(
-    () => CATEGORIES.find((category) => category.id === activeCategory)?.Panel ?? NavigationPanel,
-    [activeCategory],
+  const expandedItems = expandedByTarget[target] ?? [];
+
+  const handleTargetChange = useCallback((value: string) => {
+    if (isValidTarget(value)) {
+      writeUiTarget(value);
+    }
+  }, []);
+
+  const handleExpandedChange = useCallback(
+    (value: string[]) => {
+      writeUiExpanded({ ...getUiExpandedSnapshot(), [target]: value });
+    },
+    [target],
   );
+
+  const sections = content.pages.home.sections;
+  const sensors = usePointerSortSensors();
+
+  const handleSectionDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) {
+        return;
+      }
+      update((draft) => {
+        const ids = draft.pages.home.sections.map((section) => section.id);
+        const from = ids.indexOf(String(active.id));
+        const to = ids.indexOf(String(over.id));
+        if (from === -1 || to === -1) {
+          return;
+        }
+        draft.pages.home.sections = arrayMove(draft.pages.home.sections, from, to);
+      });
+    },
+    [update],
+  );
+
+  // 하이라이트 활성 대상 = 현재 대상에서 "마지막으로 펼친" 아코디언 하나(결정 5).
+  // Radix Accordion(multiple)은 새로 펼친 값을 배열 끝에 추가하므로 마지막 원소가 최근 항목입니다.
+  const activeValue = expandedItems.length > 0 ? expandedItems[expandedItems.length - 1] : null;
+  const activePreview: ActivePreview | null = (() => {
+    if (!activeValue) {
+      return null;
+    }
+    if (target === "home") {
+      const section = sections.find((item) => item.id === activeValue);
+      if (!section) {
+        return null;
+      }
+      return { id: `section:${section.id}`, label: SECTION_TYPE_LABELS[section.type] ?? section.type };
+    }
+    const entry = COMMON_ENTRIES.find((item) => item.value === activeValue);
+    if (!entry) {
+      return null;
+    }
+    if (activeValue === "navigation") {
+      return { id: "global:navigation", label: entry.label };
+    }
+    if (activeValue === "footer") {
+      return { id: "global:footer", label: entry.label };
+    }
+    return null;
+  })();
+
+  const activeId = activePreview?.id ?? null;
+  const activeLabel = activePreview?.label ?? null;
+
+  const postActiveTarget = useCallback((payload: ActivePreview | null) => {
+    const frame = iframeRef.current;
+    if (!frame?.contentWindow || typeof window === "undefined") {
+      return;
+    }
+    frame.contentWindow.postMessage(
+      {
+        source: MESSAGE_SOURCE,
+        type: "active-target",
+        target: payload?.id ?? null,
+        label: payload?.label ?? null,
+      },
+      window.location.origin,
+    );
+  }, []);
+
+  // 최신 활성 대상을 ref로 보관해, preview-ready 수신 시점의 값을 정확히 전송합니다.
+  const activePreviewRef = useRef<ActivePreview | null>(null);
+  useEffect(() => {
+    activePreviewRef.current = activeId ? { id: activeId, label: activeLabel ?? "" } : null;
+  }, [activeId, activeLabel]);
+
+  useEffect(() => {
+    function onMessage(event: MessageEvent) {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+      const data = event.data;
+      if (!data || data.source !== MESSAGE_SOURCE || data.type !== "preview-ready") {
+        return;
+      }
+      previewReadyRef.current = true;
+      postActiveTarget(activePreviewRef.current);
+    }
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [postActiveTarget]);
+
+  useEffect(() => {
+    if (previewReadyRef.current) {
+      postActiveTarget(activeId ? { id: activeId, label: activeLabel ?? "" } : null);
+    }
+  }, [activeId, activeLabel, postActiveTarget]);
 
   return (
     <main className="min-h-screen bg-[#f7f7f7] px-4 py-8 md:px-6">
@@ -183,16 +357,36 @@ export function AdminEditor() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleReset}
-              className="border-white/30 text-white hover:bg-white/10"
-            >
-              <RotateCcw className="h-4 w-4" />
-              초기화
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="border-white/30 text-white hover:bg-white/10"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  초기화
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>편집 내용을 초기화할까요?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    현재 브라우저에 저장된 모든 편집 내용을 기본 JSON 상태로 되돌립니다. 이 작업은 되돌릴 수 없습니다.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleReset}
+                    className="bg-red-500 text-white hover:bg-red-500/90"
+                  >
+                    초기화
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <Button
               type="button"
               variant="outline"
@@ -219,27 +413,77 @@ export function AdminEditor() {
 
         <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
           <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
-            <nav className="flex flex-wrap gap-2">
-              {CATEGORIES.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                    activeCategory === category.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-muted/70"
-                  }`}
-                >
-                  {category.label}
-                </button>
-              ))}
-            </nav>
+            <div className="space-y-1.5">
+              <Label htmlFor="admin-target-select">편집 대상</Label>
+              <Select value={target} onValueChange={handleTargetChange}>
+                <SelectTrigger id="admin-target-select" aria-label="편집 대상 선택">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TARGETS.map((group) => (
+                    <SelectItem key={group.id} value={group.id}>
+                      {group.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {target === "home" ? (
+                <p className="text-[11px] text-muted-foreground">
+                  각 섹션 헤더에서 순서 이동, 노출 토글, 삭제를 할 수 있습니다.
+                </p>
+              ) : null}
+            </div>
 
-            <div className="mt-5 max-h-[calc(100vh-260px)] overflow-y-auto pr-1">
-              <div key={activeCategory} className="animate-fade-in">
-                <ActivePanel content={content} update={update} />
-              </div>
+            <div className="mt-5 max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
+              {target === "home" ? (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+                  onDragEnd={handleSectionDragEnd}
+                >
+                  <SortableContext
+                    items={sections.map((section) => section.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <Accordion
+                      type="multiple"
+                      value={expandedItems}
+                      onValueChange={handleExpandedChange}
+                      className="flex flex-col gap-2 animate-fade-in"
+                    >
+                      {sections.map((section) => (
+                        <SortableSectionItem
+                          key={section.id}
+                          section={section}
+                          content={content}
+                          update={update}
+                        />
+                      ))}
+                    </Accordion>
+                  </SortableContext>
+                </DndContext>
+              ) : (
+                <Accordion
+                  key="common"
+                  type="multiple"
+                  value={expandedItems}
+                  onValueChange={handleExpandedChange}
+                  className="flex flex-col gap-2 animate-fade-in"
+                >
+                  {COMMON_ENTRIES.map((entry) => {
+                    const Panel = entry.Panel;
+                    return (
+                      <AccordionItem key={entry.value} value={entry.value}>
+                        <AccordionTrigger>{entry.label}</AccordionTrigger>
+                        <AccordionContent>
+                          <Panel content={content} update={update} />
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              )}
             </div>
           </section>
 
@@ -286,8 +530,10 @@ export function AdminEditor() {
             >
               <div className="mx-auto h-full overflow-hidden" style={{ width: frameWidth * scale }}>
                 <iframe
+                  ref={iframeRef}
                   title="공개 페이지 미리보기"
                   src={PREVIEW_URL}
+                  onLoad={() => postActiveTarget(activePreviewRef.current)}
                   className="border-0 bg-background"
                   style={{
                     width: frameWidth,
@@ -302,5 +548,111 @@ export function AdminEditor() {
         </div>
       </div>
     </main>
+  );
+}
+
+type SortableSectionItemProps = {
+  section: HomeSection;
+  content: SiteContent;
+  update: UpdateContent;
+};
+
+function SortableSectionItem({ section, content, update }: SortableSectionItemProps) {
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
+    useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const Panel = SECTION_EDITORS[section.type] ?? SectionMissingPanel;
+  const label = SECTION_TYPE_LABELS[section.type] ?? section.type;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(isDragging && "relative z-10 opacity-70")}
+    >
+      <AccordionItem value={section.id}>
+        <AccordionTrigger
+          actions={
+            <>
+              <HeaderAction
+                label={section.enabled ? "숨기기" : "노출하기"}
+                onClick={() =>
+                  update((draft) => {
+                    const target = draft.pages.home.sections.find((item) => item.id === section.id);
+                    if (target) {
+                      target.enabled = !target.enabled;
+                    }
+                  })
+                }
+              >
+                {section.enabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+              </HeaderAction>
+              <HeaderAction
+                label="삭제"
+                variant="danger"
+                onClick={() =>
+                  update((draft) => {
+                    const index = draft.pages.home.sections.findIndex((item) => item.id === section.id);
+                    if (index !== -1) {
+                      draft.pages.home.sections.splice(index, 1);
+                    }
+                  })
+                }
+              >
+                <Trash2 className="h-4 w-4" />
+              </HeaderAction>
+              <DragHandle ref={setActivatorNodeRef} {...attributes} {...listeners} />
+            </>
+          }
+        >
+          <span className={section.enabled ? undefined : "text-muted-foreground/60"}>
+            {label}
+            {section.enabled ? null : <span className="ml-2 text-[11px] font-medium">숨김</span>}
+          </span>
+        </AccordionTrigger>
+        <AccordionContent>
+          <Panel content={content} update={update} />
+        </AccordionContent>
+      </AccordionItem>
+    </div>
+  );
+}
+
+type HeaderActionProps = {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  variant?: "default" | "danger";
+  children: ReactNode;
+};
+
+function HeaderAction({ label, onClick, disabled, variant = "default", children }: HeaderActionProps) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        "inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-30",
+        variant === "danger" && "hover:bg-red-50 hover:text-red-500",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SectionMissingPanel() {
+  return (
+    <p className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+      이 섹션 타입에 대한 편집 폼이 없습니다.
+    </p>
   );
 }

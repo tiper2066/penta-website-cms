@@ -7,14 +7,18 @@ import type { FooterContent, NavigationContent } from "@/lib/content/types";
 type SiteFooterProps = {
   footer: FooterContent;
   navigation: NavigationContent;
+  previewId?: string;
 };
 
-export function SiteFooter({ footer, navigation }: SiteFooterProps) {
+export function SiteFooter({ footer, navigation, previewId }: SiteFooterProps) {
   const [companyInfoFirstLine, companyInfoSecondLine] = footer.legal.companyInfo.split("\n");
   const [companyPrefix, companySuffix] = companyInfoFirstLine.split(" : ");
 
   return (
-    <footer className="bg-(--color-footer-bg) pb-12 text-(--color-text-primary) lg:pb-[72px]">
+    <footer
+      className="bg-(--color-footer-bg) pb-12 text-(--color-text-primary) lg:pb-[72px]"
+      data-preview-id={previewId}
+    >
       <div className="penta-container border-t border-[#d9d9d9] pt-10 lg:pt-[72px]">
         <nav
           className="hidden gap-10 lg:grid lg:grid-cols-[repeat(4,minmax(0,1fr))_max-content]"

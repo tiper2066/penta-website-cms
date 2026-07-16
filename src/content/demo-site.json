@@ -10,11 +10,11 @@
       "href": "/"
     },
     "items": [
-      { "label": "Products", "href": "/products" },
-      { "label": "Solutions", "href": "/solutions" },
-      { "label": "Resources", "href": "/resources" },
-      { "label": "Support", "href": "/support" },
-      { "label": "Company", "href": "/company" }
+      { "id": "nav-products", "label": "Products", "href": "/products" },
+      { "id": "nav-solutions", "label": "Solutions", "href": "/solutions" },
+      { "id": "nav-resources", "label": "Resources", "href": "/resources" },
+      { "id": "nav-support", "label": "Support", "href": "/support" },
+      { "id": "nav-company", "label": "Company", "href": "/company" }
     ],
     "search": {
       "enabled": true,
@@ -248,46 +248,51 @@
   "footer": {
     "groups": [
       {
+        "id": "fg-products",
         "title": "Products",
         "items": [
-          { "label": "Data Security", "href": "/products/data-security" },
-          { "label": "Web Security", "href": "/products/web-security" },
-          { "label": "Authentication Security", "href": "/products/authentication-security" },
-          { "label": "SaaS", "href": "/products/saas" },
-          { "label": "Cryptography", "href": "/products/cryptography" },
-          { "label": "Individual Security", "href": "/products/individual-security" }
+          { "id": "fl-prod-1", "label": "Data Security", "href": "/products/data-security" },
+          { "id": "fl-prod-2", "label": "Web Security", "href": "/products/web-security" },
+          { "id": "fl-prod-3", "label": "Authentication Security", "href": "/products/authentication-security" },
+          { "id": "fl-prod-4", "label": "SaaS", "href": "/products/saas" },
+          { "id": "fl-prod-5", "label": "Cryptography", "href": "/products/cryptography" },
+          { "id": "fl-prod-6", "label": "Individual Security", "href": "/products/individual-security" }
         ]
       },
       {
+        "id": "fg-solutions",
         "title": "Solutions",
         "items": [
-          { "label": "Enterprise", "href": "/solutions/enterprise" },
-          { "label": "Compliance", "href": "/solutions/compliance" },
-          { "label": "Industry", "href": "/solutions/industry" }
+          { "id": "fl-sol-1", "label": "Enterprise", "href": "/solutions/enterprise" },
+          { "id": "fl-sol-2", "label": "Compliance", "href": "/solutions/compliance" },
+          { "id": "fl-sol-3", "label": "Industry", "href": "/solutions/industry" }
         ]
       },
       {
+        "id": "fg-resources",
         "title": "Resources",
         "items": [
-          { "label": "Insight", "href": "/resources/insight" },
-          { "label": "뉴스레터", "href": "/resources/newsletter" }
+          { "id": "fl-res-1", "label": "Insight", "href": "/resources/insight" },
+          { "id": "fl-res-2", "label": "뉴스레터", "href": "/resources/newsletter" }
         ]
       },
       {
+        "id": "fg-support",
         "title": "Support",
         "items": [
-          { "label": "문의하기", "href": "/support/contact" },
-          { "label": "자료 다운로드", "href": "/resources/downloads" },
-          { "label": "파트너십", "href": "/support/partnership" },
-          { "label": "Product Lifecycle Policy", "href": "/support/product-lifecycle-policy" }
+          { "id": "fl-sup-1", "label": "문의하기", "href": "/support/contact" },
+          { "id": "fl-sup-2", "label": "자료 다운로드", "href": "/resources/downloads" },
+          { "id": "fl-sup-3", "label": "파트너십", "href": "/support/partnership" },
+          { "id": "fl-sup-4", "label": "Product Lifecycle Policy", "href": "/support/product-lifecycle-policy" }
         ]
       },
       {
+        "id": "fg-company",
         "title": "Company",
         "items": [
-          { "label": "회사 소개", "href": "/company" },
-          { "label": "회사 소식", "href": "/company/news" },
-          { "label": "인재 채용", "href": "/company/careers" }
+          { "id": "fl-com-1", "label": "회사 소개", "href": "/company" },
+          { "id": "fl-com-2", "label": "회사 소식", "href": "/company/news" },
+          { "id": "fl-com-3", "label": "인재 채용", "href": "/company/careers" }
         ]
       }
     ],
@@ -297,9 +302,9 @@
         "href": "/privacy"
       },
       "utilityLinks": [
-        { "label": "문의하기", "href": "/support/contact" },
-        { "label": "채용 정보", "href": "/company/careers" },
-        { "label": "공식 블로그", "href": "/blog" }
+        { "id": "ul-1", "label": "문의하기", "href": "/support/contact" },
+        { "id": "ul-2", "label": "채용 정보", "href": "/company/careers" },
+        { "id": "ul-3", "label": "공식 블로그", "href": "/blog" }
       ],
       "companyInfo": "펜타시큐리티(주) 사업자 등록번호 : 116-81-65189, 대표 김태균\nISO 9001:2015  |  ISO 14001:2015  |  ISO 27001:2022",
       "copyright": "ⓒ 2024 Penta Security Inc. All rights reserved."

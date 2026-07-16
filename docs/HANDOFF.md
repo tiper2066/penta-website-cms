@@ -17,7 +17,7 @@
 - `ref-image/sub-page/sub-damo.html`, `ref-image/sub-page/sub-damo-detail.html`을 기준으로 D.AMO 개요/상세 페이지 데스크톱 구현을 완료했습니다.
 - 2.5단계 공개 페이지 반응형 보정은 완료되었습니다. 공통 Header/Footer, 메인 페이지 섹션, D.AMO 개요/상세 페이지의 모바일/태블릿 레이아웃을 보정했고, 모바일 테스트 피드백까지 반영했습니다.
 - 3단계 관리자 데모(`/admin-demo`) 편집 UI 구현은 완료되었습니다. 좌측 편집 패널과 우측 실시간 미리보기(iframe) 구조로, 공개 페이지 JSON 전 항목을 편집하고 즉시 미리볼 수 있습니다.
-- 3.5단계(관리자 속성 패널 개편) 구현 계획을 수립하고 `docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 문서화했습니다. 아직 구현 전이며 다음 세션에서 Phase A부터 진행합니다.
+- 3.5단계(관리자 속성 패널 개편) Phase A·B를 완료했습니다. 좌측 상단 카테고리 버튼을 shadcn `Select` "편집 대상" 드롭다운으로 대체하고, shadcn `Accordion`(다중 펼침)으로 편집합니다. `홈` 대상은 섹션 레지스트리 기반으로 `sections[]` 순서대로 렌더하며, 각 아코디언 헤더에서 순서 이동·노출 토글·삭제를 제공합니다(별도 "섹션 순서" 패널 제거). 선택 대상/펼침 상태는 `localStorage`에 유지됩니다. 이어서 Phase B+로 모든 순서 변경을 드래그 핸들(`::`, `@dnd-kit`) 방식으로 전환했고(푸터는 그룹 순서 + 그룹 간 링크 이동 지원), Phase C(미리보기 하이라이트)까지 완료했습니다. 편집기에서 아코디언을 펼치면 iframe 미리보기의 해당 영역이 오버레이로 강조되고 해당 위치로 스크롤됩니다. 이로써 3.5단계 범위(Phase A~C)가 모두 완료되었습니다.
 - Hero 및 제품 비주얼은 `ref-image/hero-visual/*.html`, `ref-image/products-visual/*.html`의 Figma HTML을 참고해 `src/components/visuals/figma-visuals.tsx`로 React 컴포넌트화했습니다.
 - Cloudbric 구름 비주얼은 `ref-image/products-visual/mask-cloud.png`를 CSS mask로 사용합니다.
 - Awards는 `src/components/sections/awards-carousel.tsx` 클라이언트 컴포넌트로 분리되어 자동 Carousel, hover pause, dot navigation을 제공합니다.
@@ -283,7 +283,43 @@ penta-cms/
 
 ## 3.5단계 관리자 속성 패널 개편 계획
 
-`docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 상세 계획을 문서화했으며, 아직 구현 전입니다. 확정된 결정사항 요약:
+`docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 상세 계획을 문서화했으며, Phase A·B·B+·C를 모두 완료했습니다(3.5단계 범위 완료). Phase D(멀티 페이지 모델)는 3.5 범위 밖 후속 작업입니다.
+
+Phase A 완료 내용:
+
+- 상단 카테고리 버튼 제거 → shadcn `Select` "편집 대상" 드롭다운(`공통 요소` 최상단, 그다음 `홈`).
+- shadcn `Accordion`(`type="multiple"`) 도입. `공통 요소`→[네비게이션(헤더), 푸터]. 본문은 기존 편집 패널 재사용.
+- 선택 대상 + 대상별 펼침 상태를 `localStorage`에 유지. `src/lib/content/admin-store.ts`에 UI 상태용 `useSyncExternalStore` 스토어 추가.
+- 신규 파일: `src/components/ui/select.tsx`, `src/components/ui/accordion.tsx`. 신규 의존성: `@radix-ui/react-select`, `@radix-ui/react-accordion`.
+- `globals.css`에 아코디언 펼침/접힘 애니메이션(`penta-accordion-down/up`) 추가.
+- (참고) 초기화 확인은 브라우저 `confirm` 대신 shadcn `AlertDialog`로 교체했습니다. 신규 파일 `src/components/ui/alert-dialog.tsx`, 의존성 `@radix-ui/react-alert-dialog`.
+
+Phase B 완료 내용:
+
+- 섹션 타입 → 편집 폼 레지스트리(`SECTION_EDITORS`)를 도입하고, `홈` 대상은 `content.pages.home.sections[]`를 순서대로 순회해 아코디언으로 렌더(아코디언 `value` = 섹션 `id`).
+- 아코디언 헤더에 순서 이동(위/아래)·노출 토글(Eye/EyeOff)·삭제(Trash2)를 통합. 헤더 액션은 트리거의 형제로 배치해 클릭 시 토글되지 않음. 숨김 섹션은 라벨을 흐리게 처리하고 "숨김" 배지 표시.
+- 별도 "섹션 순서" 패널(`SectionsPanel`) 제거. `admin-panels.tsx`에서 `SECTION_TYPE_LABELS`를 export해 편집기에서 재사용.
+- 아코디언 chevron을 좌측으로 이동해 헤더 우측에 액션 공간 확보.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. 세 라우트 200 응답 확인.
+
+Phase B+ (드래그 앤 드롭 정렬) 완료 내용:
+
+- 위/아래 화살표 이동을 **드래그 핸들(`::`)** 방식으로 전면 교체(우측 끝 배치, 드래그 전용, 키보드 이동 미지원 · `PointerSensor`만 사용). `@dnd-kit/*` 사용.
+- 공통 프리미티브 `src/components/admin/sortable.tsx`(`SortableList`/`SortableRow`/`DragHandle`/`RemoveButton`/`usePointerSortSensors`) 신설. `admin-fields.tsx`의 `RepeaterItem`·`IconButton`·`moveItem` 제거.
+- 안정 정렬 키를 위해 모델에 `id` 추가(`IdentifiedLink`): `navigation.items`, `footer.groups`(+`items`), `footer.legal.utilityLinks`. `demo-site.json`도 갱신(공개 렌더링 영향 없음).
+- 평면 리스트 7종은 `SortableList`+`arrayMove`로 재정렬. 섹션 아코디언은 `SortableSectionItem`(`useSortable`)로 헤더 핸들 드래그.
+- **푸터**: 그룹 순서 변경 + 링크의 **그룹 간 이동** 지원(단일 `DndContext` + `active.id` prefix 구분 + 그룹별 `useDroppable` 존 + `DragOverlay`).
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/admin-demo`, `/admin-demo/preview` 200 응답 확인.
+
+Phase C (미리보기 하이라이트) 완료 내용:
+
+- 편집기→미리보기 iframe `postMessage` 채널(`source: "penta-admin"`). `preview-ready` 핸드셰이크로 초기 메시지 유실을 방지하고, 이후 활성 대상 변경 시 `{ type: "active-target", target, label }` 전송. 수신 측은 `origin`/`source` 검증.
+- 활성 대상 = 현재 편집 대상의 펼친 아코디언 중 **마지막으로 펼친 하나**(결정 5). 홈은 `section:<id>`, 공통은 `global:navigation`/`global:footer`.
+- 미리보기 마킹: 섹션은 `data-preview-id` 래퍼, 헤더/푸터는 `SiteHeader`/`SiteFooter`의 옵션 `previewId` prop으로 부여(헤더 `sticky` 유지 위해 래퍼 대신 prop).
+- `PreviewHighlight`(신규)가 `requestAnimationFrame`로 대상 위치를 추적해 `fixed` 오버레이(브랜드 블루 ring + "편집 중" 칩)를 그리고 `scrollIntoView`로 이동. `prefers-reduced-motion` 존중.
+- 검증: `tsc --noEmit`, `npm run lint`, `npm run build` 통과. 세 라우트 200 + `data-preview-id` 마커 렌더 확인.
+
+확정된 결정사항 요약:
 
 - 좌측 상단 카테고리 탭을 "편집 대상" 드롭다운으로 대체합니다. 드롭다운은 `공통 요소`를 맨 위, 그 아래 페이지 목록(현재 `홈`)을 둡니다.
 - 선택한 대상의 섹션들을 아코디언으로 펼쳐 편집합니다(shadcn `Accordion`, 다중 펼침).
@@ -293,11 +329,24 @@ penta-cms/
 - 선택한 편집 대상과 아코디언 펼침 상태를 `localStorage`에 저장해 새로고침 후에도 유지합니다.
 - 구현 순서(3.5 범위): Phase A(드롭다운+아코디언) → Phase B(섹션 구동형 아코디언·순서 통합) → Phase C(미리보기 하이라이트). 멀티 페이지 데이터 모델(`pages` 맵 → 배열) 전환은 Phase D로 분리했으며 3.5 범위 밖입니다.
 
+## 실제 프로젝트 후속 요구사항 (Asset Manager)
+
+데모 종료 후 실제 프로젝트로 확장할 때 반영할 요구사항입니다. 아직 구현 대상이 아니며, 요구사항 확정 단계(4단계)에서 세부 정책을 확정합니다.
+
+- 관리자 화면에서 이미지 등을 경로 입력이 아니라 사용자 로컬 파일 선택 업로드 방식으로 전환합니다.
+- 배경 이미지(다양한 포맷), mp4, PDF, 폰트, HTML 등 텍스트 외 다양한 포맷을 업로드·관리합니다.
+- 삽입/변경할 모든 파일은 중앙 Asset Manager(Payload `Media`(Upload) 컬렉션 + MinIO 기반)에서 관리·재사용합니다.
+- 현재 미디어 필드가 경로 문자열로 추상화되어 있고 컴포넌트가 URL 문자열 props만 받으므로, 데이터 소스를 Media 참조로 바꿔도 컴포넌트 재작성 없이 확장 가능합니다.
+- 폰트/HTML은 통제된 방식(폰트 토큰화, HTML sanitize·격리·접근 제한)으로 취급하고, 업로드 확장자/MIME/용량 제한과 공개·비공개 버킷 분리, 백업/복구를 함께 설계합니다.
+- 상세 방향은 `docs/CMS_CONTENT_MODEL.md`("Asset Manager (미디어 관리) 전환 방향"), `docs/REQUIREMENTS_WORKSHOP.md`("이미지와 파일"), `docs/LOCAL_AND_DOCKER.md`, `docs/PROJECT_PLAN.md`(5단계)에 문서화했습니다.
+
 다음 세션 시작 시 권장 작업:
 
-1. `docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`를 기준으로 3.5단계 Phase A(편집 대상 드롭다운 + shadcn 아코디언, 선택/펼침 상태 localStorage 유지)부터 구현합니다.
-2. Phase A 완료 후 Phase B(섹션 구동형 아코디언, 순서/토글/삭제 헤더 통합), Phase C(미리보기 하이라이트, iframe `postMessage`)를 순차 진행합니다.
-3. 각 Phase 완료 시 `npm run typecheck`, `npm run lint`, `npm run build`를 실행하고 브라우저에서 `http://localhost:3000/admin-demo`, `http://localhost:3000/admin-demo/preview`를 확인합니다.
+- 3.5단계 범위(Phase A~C)는 모두 완료되었습니다. 이후 후보는 다음과 같습니다(우선순위는 요구사항 워크숍에서 확정).
+  1. **Phase D(3.5 범위 밖)**: 멀티 페이지 데이터 모델 전환(`pages` 맵 → `PageContent[]`). `types.ts`/`demo-site.json`/`site.ts`/`admin-store` 기본 스냅샷/`preview/page.tsx`/홈 로더 갱신, 드롭다운에 실제 다중 페이지 표시.
+  2. **Asset Manager**(4·5단계): 경로 입력 → 로컬 파일 업로드, Payload `Media`(Upload) + MinIO 연동. 아래 "실제 프로젝트 후속 요구사항" 참고.
+- 선택 사항: 그룹 간 링크 이동 시 `onDragOver` 기반 라이브 프리뷰(대상 그룹에서 실시간 빈칸 표시) 보강.
+- 어떤 작업이든 완료 시 `npm run typecheck`, `npm run lint`, `npm run build`를 실행하고 `http://localhost:3000/admin-demo`, `http://localhost:3000/admin-demo/preview`를 확인합니다.
 
 ## 관리자 데모 편집 항목
 

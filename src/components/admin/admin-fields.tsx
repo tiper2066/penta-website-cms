@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
-import type { ReactNode } from "react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,75 +83,6 @@ export function ToggleField({ label, checked, onChange }: ToggleFieldProps) {
   );
 }
 
-type RepeaterItemProps = {
-  title: string;
-  index: number;
-  total: number;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-  onRemove?: () => void;
-  children: ReactNode;
-};
-
-export function RepeaterItem({
-  title,
-  index,
-  total,
-  onMoveUp,
-  onMoveDown,
-  onRemove,
-  children,
-}: RepeaterItemProps) {
-  return (
-    <div className="space-y-3 rounded-xl border border-border bg-background p-4">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-bold text-muted-foreground">{title}</p>
-        <div className="flex items-center gap-1">
-          <IconButton label="위로 이동" disabled={index === 0} onClick={onMoveUp}>
-            <ArrowUp className="h-4 w-4" />
-          </IconButton>
-          <IconButton label="아래로 이동" disabled={index === total - 1} onClick={onMoveDown}>
-            <ArrowDown className="h-4 w-4" />
-          </IconButton>
-          {onRemove ? (
-            <IconButton label="삭제" onClick={onRemove} variant="danger">
-              <Trash2 className="h-4 w-4" />
-            </IconButton>
-          ) : null}
-        </div>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-type IconButtonProps = {
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  variant?: "default" | "danger";
-  children: ReactNode;
-};
-
-export function IconButton({ label, onClick, disabled, variant = "default", children }: IconButtonProps) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-full border border-border transition-colors disabled:opacity-30 ${
-        variant === "danger"
-          ? "text-red-500 hover:bg-red-50"
-          : "text-muted-foreground hover:bg-muted"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
-
 type AddButtonProps = {
   label: string;
   onClick: () => void;
@@ -165,13 +95,4 @@ export function AddButton({ label, onClick }: AddButtonProps) {
       {label}
     </Button>
   );
-}
-
-export function moveItem<T>(items: T[], index: number, direction: -1 | 1): void {
-  const target = index + direction;
-  if (target < 0 || target >= items.length) {
-    return;
-  }
-  const [moved] = items.splice(index, 1);
-  items.splice(target, 0, moved);
 }

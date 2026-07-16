@@ -11,9 +11,10 @@ import type { FooterContent, NavigationContent } from "@/lib/content/types";
 type SiteHeaderProps = {
   navigation: NavigationContent;
   footer: FooterContent;
+  previewId?: string;
 };
 
-export function SiteHeader({ navigation, footer }: SiteHeaderProps) {
+export function SiteHeader({ navigation, footer, previewId }: SiteHeaderProps) {
   const [isMenuMounted, setIsMenuMounted] = useState(false);
   const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -46,7 +47,7 @@ export function SiteHeader({ navigation, footer }: SiteHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30">
+    <header className="sticky top-0 z-30" data-preview-id={previewId}>
       <div
         className={cn(
           "border-b border-white/40 bg-background/82 py-5 backdrop-blur-xl transition-shadow duration-200 lg:py-[30px]",
