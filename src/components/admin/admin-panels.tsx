@@ -16,6 +16,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
 
+import { getHomeSections } from "@/lib/content/helpers";
 import { cn } from "@/lib/utils";
 import type { FooterContent, IdentifiedLink, SiteContent } from "@/lib/content/types";
 
@@ -168,7 +169,7 @@ export function NavigationPanel({ content, update }: PanelProps) {
 }
 
 export function HeroPanel({ content, update }: PanelProps) {
-  const section = content.pages.home.sections.find((item) => item.type === "hero");
+  const section = getHomeSections(content).find((item) => item.type === "hero");
   if (section?.type !== "hero") {
     return <EmptyPanel />;
   }
@@ -181,7 +182,7 @@ export function HeroPanel({ content, update }: PanelProps) {
         rows={2}
         onChange={(value) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((item) => item.type === "hero");
+            const target = getHomeSections(draft).find((item) => item.type === "hero");
             if (target?.type === "hero") {
               target.data.eyebrow = value;
             }
@@ -195,7 +196,7 @@ export function HeroPanel({ content, update }: PanelProps) {
         hint="줄바꿈(Enter)이 그대로 표시됩니다."
         onChange={(value) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((item) => item.type === "hero");
+            const target = getHomeSections(draft).find((item) => item.type === "hero");
             if (target?.type === "hero") {
               target.data.title = value;
             }
@@ -207,7 +208,7 @@ export function HeroPanel({ content, update }: PanelProps) {
 }
 
 export function NewsPanel({ content, update }: PanelProps) {
-  const section = content.pages.home.sections.find((item) => item.type === "news");
+  const section = getHomeSections(content).find((item) => item.type === "news");
   if (section?.type !== "news") {
     return <EmptyPanel />;
   }
@@ -221,7 +222,7 @@ export function NewsPanel({ content, update }: PanelProps) {
           value={section.data.moreLink.label}
           onChange={(value) =>
             update((draft) => {
-              const target = draft.pages.home.sections.find((item) => item.type === "news");
+              const target = getHomeSections(draft).find((item) => item.type === "news");
               if (target?.type === "news") {
                 target.data.moreLink.label = value;
               }
@@ -233,7 +234,7 @@ export function NewsPanel({ content, update }: PanelProps) {
           value={section.data.moreLink.href}
           onChange={(value) =>
             update((draft) => {
-              const target = draft.pages.home.sections.find((item) => item.type === "news");
+              const target = getHomeSections(draft).find((item) => item.type === "news");
               if (target?.type === "news") {
                 target.data.moreLink.href = value;
               }
@@ -248,7 +249,7 @@ export function NewsPanel({ content, update }: PanelProps) {
           ids={section.data.items.map((item) => item.id)}
           onReorder={(from, to) =>
             update((draft) => {
-              const target = draft.pages.home.sections.find((s) => s.type === "news");
+              const target = getHomeSections(draft).find((s) => s.type === "news");
               if (target?.type === "news") {
                 target.data.items = arrayMove(target.data.items, from, to);
               }
@@ -262,7 +263,7 @@ export function NewsPanel({ content, update }: PanelProps) {
               title={`뉴스 ${index + 1}`}
               onRemove={() =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "news");
+                  const target = getHomeSections(draft).find((s) => s.type === "news");
                   if (target?.type === "news") target.data.items.splice(index, 1);
                 })
               }
@@ -273,7 +274,7 @@ export function NewsPanel({ content, update }: PanelProps) {
                 rows={2}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "news");
+                    const target = getHomeSections(draft).find((s) => s.type === "news");
                     if (target?.type === "news") target.data.items[index].title = value;
                   })
                 }
@@ -284,7 +285,7 @@ export function NewsPanel({ content, update }: PanelProps) {
                   value={item.date}
                   onChange={(value) =>
                     update((draft) => {
-                      const target = draft.pages.home.sections.find((s) => s.type === "news");
+                      const target = getHomeSections(draft).find((s) => s.type === "news");
                       if (target?.type === "news") target.data.items[index].date = value;
                     })
                   }
@@ -295,7 +296,7 @@ export function NewsPanel({ content, update }: PanelProps) {
                   placeholder="예: NEW"
                   onChange={(value) =>
                     update((draft) => {
-                      const target = draft.pages.home.sections.find((s) => s.type === "news");
+                      const target = getHomeSections(draft).find((s) => s.type === "news");
                       if (target?.type === "news") target.data.items[index].badge = value;
                     })
                   }
@@ -306,7 +307,7 @@ export function NewsPanel({ content, update }: PanelProps) {
                 value={item.href}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "news");
+                    const target = getHomeSections(draft).find((s) => s.type === "news");
                     if (target?.type === "news") target.data.items[index].href = value;
                   })
                 }
@@ -319,7 +320,7 @@ export function NewsPanel({ content, update }: PanelProps) {
           label="뉴스 추가"
           onClick={() =>
             update((draft) => {
-              const target = draft.pages.home.sections.find((s) => s.type === "news");
+              const target = getHomeSections(draft).find((s) => s.type === "news");
               if (target?.type === "news") {
                 const id = uid("news");
                 target.data.items.push({
@@ -339,7 +340,7 @@ export function NewsPanel({ content, update }: PanelProps) {
 }
 
 export function SubscribePanel({ content, update }: PanelProps) {
-  const section = content.pages.home.sections.find((item) => item.type === "subscribe");
+  const section = getHomeSections(content).find((item) => item.type === "subscribe");
   if (section?.type !== "subscribe") {
     return <EmptyPanel />;
   }
@@ -353,7 +354,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
         ids={section.data.items.map((item) => item.id)}
         onReorder={(from, to) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((s) => s.type === "subscribe");
+            const target = getHomeSections(draft).find((s) => s.type === "subscribe");
             if (target?.type === "subscribe") {
               target.data.items = arrayMove(target.data.items, from, to);
             }
@@ -369,7 +370,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
                 rows={2}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "subscribe");
+                    const target = getHomeSections(draft).find((s) => s.type === "subscribe");
                     const field = target?.type === "subscribe" ? target.data.items[index] : undefined;
                     if (field?.type === "text") field.value = value;
                   })
@@ -383,7 +384,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
                   value={item.name}
                   onChange={(value) =>
                     update((draft) => {
-                      const target = draft.pages.home.sections.find((s) => s.type === "subscribe");
+                      const target = getHomeSections(draft).find((s) => s.type === "subscribe");
                       const field = target?.type === "subscribe" ? target.data.items[index] : undefined;
                       if (field?.type === "input") field.name = value;
                     })
@@ -394,7 +395,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
                   value={item.placeholder}
                   onChange={(value) =>
                     update((draft) => {
-                      const target = draft.pages.home.sections.find((s) => s.type === "subscribe");
+                      const target = getHomeSections(draft).find((s) => s.type === "subscribe");
                       const field = target?.type === "subscribe" ? target.data.items[index] : undefined;
                       if (field?.type === "input") field.placeholder = value;
                     })
@@ -409,7 +410,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
                   value={item.label}
                   onChange={(value) =>
                     update((draft) => {
-                      const target = draft.pages.home.sections.find((s) => s.type === "subscribe");
+                      const target = getHomeSections(draft).find((s) => s.type === "subscribe");
                       const field = target?.type === "subscribe" ? target.data.items[index] : undefined;
                       if (field?.type === "button") field.label = value;
                     })
@@ -420,7 +421,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
                   value={item.href}
                   onChange={(value) =>
                     update((draft) => {
-                      const target = draft.pages.home.sections.find((s) => s.type === "subscribe");
+                      const target = getHomeSections(draft).find((s) => s.type === "subscribe");
                       const field = target?.type === "subscribe" ? target.data.items[index] : undefined;
                       if (field?.type === "button") field.href = value;
                     })
@@ -436,7 +437,7 @@ export function SubscribePanel({ content, update }: PanelProps) {
 }
 
 export function ProductTabsPanel({ content, update }: PanelProps) {
-  const section = content.pages.home.sections.find((item) => item.type === "productTabs");
+  const section = getHomeSections(content).find((item) => item.type === "productTabs");
   if (section?.type !== "productTabs") {
     return <EmptyPanel />;
   }
@@ -449,7 +450,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
         rows={2}
         onChange={(value) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((item) => item.type === "productTabs");
+            const target = getHomeSections(draft).find((item) => item.type === "productTabs");
             if (target?.type === "productTabs") target.data.headline = value;
           })
         }
@@ -459,7 +460,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
         ids={section.data.tabs.map((tab) => tab.id)}
         onReorder={(from, to) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+            const target = getHomeSections(draft).find((s) => s.type === "productTabs");
             if (target?.type === "productTabs") {
               target.data.tabs = arrayMove(target.data.tabs, from, to);
             }
@@ -474,7 +475,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
                 value={tab.label}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                    const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                     if (target?.type === "productTabs") target.data.tabs[index].label = value;
                   })
                 }
@@ -484,7 +485,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
                 value={tab.category}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                    const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                     if (target?.type === "productTabs") target.data.tabs[index].category = value;
                   })
                 }
@@ -495,7 +496,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
               value={tab.productName}
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                  const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                   if (target?.type === "productTabs") target.data.tabs[index].productName = value;
                 })
               }
@@ -507,7 +508,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
               hint="줄바꿈(Enter)이 그대로 표시됩니다."
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                  const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                   if (target?.type === "productTabs") target.data.tabs[index].description = value;
                 })
               }
@@ -518,7 +519,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
                 value={tab.button.label}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                    const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                     if (target?.type === "productTabs") target.data.tabs[index].button.label = value;
                   })
                 }
@@ -528,7 +529,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
                 value={tab.button.href}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                    const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                     if (target?.type === "productTabs") target.data.tabs[index].button.href = value;
                   })
                 }
@@ -539,7 +540,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
               value={tab.logo}
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                  const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                   if (target?.type === "productTabs") target.data.tabs[index].logo = value;
                 })
               }
@@ -549,7 +550,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
               value={tab.visual.value}
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "productTabs");
+                  const target = getHomeSections(draft).find((s) => s.type === "productTabs");
                   if (target?.type === "productTabs") target.data.tabs[index].visual.value = value;
                 })
               }
@@ -562,7 +563,7 @@ export function ProductTabsPanel({ content, update }: PanelProps) {
 }
 
 export function StatsPanel({ content, update }: PanelProps) {
-  const section = content.pages.home.sections.find((item) => item.type === "stats");
+  const section = getHomeSections(content).find((item) => item.type === "stats");
   if (section?.type !== "stats") {
     return <EmptyPanel />;
   }
@@ -573,7 +574,7 @@ export function StatsPanel({ content, update }: PanelProps) {
         ids={section.data.items.map((item) => item.id)}
         onReorder={(from, to) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((s) => s.type === "stats");
+            const target = getHomeSections(draft).find((s) => s.type === "stats");
             if (target?.type === "stats") {
               target.data.items = arrayMove(target.data.items, from, to);
             }
@@ -587,7 +588,7 @@ export function StatsPanel({ content, update }: PanelProps) {
             title={`통계 ${index + 1}`}
             onRemove={() =>
               update((draft) => {
-                const target = draft.pages.home.sections.find((s) => s.type === "stats");
+                const target = getHomeSections(draft).find((s) => s.type === "stats");
                 if (target?.type === "stats") target.data.items.splice(index, 1);
               })
             }
@@ -598,7 +599,7 @@ export function StatsPanel({ content, update }: PanelProps) {
                 value={item.label}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "stats");
+                    const target = getHomeSections(draft).find((s) => s.type === "stats");
                     if (target?.type === "stats") target.data.items[index].label = value;
                   })
                 }
@@ -608,7 +609,7 @@ export function StatsPanel({ content, update }: PanelProps) {
                 value={item.value}
                 onChange={(value) =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((s) => s.type === "stats");
+                    const target = getHomeSections(draft).find((s) => s.type === "stats");
                     if (target?.type === "stats") target.data.items[index].value = value;
                   })
                 }
@@ -622,7 +623,7 @@ export function StatsPanel({ content, update }: PanelProps) {
         label="통계 추가"
         onClick={() =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((s) => s.type === "stats");
+            const target = getHomeSections(draft).find((s) => s.type === "stats");
             if (target?.type === "stats") {
               target.data.items.push({ id: uid("stat"), label: "새 라벨", value: "0" });
             }
@@ -634,7 +635,7 @@ export function StatsPanel({ content, update }: PanelProps) {
 }
 
 export function AwardsPanel({ content, update }: PanelProps) {
-  const section = content.pages.home.sections.find((item) => item.type === "awards");
+  const section = getHomeSections(content).find((item) => item.type === "awards");
   if (section?.type !== "awards") {
     return <EmptyPanel />;
   }
@@ -645,7 +646,7 @@ export function AwardsPanel({ content, update }: PanelProps) {
         ids={section.data.items.map((item) => item.id)}
         onReorder={(from, to) =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((s) => s.type === "awards");
+            const target = getHomeSections(draft).find((s) => s.type === "awards");
             if (target?.type === "awards") {
               target.data.items = arrayMove(target.data.items, from, to);
             }
@@ -659,7 +660,7 @@ export function AwardsPanel({ content, update }: PanelProps) {
             title={`수상 ${index + 1}`}
             onRemove={() =>
               update((draft) => {
-                const target = draft.pages.home.sections.find((s) => s.type === "awards");
+                const target = getHomeSections(draft).find((s) => s.type === "awards");
                 if (target?.type === "awards") target.data.items.splice(index, 1);
               })
             }
@@ -670,7 +671,7 @@ export function AwardsPanel({ content, update }: PanelProps) {
               rows={2}
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "awards");
+                  const target = getHomeSections(draft).find((s) => s.type === "awards");
                   if (target?.type === "awards") target.data.items[index].title = value;
                 })
               }
@@ -681,7 +682,7 @@ export function AwardsPanel({ content, update }: PanelProps) {
               rows={3}
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "awards");
+                  const target = getHomeSections(draft).find((s) => s.type === "awards");
                   if (target?.type === "awards") target.data.items[index].description = value;
                 })
               }
@@ -691,7 +692,7 @@ export function AwardsPanel({ content, update }: PanelProps) {
               value={item.logo}
               onChange={(value) =>
                 update((draft) => {
-                  const target = draft.pages.home.sections.find((s) => s.type === "awards");
+                  const target = getHomeSections(draft).find((s) => s.type === "awards");
                   if (target?.type === "awards") target.data.items[index].logo = value;
                 })
               }
@@ -704,7 +705,7 @@ export function AwardsPanel({ content, update }: PanelProps) {
         label="수상 항목 추가"
         onClick={() =>
           update((draft) => {
-            const target = draft.pages.home.sections.find((s) => s.type === "awards");
+            const target = getHomeSections(draft).find((s) => s.type === "awards");
             if (target?.type === "awards") {
               target.data.items.push({
                 id: uid("award"),

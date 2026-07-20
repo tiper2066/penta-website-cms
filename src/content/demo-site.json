@@ -21,8 +21,9 @@
       "placeholder": "Search"
     }
   },
-  "pages": {
-    "home": {
+  "pages": [
+    {
+      "id": "home",
       "slug": "/",
       "title": "Penta Security",
       "sections": [
@@ -244,7 +245,7 @@
         }
       ]
     }
-  },
+  ],
   "footer": {
     "groups": [
       {

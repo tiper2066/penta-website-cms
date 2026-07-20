@@ -216,10 +216,17 @@ const SECTION_EDITORS = {
 - 검증: `tsc --noEmit`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 및 `data-preview-id` 마커(섹션 6종 + 헤더/푸터) 렌더 확인.
 
 ### Phase D — 멀티 페이지 데이터 모델 (후속 · 3.5 범위 밖)
-- `pages: PageContent[]`로 전환, `demo-site.json`/로더/미리보기 참조 갱신.
-- 서브 페이지(`/products/data-security` 등) JSON 이관 검토(별도 범위로 확장 가능).
-- 드롭다운에 실제 다중 페이지 표시, `+ 페이지 추가` 활성화 검토.
-- 산출물: 멀티 페이지 관리 기반.
+
+상태: 완료
+
+- `SiteContent.pages`를 `{ home: HomePageContent }` 맵 → `PageContent[]` 배열로 전환했습니다. `PageContent`에 `id` 필드를 추가(`{ id, slug, title, sections }`)해 Payload `Pages` Collection 매핑과 정렬 키를 확보했습니다.
+- `src/content/demo-site.json`의 `pages`를 배열로 이관(`home` 페이지에 `"id": "home"` 부여). 공개 렌더링 결과에는 영향 없습니다.
+- 신규 헬퍼 `src/lib/content/helpers.ts` 추가: `getPage(content, id)`, `getHomePage(content)`, `getHomeSections(content)`(in-place 변형용 배열 참조), `getPageLabel(page)`(드롭다운 라벨), `HOME_PAGE_ID`.
+- `site.ts`(공개 홈 로더), `admin-store.ts` 기본 스냅샷(`getSiteContent()` 경유로 자동 반영), `admin-demo/preview/page.tsx`, `admin-panels.tsx`(섹션 find/mutate 44곳)를 헬퍼 기반으로 갱신했습니다.
+- `admin-editor.tsx`의 "편집 대상" 드롭다운을 **실제 `content.pages` 기반**으로 렌더하도록 전환(공통 요소 최상단 + 페이지 목록). 섹션 아코디언·순서 DnD·노출 토글·삭제·미리보기 하이라이트를 선택 페이지(`getPage(draft, target)`) 기준으로 일반화했습니다. 현재 페이지는 `홈` 1개라 동작은 기존과 동일합니다.
+- `+ 페이지 추가`(신규 페이지 생성)와 서브 페이지(`/products/...`) JSON 이관은 이번 범위에서 제외했습니다. 데이터 모델은 이미 다중 페이지를 담을 수 있어 후속 확장 시 UI만 추가하면 됩니다.
+- 산출물: 멀티 페이지 관리 기반(배열 모델 + 페이지 구동형 편집기).
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인. 브라우저 회귀 검증(공개 메인 렌더, 편집기 드롭다운·섹션 순서/노출/삭제, 실시간 미리보기·하이라이트, JSON 내보내기 구조) 이상 없음 확인.
 
 > 3.5단계 범위는 **Phase A~C**입니다(드롭다운·다중 펼침 아코디언·순서 통합·하이라이트). Phase D는 멀티 페이지 확장을 위한 후속 기반 작업으로 3.5 범위 밖입니다.
 
@@ -268,6 +275,6 @@ const SECTION_EDITORS = {
 4. **Phase B 적용 시점**: 섹션 구동형 아코디언(순서 관리 통합)을 3.5에 포함한다. → 결정 6
 5. **상태 유지**: 마지막 선택한 편집 대상과 펼침 상태를 `localStorage`에 저장해 새로고침 후에도 유지한다. → 결정 7
 
-### 남은 확인 (Phase D, 3.5 범위 밖)
+### 남은 확인 (Phase D 후속)
 
-- 멀티 페이지 데이터 모델(`pages` 맵 → 배열) 전환 시점과 서브 페이지 JSON 이관 범위.
+- 멀티 페이지 데이터 모델(`pages` 맵 → 배열) 전환은 완료했습니다. 남은 항목은 서브 페이지(`/products/...`) JSON 이관 범위와 `+ 페이지 추가`(신규 페이지 생성 UI)의 도입 시점입니다.

@@ -11,6 +11,7 @@ import {
   getServerContentSnapshot,
   subscribeContent,
 } from "@/lib/content/admin-store";
+import { getHomeSections } from "@/lib/content/helpers";
 
 export default function AdminPreviewPage() {
   const content = useSyncExternalStore(
@@ -19,7 +20,7 @@ export default function AdminPreviewPage() {
     getServerContentSnapshot,
   );
 
-  const sections = content.pages.home.sections.filter((section) => section.enabled);
+  const sections = getHomeSections(content).filter((section) => section.enabled);
 
   return (
     <>

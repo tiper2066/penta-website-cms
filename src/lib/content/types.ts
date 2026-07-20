@@ -13,9 +13,7 @@ export type SiteContent = {
     locale: string;
   };
   navigation: NavigationContent;
-  pages: {
-    home: HomePageContent;
-  };
+  pages: PageContent[];
   footer: FooterContent;
 };
 
@@ -32,7 +30,8 @@ export type NavigationContent = {
   };
 };
 
-export type HomePageContent = {
+export type PageContent = {
+  id: string;
   slug: string;
   title: string;
   sections: HomeSection[];

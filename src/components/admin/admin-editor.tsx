@@ -72,6 +72,7 @@ import {
   writeUiExpanded,
   writeUiTarget,
 } from "@/lib/content/admin-store";
+import { getPage, getPageLabel } from "@/lib/content/helpers";
 import { cn } from "@/lib/utils";
 import type { SiteContent } from "@/lib/content/types";
 
@@ -91,12 +92,10 @@ import { DragHandle, usePointerSortSensors, arrayMove } from "./sortable";
 
 type PanelComponent = ComponentType<{ content: SiteContent; update: UpdateContent }>;
 
-type HomeSection = SiteContent["pages"]["home"]["sections"][number];
+type HomeSection = SiteContent["pages"][number]["sections"][number];
 
-const TARGETS: Array<{ id: string; label: string }> = [
-  { id: "common", label: "공통 요소" },
-  { id: "home", label: "홈" },
-];
+const COMMON_TARGET = "common";
+const COMMON_LABEL = "공통 요소";
 
 const COMMON_ENTRIES: Array<{ value: string; label: string; Panel: PanelComponent }> = [
   { value: "navigation", label: "네비게이션(헤더)", Panel: NavigationPanel },
@@ -112,10 +111,6 @@ const SECTION_EDITORS: Record<string, PanelComponent> = {
   stats: StatsPanel,
   awards: AwardsPanel,
 };
-
-function isValidTarget(value: string): boolean {
-  return TARGETS.some((group) => group.id === value);
-}
 
 type Device = "desktop" | "tablet" | "mobile";
 
@@ -166,8 +161,19 @@ export function AdminEditor() {
   const [device, setDevice] = useState<Device>("desktop");
   const [savedAt, setSavedAt] = useState<string | null>(null);
 
+  // 편집 대상 드롭다운: "공통 요소" 최상단 + 실제 페이지 목록(현재는 홈).
+  const targets = [
+    { id: COMMON_TARGET, label: COMMON_LABEL },
+    ...content.pages.map((page) => ({ id: page.id, label: getPageLabel(page) })),
+  ];
+
   const target =
-    storedTarget && isValidTarget(storedTarget) ? storedTarget : TARGETS[0].id;
+    storedTarget && targets.some((item) => item.id === storedTarget)
+      ? storedTarget
+      : COMMON_TARGET;
+
+  const isCommon = target === COMMON_TARGET;
+  const currentPage = isCommon ? undefined : getPage(content, target);
 
   const update = useCallback<UpdateContent>((mutator) => {
     const draft = structuredClone(getContentSnapshot());
@@ -230,9 +236,7 @@ export function AdminEditor() {
   const expandedItems = expandedByTarget[target] ?? [];
 
   const handleTargetChange = useCallback((value: string) => {
-    if (isValidTarget(value)) {
-      writeUiTarget(value);
-    }
+    writeUiTarget(value);
   }, []);
 
   const handleExpandedChange = useCallback(
@@ -242,7 +246,7 @@ export function AdminEditor() {
     [target],
   );
 
-  const sections = content.pages.home.sections;
+  const sections = currentPage?.sections ?? [];
   const sensors = usePointerSortSensors();
 
   const handleSectionDragEnd = useCallback(
@@ -252,16 +256,20 @@ export function AdminEditor() {
         return;
       }
       update((draft) => {
-        const ids = draft.pages.home.sections.map((section) => section.id);
+        const page = getPage(draft, target);
+        if (!page) {
+          return;
+        }
+        const ids = page.sections.map((section) => section.id);
         const from = ids.indexOf(String(active.id));
         const to = ids.indexOf(String(over.id));
         if (from === -1 || to === -1) {
           return;
         }
-        draft.pages.home.sections = arrayMove(draft.pages.home.sections, from, to);
+        page.sections = arrayMove(page.sections, from, to);
       });
     },
-    [update],
+    [update, target],
   );
 
   // 하이라이트 활성 대상 = 현재 대상에서 "마지막으로 펼친" 아코디언 하나(결정 5).
@@ -271,7 +279,7 @@ export function AdminEditor() {
     if (!activeValue) {
       return null;
     }
-    if (target === "home") {
+    if (!isCommon) {
       const section = sections.find((item) => item.id === activeValue);
       if (!section) {
         return null;
@@ -420,14 +428,14 @@ export function AdminEditor() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {TARGETS.map((group) => (
+                  {targets.map((group) => (
                     <SelectItem key={group.id} value={group.id}>
                       {group.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {target === "home" ? (
+              {!isCommon ? (
                 <p className="text-[11px] text-muted-foreground">
                   각 섹션 헤더에서 순서 이동, 노출 토글, 삭제를 할 수 있습니다.
                 </p>
@@ -435,7 +443,7 @@ export function AdminEditor() {
             </div>
 
             <div className="mt-5 max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
-              {target === "home" ? (
+              {!isCommon ? (
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -456,6 +464,7 @@ export function AdminEditor() {
                         <SortableSectionItem
                           key={section.id}
                           section={section}
+                          pageId={target}
                           content={content}
                           update={update}
                         />
@@ -553,11 +562,12 @@ export function AdminEditor() {
 
 type SortableSectionItemProps = {
   section: HomeSection;
+  pageId: string;
   content: SiteContent;
   update: UpdateContent;
 };
 
-function SortableSectionItem({ section, content, update }: SortableSectionItemProps) {
+function SortableSectionItem({ section, pageId, content, update }: SortableSectionItemProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
     useSortable({ id: section.id });
 
@@ -583,7 +593,9 @@ function SortableSectionItem({ section, content, update }: SortableSectionItemPr
                 label={section.enabled ? "숨기기" : "노출하기"}
                 onClick={() =>
                   update((draft) => {
-                    const target = draft.pages.home.sections.find((item) => item.id === section.id);
+                    const target = getPage(draft, pageId)?.sections.find(
+                      (item) => item.id === section.id,
+                    );
                     if (target) {
                       target.enabled = !target.enabled;
                     }
@@ -597,9 +609,13 @@ function SortableSectionItem({ section, content, update }: SortableSectionItemPr
                 variant="danger"
                 onClick={() =>
                   update((draft) => {
-                    const index = draft.pages.home.sections.findIndex((item) => item.id === section.id);
+                    const page = getPage(draft, pageId);
+                    if (!page) {
+                      return;
+                    }
+                    const index = page.sections.findIndex((item) => item.id === section.id);
                     if (index !== -1) {
-                      draft.pages.home.sections.splice(index, 1);
+                      page.sections.splice(index, 1);
                     }
                   })
                 }

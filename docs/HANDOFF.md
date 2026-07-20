@@ -283,7 +283,16 @@ penta-cms/
 
 ## 3.5단계 관리자 속성 패널 개편 계획
 
-`docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 상세 계획을 문서화했으며, Phase A·B·B+·C를 모두 완료했습니다(3.5단계 범위 완료). Phase D(멀티 페이지 모델)는 3.5 범위 밖 후속 작업입니다.
+`docs/ADMIN_PANEL_IMPLEMENTATION_PLAN.md`에 상세 계획을 문서화했으며, Phase A·B·B+·C를 모두 완료했습니다(3.5단계 범위 완료). 이어서 3.5 범위 밖 후속인 Phase D(멀티 페이지 데이터 모델 전환)까지 완료했습니다.
+
+Phase D (멀티 페이지 데이터 모델) 완료 내용:
+
+- `SiteContent.pages`를 `{ home: HomePageContent }` 맵 → `PageContent[]` 배열로 전환했습니다. `PageContent = { id, slug, title, sections }`로 `id`를 추가해 Payload `Pages` Collection 매핑·정렬 키를 확보했습니다.
+- `src/content/demo-site.json`의 `pages`를 배열로 이관(`home`에 `"id": "home"`). 공개 렌더링 영향 없음.
+- 신규 헬퍼 `src/lib/content/helpers.ts`(`getPage`/`getHomePage`/`getHomeSections`/`getPageLabel`/`HOME_PAGE_ID`)를 도입해 `site.ts`(홈 로더), `admin-demo/preview/page.tsx`, `admin-panels.tsx`(섹션 find/mutate), `admin-editor.tsx`를 갱신했습니다. `admin-store.ts` 기본 스냅샷은 `getSiteContent()` 경유로 자동 반영됩니다.
+- `admin-editor.tsx`의 "편집 대상" 드롭다운을 실제 `content.pages` 기반으로 렌더(공통 요소 최상단 + 페이지 목록)하고, 섹션 아코디언·DnD 순서·노출 토글·삭제·하이라이트를 선택 페이지(`getPage(draft, target)`) 기준으로 일반화했습니다. 현재 페이지는 `홈` 1개라 기존 동작과 동일합니다.
+- 서브 페이지 JSON 이관과 `+ 페이지 추가`(신규 페이지 생성 UI)는 이번 범위 밖으로 남겨두었습니다.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인. 브라우저 회귀 검증(공개 메인, 편집기 드롭다운·섹션 순서/노출/삭제, 미리보기·하이라이트, JSON 내보내기)까지 이상 없음을 확인했습니다.
 
 Phase A 완료 내용:
 
@@ -342,8 +351,8 @@ Phase C (미리보기 하이라이트) 완료 내용:
 
 다음 세션 시작 시 권장 작업:
 
-- 3.5단계 범위(Phase A~C)는 모두 완료되었습니다. 이후 후보는 다음과 같습니다(우선순위는 요구사항 워크숍에서 확정).
-  1. **Phase D(3.5 범위 밖)**: 멀티 페이지 데이터 모델 전환(`pages` 맵 → `PageContent[]`). `types.ts`/`demo-site.json`/`site.ts`/`admin-store` 기본 스냅샷/`preview/page.tsx`/홈 로더 갱신, 드롭다운에 실제 다중 페이지 표시.
+- 3.5단계 범위(Phase A~C)와 후속 Phase D(멀티 페이지 데이터 모델 전환)까지 완료되었습니다. 이후 후보는 다음과 같습니다(우선순위는 요구사항 워크숍에서 확정).
+  1. **서브 페이지 관리(Phase D 확장)**: 서브 페이지(`/products/data-security` 등)를 `pages[]`로 이관하고, `+ 페이지 추가`(신규 페이지 생성) UI와 페이지별 섹션 편집을 활성화합니다.
   2. **Asset Manager**(4·5단계): 경로 입력 → 로컬 파일 업로드, Payload `Media`(Upload) + MinIO 연동. 아래 "실제 프로젝트 후속 요구사항" 참고.
 - 선택 사항: 그룹 간 링크 이동 시 `onDragOver` 기반 라이브 프리뷰(대상 그룹에서 실시간 빈칸 표시) 보강.
 - 어떤 작업이든 완료 시 `npm run typecheck`, `npm run lint`, `npm run build`를 실행하고 `http://localhost:3000/admin-demo`, `http://localhost:3000/admin-demo/preview`를 확인합니다.
