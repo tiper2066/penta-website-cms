@@ -224,11 +224,33 @@ const SECTION_EDITORS = {
 - 신규 헬퍼 `src/lib/content/helpers.ts` 추가: `getPage(content, id)`, `getHomePage(content)`, `getHomeSections(content)`(in-place 변형용 배열 참조), `getPageLabel(page)`(드롭다운 라벨), `HOME_PAGE_ID`.
 - `site.ts`(공개 홈 로더), `admin-store.ts` 기본 스냅샷(`getSiteContent()` 경유로 자동 반영), `admin-demo/preview/page.tsx`, `admin-panels.tsx`(섹션 find/mutate 44곳)를 헬퍼 기반으로 갱신했습니다.
 - `admin-editor.tsx`의 "편집 대상" 드롭다운을 **실제 `content.pages` 기반**으로 렌더하도록 전환(공통 요소 최상단 + 페이지 목록). 섹션 아코디언·순서 DnD·노출 토글·삭제·미리보기 하이라이트를 선택 페이지(`getPage(draft, target)`) 기준으로 일반화했습니다. 현재 페이지는 `홈` 1개라 동작은 기존과 동일합니다.
-- `+ 페이지 추가`(신규 페이지 생성)와 서브 페이지(`/products/...`) JSON 이관은 이번 범위에서 제외했습니다. 데이터 모델은 이미 다중 페이지를 담을 수 있어 후속 확장 시 UI만 추가하면 됩니다.
 - 산출물: 멀티 페이지 관리 기반(배열 모델 + 페이지 구동형 편집기).
 - 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인. 브라우저 회귀 검증(공개 메인 렌더, 편집기 드롭다운·섹션 순서/노출/삭제, 실시간 미리보기·하이라이트, JSON 내보내기 구조) 이상 없음 확인.
 
-> 3.5단계 범위는 **Phase A~C**입니다(드롭다운·다중 펼침 아코디언·순서 통합·하이라이트). Phase D는 멀티 페이지 확장을 위한 후속 기반 작업으로 3.5 범위 밖입니다.
+### Phase D 확장 — 서브 페이지 완전 이관 + 페이지/섹션 관리 UI
+
+상태: 완료
+
+- **서브 페이지 JSON 이관**: 하드코딩되어 있던 `/products/data-security`(개요)와 `/products/data-security/[lineup]`(상세) 콘텐츠를 `demo-site.json`의 `pages[]` 항목(`data-security`, `data-security-lineup`)으로 완전히 이관했습니다.
+- **신규 섹션 타입 8종**: `productHero`, `statement`, `benefits`, `lineupCards`, `placeholder`, `faq`, `pageHeader`, `lineupDetail`을 `types.ts`에 추가하고 `HomeSection`(=`PageSection`) 유니언에 편입했습니다. 각 타입의 뷰 컴포넌트를 `src/components/sections/*`에 신설하고 `section-renderer.tsx` 스위치에 연결했습니다(`lineupDetail`은 활성 탭 결정을 위해 `activeLineupSlug` 컨텍스트를 받음).
+- **공개 라우트 JSON 구동화**: 두 라우트를 `getPage(content, id)`로 페이지를 불러와 `SectionRenderer`로 렌더하도록 재작성했습니다. `[lineup]`의 `generateStaticParams`/`generateMetadata`도 `lineupDetail` 섹션 데이터에서 파생합니다. 시각 결과는 기존과 동일합니다.
+- **편집기 페이지 관리**: "편집 대상" 드롭다운 옆에 `+ 페이지 추가`, 서브 페이지 선택 시 `페이지 삭제`(홈 제외)와 페이지 제목·경로(slug) 설정 필드를 추가했습니다.
+- **섹션 추가**: 페이지 대상일 때 하단에 `+ 섹션 추가` 드롭다운(14개 섹션 타입, `section-templates.ts`의 기본값 팩토리)을 제공합니다.
+- **섹션별 편집 일반화**: 신규 섹션 패널은 타입 find가 아니라 **`pageId`+`section.id`로 대상 섹션을 직접 편집**하므로 한 페이지에 같은 타입(예: `placeholder` 2개)이 여러 개 있어도 안전합니다. `lineupDetail`은 라인업→카드→블록→항목의 깊은 중첩을 아래 Phase D 확장(편집기 UX)의 드릴-인으로 편집합니다.
+- **미리보기 페이지 연동**: `/admin-demo/preview`가 UI 편집 대상(`localStorage`)을 구독해 **현재 선택한 페이지의 섹션**을 렌더합니다(공통 요소 대상이면 홈).
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/products/data-security`, `/products/data-security/{on-application,on-db,on-os}`, `/admin-demo`, `/admin-demo/preview` 200 응답 및 이관 콘텐츠 렌더 확인.
+
+### Phase D 확장 — 편집기 UX 개선 (드릴-인 네비게이션 + 리사이즈 스플리터)
+
+상태: 완료
+
+- **리사이즈 스플리터(A-1)**: 좌측 편집 패널과 우측 미리보기 사이 세로 드래그 핸들(데스크톱 lg 이상). `flex` + CSS 변수(`--panel-w`)로 너비 제어, 범위 **320~760px**(미리보기 최소 360px 확보), 값은 `localStorage`(`penta-cms:admin-demo:ui:panelWidth`)에 저장. 더블클릭 시 기본값(380px) 초기화, 하이드레이션 안전(기본값 렌더 후 마운트 시 1회 복원).
+- **공통 드릴-인 편집기(B-1, `src/components/admin/drill-in.tsx` 신규)**: 깊은 중첩 목록을 한 번에 한 레벨만 표시. 브레드크럼 + "뒤로" + 현재 레벨 목록(`SortableList` 정렬/추가/삭제). 자식이 있는 노드는 "N개 편집 →" 드릴-인, leaf 노드는 인라인 편집. `DrillNode`/`DrillChildGroup` 트리를 패널이 데이터에서 구성해 넘긴다. 경로(`path`)는 매 렌더 데이터에서 파생하여 삭제 시 자동 정리.
+- **`lineupDetail` 적용**: 3단 인라인 중첩 → 드릴-인(라인업→카드→블록)으로 교체.
+- **`footer` 적용(옵션)**: `그룹 → 링크` 드릴-인. 기존 그룹 간 드래그 이동은 링크별 "그룹 이동" 선택 상자로 대체(그룹 2개 이상 시 노출). 법무/회사 정보는 인라인 유지. 기존 `FooterMenuEditor`/`FooterGroupRow`/`FooterLinkRow` 제거.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과.
+
+> 3.5단계 범위는 **Phase A~C**입니다(드롭다운·다중 펼침 아코디언·순서 통합·하이라이트). Phase D 및 그 확장(서브 페이지 이관, 편집기 UX)은 멀티 페이지 확장을 위한 후속 작업으로 3.5 범위 밖입니다.
 
 ---
 
@@ -243,8 +265,13 @@ const SECTION_EDITORS = {
 | `src/components/ui/accordion.tsx` (신규) | shadcn Accordion 프리미티브(`type="multiple"`) | A |
 | `src/app/admin-demo/preview/page.tsx` | 섹션/전역 래퍼에 `data-preview-id`, `message` 구독, 오버레이 레이어 | C |
 | `src/components/sections/section-renderer.tsx` | (선택) 래퍼에 식별자 부여 지점 | C |
-| `src/lib/content/types.ts` | `pages` 맵 → 배열 전환 | D |
-| `src/content/demo-site.json`, `src/lib/content/site.ts`, `src/lib/content/admin-store.ts` | 모델 변경 반영 | D |
+| `src/lib/content/types.ts` | `pages` 맵 → 배열 전환, 서브 페이지 섹션 타입 8종 추가 | D |
+| `src/content/demo-site.json`, `src/lib/content/site.ts`, `src/lib/content/admin-store.ts`, `src/lib/content/helpers.ts` | 모델 변경 반영, 페이지 헬퍼 | D |
+| `src/components/sections/*` (신규 8종), `section-renderer.tsx` | 서브 페이지 섹션 뷰 + 렌더 스위치 | D 확장 |
+| `src/components/admin/section-templates.ts` (신규) | 섹션/페이지 기본값 팩토리, `+ 섹션 추가` 옵션 | D 확장 |
+| `src/components/admin/drill-in.tsx` (신규) | 공통 드릴-인 편집기(브레드크럼/뒤로/레벨별 목록) | D 확장(UX) |
+| `src/components/admin/admin-editor.tsx` | 좌측 패널 리사이즈 스플리터 + `localStorage` 저장 | D 확장(UX) |
+| `src/components/admin/admin-panels.tsx` | `lineupDetail`/`footer` 드릴-인 적용, 기존 푸터 DnD 에디터 제거 | D 확장(UX) |
 | `docs/PROJECT_PLAN.md`, `docs/HANDOFF.md` | 단계/상태 갱신 | 각 Phase 완료 시 |
 
 (경로는 현재 리포 기준 추정이며 구현 시 확정합니다.)

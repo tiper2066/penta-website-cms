@@ -244,6 +244,500 @@
           }
         }
       ]
+    },
+    {
+      "id": "data-security",
+      "slug": "/products/data-security",
+      "title": "데이터 보안 (D.AMO)",
+      "sections": [
+        {
+          "id": "ds-hero",
+          "type": "productHero",
+          "enabled": true,
+          "data": {
+            "title": "국내 최초 암호 플랫폼, D.AMO",
+            "subtitle": "전 계층 데이터 암호화 솔루션",
+            "description": "국내 최초 암호 플랫폼으로 20년 이상 공공조달 점유율 1위를 기록하며,\n국내 대기업, 금융, 공공기관 등 20,000여 개 레퍼런스로 그 기술성을 입증받았습니다.",
+            "primaryCta": { "label": "문의하기", "href": "/support/contact" },
+            "secondaryCta": { "label": "자료 다운로드", "href": "/resources/downloads" },
+            "image": "/assets/products/damo-visual.svg",
+            "imageAlt": "D.AMO 제품 이미지"
+          }
+        },
+        {
+          "id": "ds-statement",
+          "type": "statement",
+          "enabled": true,
+          "data": {
+            "title": "연이어 터지는 대규모 데이터 유출 사고,\n이를 방지하기 위한 법적 규제 역시 강화되고 있습니다.",
+            "body": "데이터 유출은 단순 서비스 방해를 넘어 기업과 개인에게 영구적 손실을 입히는 심각한 위협입니다.\nD.AMO는 개인정보를 보호하고 기업의 신뢰와 브랜드 평판을 유지하는 동시에, 정부 및 규제기관의 법규 준수를 위한 모든 방안을 제시합니다."
+          }
+        },
+        {
+          "id": "ds-benefits",
+          "type": "benefits",
+          "enabled": true,
+          "data": {
+            "title": "D.AMO를 선택하는 이유",
+            "items": [
+              {
+                "id": "benefit-01",
+                "number": "01",
+                "title": "모든 환경에 최적화된 암호화 제공",
+                "description": "Application, DB, OS 등 고객의 시스템 아키텍처에 따라 성능과 보안성을 최적화하여 적용할 수 있는 다양한 제품을 보유하고 있습니다."
+              },
+              {
+                "id": "benefit-02",
+                "number": "02",
+                "title": "국내외 컴플라이언스 100% 만족",
+                "description": "개인정보보호법, 전자금융감독규정, ISMS-P, GDPR, PCI-DSS 등 20년간 검증된 기술력으로 국내외 컴플라이언스를 만족하며 기업의 중요 정보를 안전하게 보호합니다."
+              },
+              {
+                "id": "benefit-03",
+                "number": "03",
+                "title": "강력한 키 관리 시스템 제공",
+                "description": "전용 Appliance 장비와 Cloud 시스템을 지원하며, 키 라이프사이클 관리, 감사, 접근제어 등 국내외 모든 암호화 솔루션과 연동 가능한 키 관리를 제공합니다."
+              },
+              {
+                "id": "benefit-04",
+                "number": "04",
+                "title": "국정원 검증 암호 모듈 및 양자내성 알고리즘 지원",
+                "description": "국가정보원 KCMVP 인증을 획득하고 국내외 표준(NIST, KPQC) 양자내성 암호 알고리즘을 탑재한 자체 개발 암호 모듈을 제공합니다."
+              }
+            ],
+            "imagePlaceholder": "D.AMO 제품 이미지"
+          }
+        },
+        {
+          "id": "ds-lineup-cards",
+          "type": "lineupCards",
+          "enabled": true,
+          "data": {
+            "title": "적용 환경별 D.AMO 라인업",
+            "items": [
+              {
+                "id": "lc-on-application",
+                "name": "D.AMO onApplication",
+                "description": "Application 서버에 설치한 API를 이용하여 암호화 수행 후 DBMS에 쿼리를 전송하는 방식으로 암/복호화 시 DBMS 부하를 최소화하며, 다양한 OS 및 DBMS를 지원하는 등 뛰어난 호환성을 지니고 있습니다.",
+                "href": "/products/data-security/on-application"
+              },
+              {
+                "id": "lc-on-db",
+                "name": "D.AMO onDB",
+                "description": "DB서버에 Package, Engine, DBMS API 등의 형태로 Agent를 설치하여 암/복호화를 수행하고, 접근 제어, 감사 기록, 권한 분리 등의 기능을 통해 통합 DB보안을 제공합니다.",
+                "href": "/products/data-security/on-db"
+              },
+              {
+                "id": "lc-on-os",
+                "name": "D.AMO onOS",
+                "description": "OS 커널 레벨에 Agent를 설치하여 정형/비정형 데이터의 암호화를 수행합니다. 파일 시스템 레벨에서 데이터를 보호하여 다양한 형태의 데이터 보안을 지원합니다.",
+                "href": "/products/data-security/on-os"
+              }
+            ]
+          }
+        },
+        {
+          "id": "ds-awards",
+          "type": "placeholder",
+          "enabled": true,
+          "data": { "title": null, "label": "이미지 (수상 / 인증)" }
+        },
+        {
+          "id": "ds-composition",
+          "type": "placeholder",
+          "enabled": true,
+          "data": { "title": "제품 구성", "label": "제품 구성 / 사양표" }
+        },
+        {
+          "id": "ds-faq",
+          "type": "faq",
+          "enabled": true,
+          "data": {
+            "title": "FAQs",
+            "items": [
+              {
+                "id": "faq-1",
+                "question": "D.AMO는 무엇인가요?",
+                "answer": "D.AMO는 데이터베이스에 저장된 중요한 정보에 대하여 접근 제어 및 암호화를 실행하는 데이터 보안 솔루션입니다. 기존 응용 프로그램을 수정하지 않고도 암호화를 적용할 수 있으며, 데이터베이스 사용자를 세분화하여 민감한 데이터를 보호합니다. 1차적으로 DB 사용자 단위의 로그인 권한을 클라이언트 IP별, 허용 시간대별, 접근 응용 프로그램별로 제어하고, 2차적으로 암호화 컬럼에 대한 암복호화 권한을 부여하여 데이터를 안전하게 보호합니다."
+              },
+              {
+                "id": "faq-2",
+                "question": "암호화가 꼭 필요한가요? 접근 제어나 마스킹만으로는 부족한가요?",
+                "answer": "접근 제어, 마스킹, 토큰 등 다양한 조치가 있지만 암호화는 데이터에 대한 근본적인 보호를 제공하는 동시에, 원본을 복원할 수 있는 유일한 보호 기법입니다. 수학적 처리를 통해 알아볼 수 없게 변환된 데이터는 업무 처리에 활용될 때만 철저한 정책에 따라 원본을 복원할 수 있어 정보 보안 법규를 준수하는 동시에 안전한 데이터 활용을 가능하게 합니다."
+              },
+              {
+                "id": "faq-3",
+                "question": "D.AMO 설치 후 기존 프로그램을 수정해야 하나요?",
+                "answer": "아니요, 수정할 필요가 없습니다. D.AMO를 설치하여 중요 데이터를 암호화하게 되더라도 기존 프로그램에서는 동일한 테이블 명과 컬럼 명으로 데이터베이스 접근이 가능하므로 아무런 변경 작업 없이 사용 가능합니다."
+              },
+              {
+                "id": "faq-4",
+                "question": "암호화 적용 후 데이터 백업에 문제가 없나요?",
+                "answer": "네, 문제없습니다. 암호화된 데이터를 포함한 모든 오브젝트를 백업하고 복구할 경우 D.AMO가 설치된 환경에서 이전 상태 그대로 복원됩니다. 단, 별도 스크립트로 테이블 단위 백업 시에는 변경된 테이블 이름으로 백업해야 합니다."
+              },
+              {
+                "id": "faq-5",
+                "question": "D.AMO는 어떤 보안 기능을 제공하나요?",
+                "answer": "D.AMO는 암호화, 접근 제어, 감사, 리포팅을 모두 제공하는 통합 DB 보안 솔루션입니다. 암호화: 중요 데이터를 안전하게 보호합니다. 접근 제어: 2단계로 진행됩니다. 1차는 로그인 시 IP 주소, 서비스명, 시간대에 따라 접근을 제어하고, 2차는 암호화된 컬럼 접근 시 IP 주소와 서비스명을 기준으로 필요한 경우에만 허용합니다. 감사: 정책 설정·변경·삭제는 물론 암호화 컬럼 접근 이력까지 상세히 기록합니다. 이를 통해 비정상적인 접근 시도를 감지하고 세션을 차단할 수 있습니다."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "data-security-lineup",
+      "slug": "/products/data-security/:lineup",
+      "title": "D.AMO 라인업 상세",
+      "sections": [
+        {
+          "id": "dsl-header",
+          "type": "pageHeader",
+          "enabled": true,
+          "data": {
+            "title": "적용 환경별 D.AMO 라인업",
+            "description": "고객의 시스템 아키텍처에 따라 onApplication · onDB · onOS 세 가지 방식으로 전 계층 데이터를 암호화합니다."
+          }
+        },
+        {
+          "id": "dsl-detail",
+          "type": "lineupDetail",
+          "enabled": true,
+          "data": {
+            "items": [
+              {
+                "id": "ld-on-application",
+                "slug": "on-application",
+                "label": "D.AMO onApplication",
+                "description": "Application 서버에 설치한 API를 이용하여 암호화 수행 후 DBMS에 쿼리를 전송하는 방식으로, 암/복호화 시 DBMS 부하를 최소화하며 다양한 OS 및 DBMS를 지원하는 뛰어난 호환성을 지닙니다.",
+                "cards": [
+                  {
+                    "id": "ld-app-c1",
+                    "title": "안전한 암호 알고리즘 사용",
+                    "blocks": [
+                      {
+                        "id": "ld-app-c1-b1",
+                        "heading": null,
+                        "items": [
+                          "안전한 암호 알고리즘 사용",
+                          "자체 개발한 국가정보원 검증필 암호모듈 사용 (CIS-CC)",
+                          "미연방정보처리표준(FIPS)에 의한 인증 획득 (AES, TDES 인증)",
+                          "국내외 표준 알고리즘 모두 지원 (SEED, ARIA, AES, TDES, SHA, BLOWFISH 등)",
+                          "각 모듈은 인터페이스가 달라도 내부에 탑재된 동일한 모듈의 암호엔진 사용으로 강력한 호환성 제공"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ld-app-c2",
+                    "title": "주요 기능",
+                    "blocks": [
+                      {
+                        "id": "ld-app-c2-b1",
+                        "heading": "DBMS 부하 분산 처리",
+                        "items": [
+                          "암/복호화를 어플리케이션에서 수행하므로 암호화 대상 DBMS 서버의 부하를 어플리케이션에서 분산 처리",
+                          "HA 장비 간 자동 정책 동기화 기능 지원"
+                        ]
+                      },
+                      {
+                        "id": "ld-app-c2-b2",
+                        "heading": "인덱스 칼럼의 색인기능 및 선택적 암호화 기능 지원",
+                        "items": [
+                          "인덱스 칼럼 암호화 후에도 기존의 Index Search 유지",
+                          "암호화에 따른 Application 변경 없음",
+                          "부분 암호화를 활용한 암호화 컬럼의 인덱스 검색 지원 (일치검색, 범위검색)"
+                        ]
+                      },
+                      {
+                        "id": "ld-app-c2-b3",
+                        "heading": "대용량 데이터 일괄 암호화 지원",
+                        "items": [
+                          "대용량 일괄 암호화는 DBMS에서 파일 형태로 export 하여 그 파일을 암호화한 후 DBMS에 저장하는 방식",
+                          "일괄 암호화를 DBMS가 아닌 Application에서 처리하므로 속도가 빠름",
+                          "일괄 암호화에 따른 DBMS 부하가 적음"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ld-app-c3",
+                    "title": "기술적 차별점",
+                    "blocks": [
+                      {
+                        "id": "ld-app-c3-b1",
+                        "heading": "뛰어난 성능 및 네트워크 구간의 안정성 보장",
+                        "items": [
+                          "DBMS가 아닌 별도의 Application 서버에서 암/복호화를 수행하므로 기존 DBMS에 추가 부하 없음",
+                          "Application과 DBMS 사이 전송 구간에서 암호화된 데이터 전송으로 안정성 확보"
+                        ]
+                      },
+                      {
+                        "id": "ld-app-c3-b2",
+                        "heading": "강력한 키 관리 및 관리자 인증",
+                        "items": [
+                          "하이브리드 암호화 방식으로 암/복호화 키 이중 암호화",
+                          "별도 H/W를 통한 강력한 키 관리 기능 지원 (D.AMO KMS 적용 시)"
+                        ]
+                      },
+                      {
+                        "id": "ld-app-c3-b3",
+                        "heading": "다양한 알고리즘 및 환경 지원 (유연성·확장성)",
+                        "items": [
+                          "국내외 표준 암호화 알고리즘 지원 (RSA, 3DES, AES, SEED, ARIA, SHA 등)",
+                          "모든 Application 개발 환경(C, Java 등) 및 모든 종류의 DBMS 지원 (Oracle, Altibase, MSSQL, DB2 등)",
+                          "이기종 DBMS 간 데이터 연동 시 암호키가 다른 경우도 안전하게 연동 가능",
+                          "관리 대상 DBMS 추가 시 D.AMO SCP Agent 설치만으로 기존 관리체계에 통합 가능"
+                        ]
+                      },
+                      {
+                        "id": "ld-app-c3-b4",
+                        "heading": "다양한 라이브러리 제공으로 개발 편의성 제공",
+                        "items": ["다양한 함수·라이브러리 제공으로 개발자 환경을 폭넓게 지원하여 편의성 극대화"]
+                      },
+                      {
+                        "id": "ld-app-c3-b5",
+                        "heading": "높은 관리 편의성 지원",
+                        "items": [
+                          "GUI 방식의 통합 관리도구 제공",
+                          "편리한 사용자 인터페이스 제공",
+                          "관리자 시스템에서 간편한 키 관리 및 설정 기능 제공 (KMS 적용 시)"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "ld-on-db",
+                "slug": "on-db",
+                "label": "D.AMO onDB",
+                "description": "DB 서버에 Package, Engine, DBMS API 등의 형태로 Agent를 설치하여 암/복호화를 수행하고, 접근 제어·감사 기록·권한 분리 기능을 통해 통합 DB 보안을 제공합니다.",
+                "cards": [
+                  {
+                    "id": "ld-db-c1",
+                    "title": "Package 설치형 암호화",
+                    "blocks": [
+                      {
+                        "id": "ld-db-c1-b1",
+                        "heading": "VTI 암호화 모드 / API 암호화 모드 지원",
+                        "items": [
+                          "고객 환경 및 성능, 지원 환경에 따라 두 가지 암호화 모드 지원",
+                          "VTI(View/Trigger Interface) 모드: View와 Trigger를 이용해 암호화 수행 (암호화 테이블·컬럼명 변경)",
+                          "API(Application Programming Interface) 모드: View·Trigger 없이 암호화 수행 (테이블·컬럼명 변경 없음)"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c1-b2",
+                        "heading": "암호화 정책을 통한 컬럼 단위 선택적 암호화",
+                        "items": [
+                          "암호화 알고리즘, 운영 모드, 부분 암호화 등을 정책으로 효율적으로 설정",
+                          "필요한 데이터만 암호화하여 성능 저하 최소화 및 보안성 확보"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c1-b3",
+                        "heading": "DB 전체 및 암호화 컬럼 접근제어",
+                        "items": ["DB 계정 / IP / MAC / Application / 시간 / 요일별 접근제어 제공"]
+                      },
+                      {
+                        "id": "ld-db-c1-b4",
+                        "heading": "장애 발생 시 암호화 데이터 복구 가능",
+                        "items": [
+                          "Site / Console / DB 키는 백업해 둔 키 사용",
+                          "복구 완료 시 장애 이전과 동일하게 복호화 및 신규 데이터 암호화 가능",
+                          "키만 정상 백업되면 SA 버전과 무관하게 데이터 복구 가능"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c1-b5",
+                        "heading": "서비스 중단 없는 암호화",
+                        "items": ["별도 사본 테이블에서 암호화 적용 후 서비스 테이블로 전환하여 중단 최소화"]
+                      },
+                      {
+                        "id": "ld-db-c1-b6",
+                        "heading": "사용자 친화적인 관리도구 제공",
+                        "items": [
+                          "직관적인 메뉴 체계와 다양한 아이콘 활용",
+                          "다수의 Security Agent를 하나의 관리도구에서 통합 관리"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c1-b7",
+                        "heading": "최적화 지원 DBMS",
+                        "items": ["Oracle, MS SQL Server"]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ld-db-c2",
+                    "title": "Engine 설치형 암호화",
+                    "blocks": [
+                      {
+                        "id": "ld-db-c2-b1",
+                        "heading": "Application에 대한 독립성",
+                        "items": [
+                          "DBMS 내부에 설치·작동하여 기존 Application에 영향 없음",
+                          "Encryption Engine 삽입 외 DB 환경 변화 없음 (테이블·컬럼명 변경 없음)"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c2-b2",
+                        "heading": "컬럼 단위 선택적 암호화 지원",
+                        "items": [
+                          "데이터 중요도에 따라 중요한 컬럼만 암호화",
+                          "전체 암호화가 필요한 파일암호화 대비 효율·성능 우위"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c2-b3",
+                        "heading": "인덱스 칼럼의 색인기능 및 선택적 암호화 지원",
+                        "items": [
+                          "인덱스 칼럼 암호화 후에도 기존 Index Search 유지",
+                          "암호화에 따른 Application 변경 없음",
+                          "부분 암호화를 활용한 컬럼 인덱스 검색 지원 (일치·범위 검색)"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c2-b4",
+                        "heading": "권한 분리 및 접근 제어",
+                        "items": [
+                          "인가받지 못한 DB 관리자는 복호화 불가 (보안관리자가 DB 관리자 권한 제어)",
+                          "DB 관리자와 보안 관리자의 철저한 권한 분리"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c2-b5",
+                        "heading": "최적화 지원 DBMS",
+                        "items": ["MySQL, MariaDB"]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ld-db-c3",
+                    "title": "API 설치형 암호화",
+                    "blocks": [
+                      {
+                        "id": "ld-db-c3-b1",
+                        "heading": "인덱스 칼럼의 색인기능 및 선택적 암호화 지원",
+                        "items": [
+                          "인덱스 칼럼 암호화 후에도 기존 Index Search 유지",
+                          "암호화에 따른 Application 변경 없음",
+                          "부분 암호화를 활용한 컬럼 인덱스 검색 지원 (일치·범위 검색)"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c3-b2",
+                        "heading": "대용량 데이터 일괄 암호화 지원",
+                        "items": [
+                          "DBMS에서 파일로 export 후 암호화하여 DBMS에 저장하는 방식",
+                          "DBMS가 아닌 Application에서 처리하므로 속도가 빠름",
+                          "일괄 암호화에 따른 DBMS 부하가 적음"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c3-b3",
+                        "heading": "개발자 편의성 제공",
+                        "items": [
+                          "다양한 언어 기반 함수·라이브러리 제공으로 개발 편의성 증대",
+                          "최소한의 수정개발로 반영 가능한 API 함수 제공"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c3-b4",
+                        "heading": "강력한 키 관리 및 관리자 인증",
+                        "items": [
+                          "하이브리드 암호화 방식으로 암/복호화 키 이중 암호화",
+                          "별도 H/W를 통한 강력한 키 관리 기능 지원 (D.AMO KMS 적용 시)"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c3-b5",
+                        "heading": "다양한 알고리즘 및 환경 지원 (유연성·확장성)",
+                        "items": [
+                          "국내외 표준 암호화 알고리즘 지원 (RSA, 3DES, AES, SEED, ARIA, SHA 등)",
+                          "모든 Application 개발 환경 및 모든 종류의 DBMS 지원",
+                          "이기종 DBMS 간 연동 시 암호키가 달라도 안전하게 연동",
+                          "관리 대상 DBMS 추가 시 D.AMO SCP Agent 설치만으로 통합 가능"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c3-b6",
+                        "heading": "높은 관리 편의성 지원",
+                        "items": [
+                          "관리자 시스템에서 간편한 키 관리 및 설정",
+                          "직관적인 GUI 및 CLI 제공",
+                          "콘솔을 통한 정책 설정 및 로그·시스템 현황 확인"
+                        ]
+                      },
+                      {
+                        "id": "ld-db-c3-b7",
+                        "heading": "최적화 지원 DBMS",
+                        "items": ["Oracle, MS SQL, MySQL, PostgreSQL, Tibero, Cubrid, Sybase, Altibase, DB2 등"]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "ld-on-os",
+                "slug": "on-os",
+                "label": "D.AMO onOS",
+                "description": "OS 커널 레벨에 Agent를 설치하여 정형/비정형 데이터의 암호화를 수행합니다. 파일 시스템 레벨에서 데이터를 보호하여 다양한 형태의 데이터 보안을 지원합니다.",
+                "cards": [
+                  {
+                    "id": "ld-os-c1",
+                    "title": "주요 기능",
+                    "blocks": [
+                      {
+                        "id": "ld-os-c1-b1",
+                        "heading": "커널 레벨 암호화",
+                        "items": ["OS 커널 레벨에서의 빠른 암복호화", "도입 시 성능 부하 1% 미만"]
+                      },
+                      {
+                        "id": "ld-os-c1-b2",
+                        "heading": "보안성 및 감사",
+                        "items": [
+                          "안전한 암호모듈 (국정원 검증필 암호모듈)",
+                          "안전한 키 관리 (키 관리 전용 D.AMO KMS 연동)",
+                          "접근제어 (Process, User, IP, MAC, Time)",
+                          "물리적 보안 위협 대응 (도난·분실 시 해독 불가)",
+                          "감사 (사용자·시스템 감사)"
+                        ]
+                      },
+                      {
+                        "id": "ld-os-c1-b3",
+                        "heading": "암호화 데이터 백업 및 복원 기능 제공",
+                        "items": ["데이터를 암호화된 상태로 백업 서버에 백업"]
+                      },
+                      {
+                        "id": "ld-os-c1-b4",
+                        "heading": "정형/비정형 데이터 파일·폴더 단위 암호화",
+                        "items": ["이미지, 음성, 영상, 로그 등 모든 종류의 비정형 데이터 암호화 가능"]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ld-os-c2",
+                    "title": "기술적 차별점 — 구축 및 사용자 편의성",
+                    "blocks": [
+                      {
+                        "id": "ld-os-c2-b1",
+                        "heading": null,
+                        "items": [
+                          "Installer 방식으로 1일 이내 도입 가능",
+                          "Application 소스(쿼리) 수정 없음",
+                          "GUI 기반 관리도구 지원"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "footer": {

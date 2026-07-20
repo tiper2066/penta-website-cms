@@ -22,3 +22,23 @@ export function getPageLabel(page: PageContent): string {
   }
   return page.title || page.slug;
 }
+
+// 공개 라우트 경로(pathname)를 편집 대상 페이지 id로 매핑합니다.
+// 미리보기 내부 링크 클릭 → 좌측 편집 대상 전환에 사용합니다.
+// slug의 `:param` 세그먼트는 임의의 한 세그먼트로 취급합니다(예: 라인업 상세).
+export function resolvePageIdByPath(content: SiteContent, pathname: string): string | null {
+  const exact = content.pages.find((page) => page.slug === pathname);
+  if (exact) {
+    return exact.id;
+  }
+  for (const page of content.pages) {
+    if (!page.slug.includes(":")) {
+      continue;
+    }
+    const pattern = `^${page.slug.replace(/:[^/]+/g, "[^/]+")}$`;
+    if (new RegExp(pattern).test(pathname)) {
+      return page.id;
+    }
+  }
+  return null;
+}

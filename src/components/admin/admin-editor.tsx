@@ -14,6 +14,7 @@ import {
   Eye,
   EyeOff,
   Monitor,
+  Plus,
   RotateCcw,
   Smartphone,
   SquareArrowOutUpRight,
@@ -76,40 +77,60 @@ import { getPage, getPageLabel } from "@/lib/content/helpers";
 import { cn } from "@/lib/utils";
 import type { SiteContent } from "@/lib/content/types";
 
-import { type UpdateContent } from "./admin-fields";
+import { TextField, type UpdateContent } from "./admin-fields";
 import {
   AwardsPanel,
+  BenefitsPanel,
+  FaqPanel,
   FooterPanel,
   HeroPanel,
+  LineupCardsPanel,
+  LineupDetailPanel,
   NavigationPanel,
   NewsPanel,
+  PageHeaderPanel,
+  PlaceholderPanel,
+  ProductHeroPanel,
   ProductTabsPanel,
   SECTION_TYPE_LABELS,
+  StatementPanel,
   StatsPanel,
   SubscribePanel,
+  type SectionEditorProps,
 } from "./admin-panels";
+import { SECTION_ADD_OPTIONS, createPage, createSection } from "./section-templates";
 import { DragHandle, usePointerSortSensors, arrayMove } from "./sortable";
 
-type PanelComponent = ComponentType<{ content: SiteContent; update: UpdateContent }>;
+type CommonPanel = ComponentType<{ content: SiteContent; update: UpdateContent }>;
+type SectionPanel = ComponentType<SectionEditorProps>;
 
 type HomeSection = SiteContent["pages"][number]["sections"][number];
 
 const COMMON_TARGET = "common";
 const COMMON_LABEL = "공통 요소";
+const HOME_PAGE_ID = "home";
 
-const COMMON_ENTRIES: Array<{ value: string; label: string; Panel: PanelComponent }> = [
+const COMMON_ENTRIES: Array<{ value: string; label: string; Panel: CommonPanel }> = [
   { value: "navigation", label: "네비게이션(헤더)", Panel: NavigationPanel },
   { value: "footer", label: "푸터", Panel: FooterPanel },
 ];
 
 // 섹션 타입 → 편집 폼 레지스트리 (공개 측 section-renderer의 타입 스위치와 대칭).
-const SECTION_EDITORS: Record<string, PanelComponent> = {
+const SECTION_EDITORS: Record<string, SectionPanel> = {
   hero: HeroPanel,
   news: NewsPanel,
   subscribe: SubscribePanel,
   productTabs: ProductTabsPanel,
   stats: StatsPanel,
   awards: AwardsPanel,
+  productHero: ProductHeroPanel,
+  statement: StatementPanel,
+  benefits: BenefitsPanel,
+  lineupCards: LineupCardsPanel,
+  placeholder: PlaceholderPanel,
+  faq: FaqPanel,
+  pageHeader: PageHeaderPanel,
+  lineupDetail: LineupDetailPanel,
 };
 
 type Device = "desktop" | "tablet" | "mobile";
@@ -128,6 +149,12 @@ const DEVICE_OPTIONS: Array<{ id: Device; label: string; Icon: typeof Monitor }>
 
 const PREVIEW_URL = "/admin-demo/preview";
 const MESSAGE_SOURCE = "penta-admin";
+
+// 편집 패널(좌측) 너비 조절용 상수.
+const PANEL_MIN = 320;
+const PANEL_MAX = 760;
+const PANEL_DEFAULT = 380;
+const PANEL_STORAGE_KEY = "penta-cms:admin-demo:ui:panelWidth";
 
 type ActivePreview = {
   id: string;
@@ -212,6 +239,76 @@ export function AdminEditor() {
   const previewReadyRef = useRef(false);
   const [previewArea, setPreviewArea] = useState({ width: 0, height: 0 });
 
+  // 편집 패널 너비(px). SSR/CSR 일치를 위해 기본값으로 시작한 뒤 마운트 후 localStorage에서 복원합니다.
+  const splitRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+  const [panelWidth, setPanelWidth] = useState(PANEL_DEFAULT);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const raw = window.localStorage.getItem(PANEL_STORAGE_KEY);
+    const parsed = raw ? Number(raw) : NaN;
+    if (Number.isFinite(parsed)) {
+      // 서버/최초 클라이언트 렌더는 기본값으로 일치시키고(하이드레이션 안전),
+      // 마운트 후에만 저장된 너비로 1회 복원합니다.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPanelWidth(Math.min(PANEL_MAX, Math.max(PANEL_MIN, parsed)));
+    }
+  }, []);
+
+  const persistPanelWidth = useCallback((width: number) => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(PANEL_STORAGE_KEY, String(Math.round(width)));
+    }
+  }, []);
+
+  const handleSplitPointerDown = useCallback(
+    (event: React.PointerEvent) => {
+      event.preventDefault();
+      const container = splitRef.current;
+      if (!container) {
+        return;
+      }
+      draggingRef.current = true;
+      const left = container.getBoundingClientRect().left;
+
+      const onMove = (moveEvent: PointerEvent) => {
+        if (!draggingRef.current) {
+          return;
+        }
+        const containerWidth = container.getBoundingClientRect().width;
+        // 미리보기 영역이 최소 360px는 남도록 상한을 함께 제한합니다.
+        const maxWidth = Math.min(PANEL_MAX, containerWidth - 360);
+        const next = Math.min(maxWidth, Math.max(PANEL_MIN, moveEvent.clientX - left));
+        setPanelWidth(next);
+      };
+      const onUp = () => {
+        draggingRef.current = false;
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+        document.body.style.userSelect = "";
+        document.body.style.cursor = "";
+        setPanelWidth((width) => {
+          persistPanelWidth(width);
+          return width;
+        });
+      };
+
+      document.body.style.userSelect = "none";
+      document.body.style.cursor = "col-resize";
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+    },
+    [persistPanelWidth],
+  );
+
+  const handleSplitReset = useCallback(() => {
+    setPanelWidth(PANEL_DEFAULT);
+    persistPanelWidth(PANEL_DEFAULT);
+  }, [persistPanelWidth]);
+
   useEffect(() => {
     const element = previewAreaRef.current;
     if (!element || typeof ResizeObserver === "undefined") {
@@ -238,6 +335,35 @@ export function AdminEditor() {
   const handleTargetChange = useCallback((value: string) => {
     writeUiTarget(value);
   }, []);
+
+  const handleAddPage = useCallback(() => {
+    const page = createPage("새 페이지", "");
+    update((draft) => {
+      draft.pages.push(page);
+    });
+    writeUiTarget(page.id);
+  }, [update]);
+
+  const handleDeletePage = useCallback(() => {
+    update((draft) => {
+      const index = draft.pages.findIndex((p) => p.id === target);
+      if (index !== -1 && draft.pages[index].id !== HOME_PAGE_ID) {
+        draft.pages.splice(index, 1);
+      }
+    });
+    writeUiTarget(HOME_PAGE_ID);
+  }, [update, target]);
+
+  const [sectionAddKey, setSectionAddKey] = useState(0);
+  const handleAddSection = useCallback(
+    (type: HomeSection["type"]) => {
+      update((draft) => {
+        getPage(draft, target)?.sections.push(createSection(type));
+      });
+      setSectionAddKey((key) => key + 1);
+    },
+    [update, target],
+  );
 
   const handleExpandedChange = useCallback(
     (value: string[]) => {
@@ -347,6 +473,27 @@ export function AdminEditor() {
     }
   }, [activeId, activeLabel, postActiveTarget]);
 
+  // 안전장치: 편집 대상이 바뀌었는데 iframe이 미리보기 라우트를 벗어나 있으면(예: 사용자가
+  // 미리보기에서 외부/미매칭 경로로 이동한 경우) 미리보기 라우트로 되돌려 동기화를 회복합니다.
+  useEffect(() => {
+    const frame = iframeRef.current;
+    if (!frame) {
+      return;
+    }
+    try {
+      const win = frame.contentWindow;
+      if (
+        win &&
+        win.location.protocol.startsWith("http") &&
+        new URL(win.location.href).pathname !== PREVIEW_URL
+      ) {
+        win.location.replace(PREVIEW_URL);
+      }
+    } catch {
+      frame.src = PREVIEW_URL;
+    }
+  }, [target]);
+
   return (
     <main className="min-h-screen bg-[#f7f7f7] px-4 py-8 md:px-6">
       <div className="flex w-full flex-col gap-6">
@@ -419,8 +566,12 @@ export function AdminEditor() {
           </div>
         </header>
 
-        <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
-          <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+        <div
+          ref={splitRef}
+          className="flex flex-col gap-6 lg:flex-row lg:items-stretch"
+          style={{ "--panel-w": `${panelWidth}px` } as React.CSSProperties}
+        >
+          <section className="w-full shrink-0 rounded-xl border border-border bg-card p-5 shadow-sm lg:w-(--panel-w)">
             <div className="space-y-1.5">
               <Label htmlFor="admin-target-select">편집 대상</Label>
               <Select value={target} onValueChange={handleTargetChange}>
@@ -435,12 +586,57 @@ export function AdminEditor() {
                   ))}
                 </SelectContent>
               </Select>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button type="button" variant="outline" size="sm" onClick={handleAddPage}>
+                  <Plus className="h-4 w-4" />
+                  페이지 추가
+                </Button>
+                {!isCommon && target !== HOME_PAGE_ID ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDeletePage}
+                    className="text-red-500 hover:bg-red-50 hover:text-red-500"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    페이지 삭제
+                  </Button>
+                ) : null}
+              </div>
               {!isCommon ? (
                 <p className="text-[11px] text-muted-foreground">
                   각 섹션 헤더에서 순서 이동, 노출 토글, 삭제를 할 수 있습니다.
                 </p>
               ) : null}
             </div>
+
+            {!isCommon && currentPage && target !== HOME_PAGE_ID ? (
+              <div className="mt-4 space-y-3 rounded-lg border border-border bg-muted/40 p-3">
+                <p className="text-xs font-bold text-muted-foreground">페이지 설정</p>
+                <TextField
+                  label="페이지 제목"
+                  value={currentPage.title}
+                  onChange={(value) =>
+                    update((draft) => {
+                      const page = getPage(draft, target);
+                      if (page) page.title = value;
+                    })
+                  }
+                />
+                <TextField
+                  label="경로(slug)"
+                  value={currentPage.slug}
+                  hint="공개 라우트와 별개인 참고용 경로입니다."
+                  onChange={(value) =>
+                    update((draft) => {
+                      const page = getPage(draft, target);
+                      if (page) page.slug = value;
+                    })
+                  }
+                />
+              </div>
+            ) : null}
 
             <div className="mt-5 max-h-[calc(100vh-300px)] overflow-y-auto pr-1">
               {!isCommon ? (
@@ -472,7 +668,29 @@ export function AdminEditor() {
                     </Accordion>
                   </SortableContext>
                 </DndContext>
-              ) : (
+              ) : null}
+
+              {!isCommon ? (
+                <div className="mt-3">
+                  <Select
+                    key={sectionAddKey}
+                    onValueChange={(value) => handleAddSection(value as HomeSection["type"])}
+                  >
+                    <SelectTrigger aria-label="섹션 추가">
+                      <SelectValue placeholder="+ 섹션 추가" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SECTION_ADD_OPTIONS.map((option) => (
+                        <SelectItem key={option.type} value={option.type}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
+
+              {isCommon ? (
                 <Accordion
                   key="common"
                   type="multiple"
@@ -492,11 +710,22 @@ export function AdminEditor() {
                     );
                   })}
                 </Accordion>
-              )}
+              ) : null}
             </div>
           </section>
 
-          <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="편집 패널 너비 조절 (더블클릭 시 기본값)"
+            onPointerDown={handleSplitPointerDown}
+            onDoubleClick={handleSplitReset}
+            className="group hidden shrink-0 cursor-col-resize items-center justify-center lg:flex"
+          >
+            <div className="h-16 w-1.5 rounded-full bg-border transition-colors group-hover:bg-primary/50" />
+          </div>
+
+          <section className="min-w-0 flex-1 rounded-xl border border-border bg-card p-5 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <p className="text-sm font-bold">실시간 미리보기</p>
@@ -576,7 +805,7 @@ function SortableSectionItem({ section, pageId, content, update }: SortableSecti
     transition,
   };
 
-  const Panel = SECTION_EDITORS[section.type] ?? SectionMissingPanel;
+  const Panel: SectionPanel = SECTION_EDITORS[section.type] ?? SectionMissingPanel;
   const label = SECTION_TYPE_LABELS[section.type] ?? section.type;
 
   return (
@@ -632,7 +861,7 @@ function SortableSectionItem({ section, pageId, content, update }: SortableSecti
           </span>
         </AccordionTrigger>
         <AccordionContent>
-          <Panel content={content} update={update} />
+          <Panel content={content} update={update} section={section} pageId={pageId} />
         </AccordionContent>
       </AccordionItem>
     </div>

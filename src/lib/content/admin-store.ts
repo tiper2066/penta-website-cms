@@ -26,6 +26,16 @@ function ensureInitialized(): void {
   }
   initialized = true;
 
+  // 이전 스키마 등 호환되지 않는 stale 저장 데이터는 한 번 정리합니다.
+  try {
+    const raw = window.localStorage.getItem(ADMIN_STORAGE_KEY);
+    if (raw && !isValidContent(JSON.parse(raw))) {
+      window.localStorage.removeItem(ADMIN_STORAGE_KEY);
+    }
+  } catch {
+    window.localStorage.removeItem(ADMIN_STORAGE_KEY);
+  }
+
   window.addEventListener("storage", (event) => {
     if (event.key === ADMIN_STORAGE_KEY) {
       emitChange();
@@ -58,11 +68,29 @@ export function getContentSnapshot(): SiteContent {
 
   cachedRaw = raw;
   try {
-    cachedContent = raw ? (JSON.parse(raw) as SiteContent) : defaultSnapshot;
+    const parsed = raw ? JSON.parse(raw) : null;
+    // 이전 스키마(pages가 { home } 객체 맵)로 저장된 stale 데이터 등
+    // 현재 형식과 맞지 않으면 기본 스냅샷으로 되돌립니다.
+    cachedContent = parsed && isValidContent(parsed) ? (parsed as SiteContent) : defaultSnapshot;
   } catch {
     cachedContent = defaultSnapshot;
   }
   return cachedContent;
+}
+
+// 저장된 콘텐츠가 현재 스키마(pages 배열)와 호환되는지 최소 검증합니다.
+function isValidContent(value: unknown): value is SiteContent {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const candidate = value as { pages?: unknown; navigation?: unknown; footer?: unknown };
+  return (
+    Array.isArray(candidate.pages) &&
+    typeof candidate.navigation === "object" &&
+    candidate.navigation !== null &&
+    typeof candidate.footer === "object" &&
+    candidate.footer !== null
+  );
 }
 
 export function getServerContentSnapshot(): SiteContent {

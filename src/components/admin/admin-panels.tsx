@@ -1,24 +1,19 @@
 "use client";
 
-import {
-  closestCorners,
-  DndContext,
-  DragOverlay,
-  useDroppable,
-  type DragEndEvent,
-  type DragStartEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
-
-import { getHomeSections } from "@/lib/content/helpers";
-import { cn } from "@/lib/utils";
-import type { FooterContent, IdentifiedLink, SiteContent } from "@/lib/content/types";
+import { Label } from "@/components/ui/label";
+import { getHomeSections, getPage } from "@/lib/content/helpers";
+import type {
+  BenefitsSection,
+  FaqSection,
+  HomeSection,
+  LineupCardsSection,
+  LineupDetailSection,
+  PageHeaderSection,
+  PlaceholderSection,
+  ProductHeroSection,
+  SiteContent,
+  StatementSection,
+} from "@/lib/content/types";
 
 import {
   AddButton,
@@ -27,14 +22,8 @@ import {
   ToggleField,
   type UpdateContent,
 } from "./admin-fields";
-import {
-  arrayMove,
-  DragHandle,
-  RemoveButton,
-  SortableList,
-  SortableRow,
-  usePointerSortSensors,
-} from "./sortable";
+import { DrillInEditor, type DrillChildGroup } from "./drill-in";
+import { arrayMove, SortableList, SortableRow } from "./sortable";
 
 type PanelProps = {
   content: SiteContent;
@@ -48,6 +37,22 @@ export const SECTION_TYPE_LABELS: Record<string, string> = {
   productTabs: "Product Tabs",
   stats: "Stats",
   awards: "Awards",
+  productHero: "제품 히어로",
+  statement: "서술 문단",
+  benefits: "선택 이유 카드",
+  lineupCards: "라인업 카드",
+  placeholder: "플레이스홀더",
+  faq: "FAQ",
+  pageHeader: "페이지 헤더",
+  lineupDetail: "라인업 상세",
+};
+
+// 페이지 섹션 편집 패널 공통 props. 특정 페이지의 특정 섹션(id)을 편집합니다.
+export type SectionEditorProps = {
+  content: SiteContent;
+  update: UpdateContent;
+  section: HomeSection;
+  pageId: string;
 };
 
 function uid(prefix: string): string {
@@ -723,15 +728,94 @@ export function AwardsPanel({ content, update }: PanelProps) {
 
 export function FooterPanel({ content, update }: PanelProps) {
   const { footer } = content;
+  const groups = footer.groups;
+
+  const root: DrillChildGroup = {
+    label: "그룹",
+    addLabel: "메뉴 그룹 추가",
+    items: groups.map((group, gi) => ({
+      id: group.id,
+      title: group.title || `그룹 ${gi + 1}`,
+      fields: (
+        <TextField
+          label="그룹 제목"
+          value={group.title}
+          onChange={(v) => update((d) => { d.footer.groups[gi].title = v; })}
+        />
+      ),
+      childGroup: {
+        label: "링크",
+        addLabel: "링크 추가",
+        items: group.items.map((link, ii) => ({
+          id: link.id,
+          title: link.label || `링크 ${ii + 1}`,
+          fields: (
+            <>
+              <TextField
+                label="라벨"
+                value={link.label}
+                onChange={(v) => update((d) => { d.footer.groups[gi].items[ii].label = v; })}
+              />
+              <TextField
+                label="링크"
+                value={link.href}
+                onChange={(v) => update((d) => { d.footer.groups[gi].items[ii].href = v; })}
+              />
+              {groups.length > 1 ? (
+                <div className="space-y-1.5">
+                  <Label>그룹 이동</Label>
+                  <select
+                    value={group.id}
+                    onChange={(event) => {
+                      const targetId = event.target.value;
+                      if (targetId === group.id) return;
+                      update((d) => {
+                        const [moved] = d.footer.groups[gi].items.splice(ii, 1);
+                        const tgt = d.footer.groups.find((g) => g.id === targetId);
+                        if (tgt && moved) tgt.items.push(moved);
+                      });
+                    }}
+                    className="w-full rounded-lg border border-input bg-white px-3 py-2 text-sm"
+                  >
+                    {groups.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+            </>
+          ),
+        })),
+        onReorder: (from, to) =>
+          update((d) => { d.footer.groups[gi].items = arrayMove(d.footer.groups[gi].items, from, to); }),
+        onAdd: () =>
+          update((d) => { d.footer.groups[gi].items.push({ id: uid("fl"), label: "새 링크", href: "/" }); }),
+        onRemove: (idx) => update((d) => { d.footer.groups[gi].items.splice(idx, 1); }),
+      },
+    })),
+    onReorder: (from, to) => update((d) => { d.footer.groups = arrayMove(d.footer.groups, from, to); }),
+    onAdd: () =>
+      update((d) => {
+        d.footer.groups.push({
+          id: uid("fg"),
+          title: "새 그룹",
+          items: [{ id: uid("fl"), label: "새 링크", href: "/" }],
+        });
+      }),
+    onRemove: (idx) => update((d) => { d.footer.groups.splice(idx, 1); }),
+  };
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
+      <div className="space-y-3">
         <h3 className="text-sm font-bold">메뉴 그룹</h3>
-        <p className="text-[11px] text-muted-foreground">
-          그룹과 링크의 핸들(::)을 드래그해 순서를 바꿀 수 있고, 링크는 다른 그룹으로도 옮길 수 있습니다.
-        </p>
-        <FooterMenuEditor content={content} update={update} />
+        <DrillInEditor
+          root={root}
+          rootTitle="그룹"
+          hint="그룹을 열어 링크를 편집합니다. 링크의 '그룹 이동'으로 다른 그룹으로 옮길 수 있습니다."
+        />
       </div>
 
       <div className="space-y-4">
@@ -838,294 +922,330 @@ export function FooterPanel({ content, update }: PanelProps) {
   );
 }
 
-function FooterMenuEditor({ content, update }: PanelProps) {
-  const groups = content.footer.groups;
-  const sensors = usePointerSortSensors();
-  const [activeLabel, setActiveLabel] = useState<string | null>(null);
-
-  function handleDragStart(event: DragStartEvent) {
-    const id = String(event.active.id);
-    if (id.startsWith("group:")) {
-      const group = groups.find((g) => `group:${g.id}` === id);
-      setActiveLabel(group ? `그룹: ${group.title}` : null);
-      return;
-    }
-    if (id.startsWith("link:")) {
-      const linkId = id.slice("link:".length);
-      for (const group of groups) {
-        const link = group.items.find((l) => l.id === linkId);
-        if (link) {
-          setActiveLabel(link.label);
-          return;
-        }
-      }
-    }
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    setActiveLabel(null);
-    const { active, over } = event;
-    if (!over) {
-      return;
-    }
-    const activeId = String(active.id);
-    const overId = String(over.id);
-    if (activeId === overId) {
-      return;
-    }
-
-    update((draft) => {
-      const gs = draft.footer.groups;
-
-      if (activeId.startsWith("group:")) {
-        if (!overId.startsWith("group:")) {
-          return;
-        }
-        const from = gs.findIndex((g) => `group:${g.id}` === activeId);
-        const to = gs.findIndex((g) => `group:${g.id}` === overId);
-        if (from === -1 || to === -1) {
-          return;
-        }
-        draft.footer.groups = arrayMove(gs, from, to);
-        return;
-      }
-
-      if (activeId.startsWith("link:")) {
-        const linkId = activeId.slice("link:".length);
-        let srcGroup = -1;
-        let srcIndex = -1;
-        gs.forEach((group, groupIndex) => {
-          const linkIndex = group.items.findIndex((l) => l.id === linkId);
-          if (linkIndex !== -1) {
-            srcGroup = groupIndex;
-            srcIndex = linkIndex;
-          }
-        });
-        if (srcGroup === -1) {
-          return;
-        }
-
-        let tgtGroup = -1;
-        let tgtIndex = -1;
-        if (overId.startsWith("link:")) {
-          const overLinkId = overId.slice("link:".length);
-          gs.forEach((group, groupIndex) => {
-            const linkIndex = group.items.findIndex((l) => l.id === overLinkId);
-            if (linkIndex !== -1) {
-              tgtGroup = groupIndex;
-              tgtIndex = linkIndex;
-            }
-          });
-        } else if (overId.startsWith("zone:")) {
-          const groupId = overId.slice("zone:".length);
-          tgtGroup = gs.findIndex((g) => g.id === groupId);
-          tgtIndex = tgtGroup !== -1 ? gs[tgtGroup].items.length : -1;
-        } else if (overId.startsWith("group:")) {
-          const groupId = overId.slice("group:".length);
-          tgtGroup = gs.findIndex((g) => g.id === groupId);
-          tgtIndex = tgtGroup !== -1 ? gs[tgtGroup].items.length : -1;
-        }
-        if (tgtGroup === -1) {
-          return;
-        }
-
-        const [moved] = gs[srcGroup].items.splice(srcIndex, 1);
-        let insertAt = tgtIndex;
-        if (srcGroup === tgtGroup && srcIndex < tgtIndex) {
-          insertAt -= 1;
-        }
-        if (insertAt < 0) {
-          insertAt = 0;
-        }
-        gs[tgtGroup].items.splice(insertAt, 0, moved);
-      }
-    });
-  }
-
-  return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragCancel={() => setActiveLabel(null)}
-    >
-      <SortableContext
-        items={groups.map((group) => `group:${group.id}`)}
-        strategy={verticalListSortingStrategy}
-      >
-        <div className="space-y-3">
-          {groups.map((group, groupIndex) => (
-            <FooterGroupRow key={group.id} group={group} groupIndex={groupIndex} update={update} />
-          ))}
-        </div>
-      </SortableContext>
-
-      <div className="mt-3">
-        <AddButton
-          label="메뉴 그룹 추가"
-          onClick={() =>
-            update((draft) => {
-              draft.footer.groups.push({
-                id: uid("fg"),
-                title: "새 그룹",
-                items: [{ id: uid("fl"), label: "새 링크", href: "/" }],
-              });
-            })
-          }
-        />
-      </div>
-
-      <DragOverlay>
-        {activeLabel ? (
-          <div className="rounded-lg border border-border bg-white px-3 py-2 text-xs font-bold shadow-lg">
-            {activeLabel}
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
-  );
-}
-
-type FooterGroupRowProps = {
-  group: FooterContent["groups"][number];
-  groupIndex: number;
-  update: UpdateContent;
-};
-
-function FooterGroupRow({ group, groupIndex, update }: FooterGroupRowProps) {
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
-    useSortable({ id: `group:${group.id}`, data: { type: "group" } });
-  const { setNodeRef: setZoneRef } = useDroppable({ id: `zone:${group.id}` });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        "space-y-3 rounded-xl border border-border bg-background p-4",
-        isDragging && "relative z-10 opacity-70 shadow-lg",
-      )}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-bold text-muted-foreground">그룹 {groupIndex + 1}</p>
-        <div className="flex items-center gap-1">
-          <RemoveButton
-            onClick={() =>
-              update((draft) => {
-                draft.footer.groups.splice(groupIndex, 1);
-              })
-            }
-          />
-          <DragHandle ref={setActivatorNodeRef} {...attributes} {...listeners} />
-        </div>
-      </div>
-      <TextField
-        label="그룹 제목"
-        value={group.title}
-        onChange={(value) =>
-          update((draft) => {
-            draft.footer.groups[groupIndex].title = value;
-          })
-        }
-      />
-      <div ref={setZoneRef} className="space-y-2 border-l-2 border-muted pl-3">
-        <SortableContext
-          items={group.items.map((item) => `link:${item.id}`)}
-          strategy={verticalListSortingStrategy}
-        >
-          {group.items.map((item, itemIndex) => (
-            <FooterLinkRow
-              key={item.id}
-              item={item}
-              groupIndex={groupIndex}
-              itemIndex={itemIndex}
-              update={update}
-            />
-          ))}
-        </SortableContext>
-        <AddButton
-          label="링크 추가"
-          onClick={() =>
-            update((draft) => {
-              draft.footer.groups[groupIndex].items.push({ id: uid("fl"), label: "새 링크", href: "/" });
-            })
-          }
-        />
-      </div>
-    </div>
-  );
-}
-
-type FooterLinkRowProps = {
-  item: IdentifiedLink;
-  groupIndex: number;
-  itemIndex: number;
-  update: UpdateContent;
-};
-
-function FooterLinkRow({ item, groupIndex, itemIndex, update }: FooterLinkRowProps) {
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
-    useSortable({ id: `link:${item.id}`, data: { type: "link" } });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        "space-y-2 rounded-lg border border-border bg-white p-3",
-        isDragging && "relative z-10 opacity-70 shadow-lg",
-      )}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] font-bold text-muted-foreground">링크 {itemIndex + 1}</p>
-        <div className="flex items-center gap-1">
-          <RemoveButton
-            onClick={() =>
-              update((draft) => {
-                draft.footer.groups[groupIndex].items.splice(itemIndex, 1);
-              })
-            }
-          />
-          <DragHandle ref={setActivatorNodeRef} {...attributes} {...listeners} />
-        </div>
-      </div>
-      <TextField
-        label="라벨"
-        value={item.label}
-        onChange={(value) =>
-          update((draft) => {
-            draft.footer.groups[groupIndex].items[itemIndex].label = value;
-          })
-        }
-      />
-      <TextField
-        label="링크"
-        value={item.href}
-        onChange={(value) =>
-          update((draft) => {
-            draft.footer.groups[groupIndex].items[itemIndex].href = value;
-          })
-        }
-      />
-    </div>
-  );
-}
-
 function EmptyPanel() {
   return (
     <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
       이 섹션이 현재 콘텐츠에 없습니다.
     </p>
+  );
+}
+
+// ── 서브 페이지 섹션 편집 패널 ─────────────────────────────────────────
+// 특정 페이지(pageId)의 특정 섹션(section.id)을 직접 편집합니다.
+// (홈 패널과 달리 타입 find가 아니라 id로 대상 섹션을 찾으므로 중복 타입도 안전)
+
+export function ProductHeroPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "productHero") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: ProductHeroSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "productHero") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-4">
+      <TextField label="타이틀" value={data.title} onChange={(v) => set((d) => { d.title = v; })} />
+      <TextField label="부제" value={data.subtitle} onChange={(v) => set((d) => { d.subtitle = v; })} />
+      <TextAreaField
+        label="설명"
+        value={data.description}
+        rows={3}
+        hint="줄바꿈(Enter)이 그대로 표시됩니다."
+        onChange={(v) => set((d) => { d.description = v; })}
+      />
+      <div className="grid grid-cols-2 gap-3">
+        <TextField label="기본 버튼 라벨" value={data.primaryCta.label} onChange={(v) => set((d) => { d.primaryCta.label = v; })} />
+        <TextField label="기본 버튼 링크" value={data.primaryCta.href} onChange={(v) => set((d) => { d.primaryCta.href = v; })} />
+        <TextField label="보조 버튼 라벨" value={data.secondaryCta.label} onChange={(v) => set((d) => { d.secondaryCta.label = v; })} />
+        <TextField label="보조 버튼 링크" value={data.secondaryCta.href} onChange={(v) => set((d) => { d.secondaryCta.href = v; })} />
+      </div>
+      <TextField
+        label="제품 이미지 경로"
+        value={data.image ?? ""}
+        placeholder="/assets/products/damo-visual.svg"
+        onChange={(v) => set((d) => { d.image = v.trim() ? v : null; })}
+      />
+      <TextField label="이미지 대체 텍스트" value={data.imageAlt} onChange={(v) => set((d) => { d.imageAlt = v; })} />
+    </div>
+  );
+}
+
+export function StatementPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "statement") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: StatementSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "statement") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-4">
+      <TextAreaField
+        label="제목"
+        value={data.title}
+        rows={2}
+        hint="줄바꿈(Enter)이 그대로 표시됩니다."
+        onChange={(v) => set((d) => { d.title = v; })}
+      />
+      <TextAreaField
+        label="본문"
+        value={data.body}
+        rows={4}
+        hint="줄바꿈(Enter)이 그대로 표시됩니다."
+        onChange={(v) => set((d) => { d.body = v; })}
+      />
+    </div>
+  );
+}
+
+export function BenefitsPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "benefits") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: BenefitsSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "benefits") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-5">
+      <TextField label="제목" value={data.title} onChange={(v) => set((d) => { d.title = v; })} />
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold">카드 목록</h3>
+        <SortableList
+          ids={data.items.map((item) => item.id)}
+          onReorder={(from, to) => set((d) => { d.items = arrayMove(d.items, from, to); })}
+        >
+          {data.items.map((item, index) => (
+            <SortableRow
+              key={item.id}
+              id={item.id}
+              title={`카드 ${index + 1}`}
+              onRemove={() => set((d) => { d.items.splice(index, 1); })}
+            >
+              <div className="grid grid-cols-[80px_1fr] gap-3">
+                <TextField label="번호" value={item.number} onChange={(v) => set((d) => { d.items[index].number = v; })} />
+                <TextField label="제목" value={item.title} onChange={(v) => set((d) => { d.items[index].title = v; })} />
+              </div>
+              <TextAreaField label="설명" value={item.description} rows={3} onChange={(v) => set((d) => { d.items[index].description = v; })} />
+            </SortableRow>
+          ))}
+        </SortableList>
+        <AddButton
+          label="카드 추가"
+          onClick={() =>
+            set((d) => {
+              d.items.push({ id: uid("benefit"), number: String(d.items.length + 1).padStart(2, "0"), title: "새 카드", description: "" });
+            })
+          }
+        />
+      </div>
+      <TextField
+        label="하단 이미지 플레이스홀더 문구"
+        value={data.imagePlaceholder ?? ""}
+        placeholder="비우면 표시하지 않습니다"
+        onChange={(v) => set((d) => { d.imagePlaceholder = v.trim() ? v : null; })}
+      />
+    </div>
+  );
+}
+
+export function LineupCardsPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "lineupCards") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: LineupCardsSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "lineupCards") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-5">
+      <TextField label="제목" value={data.title} onChange={(v) => set((d) => { d.title = v; })} />
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold">라인업 카드</h3>
+        <SortableList
+          ids={data.items.map((item) => item.id)}
+          onReorder={(from, to) => set((d) => { d.items = arrayMove(d.items, from, to); })}
+        >
+          {data.items.map((item, index) => (
+            <SortableRow
+              key={item.id}
+              id={item.id}
+              title={`카드 ${index + 1}`}
+              onRemove={() => set((d) => { d.items.splice(index, 1); })}
+            >
+              <TextField label="이름" value={item.name} onChange={(v) => set((d) => { d.items[index].name = v; })} />
+              <TextAreaField label="설명" value={item.description} rows={3} onChange={(v) => set((d) => { d.items[index].description = v; })} />
+              <TextField label="링크" value={item.href} onChange={(v) => set((d) => { d.items[index].href = v; })} />
+            </SortableRow>
+          ))}
+        </SortableList>
+        <AddButton
+          label="라인업 카드 추가"
+          onClick={() => set((d) => { d.items.push({ id: uid("lineup"), name: "새 라인업", description: "", href: "#" }); })}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function PlaceholderPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "placeholder") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: PlaceholderSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "placeholder") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-4">
+      <TextField
+        label="제목(선택)"
+        value={data.title ?? ""}
+        placeholder="비우면 제목 없이 박스만 표시합니다"
+        onChange={(v) => set((d) => { d.title = v.trim() ? v : null; })}
+      />
+      <TextField label="박스 안내 문구" value={data.label} onChange={(v) => set((d) => { d.label = v; })} />
+    </div>
+  );
+}
+
+export function FaqPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "faq") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: FaqSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "faq") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-5">
+      <TextField label="제목" value={data.title} onChange={(v) => set((d) => { d.title = v; })} />
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold">FAQ 목록</h3>
+        <SortableList
+          ids={data.items.map((item) => item.id)}
+          onReorder={(from, to) => set((d) => { d.items = arrayMove(d.items, from, to); })}
+        >
+          {data.items.map((item, index) => (
+            <SortableRow
+              key={item.id}
+              id={item.id}
+              title={`Q ${index + 1}`}
+              onRemove={() => set((d) => { d.items.splice(index, 1); })}
+            >
+              <TextAreaField label="질문" value={item.question} rows={2} onChange={(v) => set((d) => { d.items[index].question = v; })} />
+              <TextAreaField label="답변" value={item.answer} rows={4} onChange={(v) => set((d) => { d.items[index].answer = v; })} />
+            </SortableRow>
+          ))}
+        </SortableList>
+        <AddButton
+          label="FAQ 추가"
+          onClick={() => set((d) => { d.items.push({ id: uid("faq"), question: "새 질문", answer: "" }); })}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function PageHeaderPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "pageHeader") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: PageHeaderSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "pageHeader") mutator(s.data);
+    });
+
+  return (
+    <div className="space-y-4">
+      <TextField label="제목" value={data.title} onChange={(v) => set((d) => { d.title = v; })} />
+      <TextAreaField label="설명" value={data.description} rows={3} onChange={(v) => set((d) => { d.description = v; })} />
+    </div>
+  );
+}
+
+export function LineupDetailPanel({ section, pageId, update }: SectionEditorProps) {
+  if (section.type !== "lineupDetail") return <EmptyPanel />;
+  const data = section.data;
+  const set = (mutator: (d: LineupDetailSection["data"]) => void) =>
+    update((draft) => {
+      const s = getPage(draft, pageId)?.sections.find((x) => x.id === section.id);
+      if (s?.type === "lineupDetail") mutator(s.data);
+    });
+
+  const root: DrillChildGroup = {
+    label: "라인업",
+    addLabel: "라인업 추가",
+    items: data.items.map((lineup, li) => ({
+      id: lineup.id,
+      title: lineup.label || `라인업 ${li + 1}`,
+      fields: (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <TextField label="탭 라벨" value={lineup.label} onChange={(v) => set((d) => { d.items[li].label = v; })} />
+            <TextField label="slug" value={lineup.slug} onChange={(v) => set((d) => { d.items[li].slug = v; })} />
+          </div>
+          <TextAreaField label="설명" value={lineup.description} rows={2} onChange={(v) => set((d) => { d.items[li].description = v; })} />
+        </>
+      ),
+      childGroup: {
+        label: "카드",
+        addLabel: "카드 추가",
+        items: lineup.cards.map((card, ci) => ({
+          id: card.id,
+          title: card.title || `카드 ${ci + 1}`,
+          fields: (
+            <TextField label="카드 제목" value={card.title} onChange={(v) => set((d) => { d.items[li].cards[ci].title = v; })} />
+          ),
+          childGroup: {
+            label: "블록",
+            addLabel: "블록 추가",
+            items: card.blocks.map((block, bi) => ({
+              id: block.id,
+              title: block.heading || `블록 ${bi + 1}`,
+              fields: (
+                <>
+                  <TextField
+                    label="소제목(선택)"
+                    value={block.heading ?? ""}
+                    placeholder="비우면 소제목 없이 목록만"
+                    onChange={(v) => set((d) => { d.items[li].cards[ci].blocks[bi].heading = v.trim() ? v : null; })}
+                  />
+                  <TextAreaField
+                    label="항목 (한 줄에 하나)"
+                    value={block.items.join("\n")}
+                    rows={4}
+                    onChange={(v) => set((d) => { d.items[li].cards[ci].blocks[bi].items = v.split("\n"); })}
+                  />
+                </>
+              ),
+            })),
+            onReorder: (from, to) => set((d) => { d.items[li].cards[ci].blocks = arrayMove(d.items[li].cards[ci].blocks, from, to); }),
+            onAdd: () => set((d) => { d.items[li].cards[ci].blocks.push({ id: uid("block"), heading: null, items: [] }); }),
+            onRemove: (idx) => set((d) => { d.items[li].cards[ci].blocks.splice(idx, 1); }),
+          },
+        })),
+        onReorder: (from, to) => set((d) => { d.items[li].cards = arrayMove(d.items[li].cards, from, to); }),
+        onAdd: () => set((d) => { d.items[li].cards.push({ id: uid("card"), title: "새 카드", blocks: [] }); }),
+        onRemove: (idx) => set((d) => { d.items[li].cards.splice(idx, 1); }),
+      },
+    })),
+    onReorder: (from, to) => set((d) => { d.items = arrayMove(d.items, from, to); }),
+    onAdd: () => set((d) => { d.items.push({ id: uid("lineup"), slug: uid("slug"), label: "새 라인업", description: "", cards: [] }); }),
+    onRemove: (idx) => set((d) => { d.items.splice(idx, 1); }),
+  };
+
+  return (
+    <DrillInEditor
+      root={root}
+      rootTitle="라인업"
+      hint="라인업 → 카드 → 블록 순으로 열어 편집합니다. 카드 안 항목은 한 줄에 하나씩 입력하세요."
+    />
   );
 }

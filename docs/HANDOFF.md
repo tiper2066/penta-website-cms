@@ -291,8 +291,26 @@ Phase D (멀티 페이지 데이터 모델) 완료 내용:
 - `src/content/demo-site.json`의 `pages`를 배열로 이관(`home`에 `"id": "home"`). 공개 렌더링 영향 없음.
 - 신규 헬퍼 `src/lib/content/helpers.ts`(`getPage`/`getHomePage`/`getHomeSections`/`getPageLabel`/`HOME_PAGE_ID`)를 도입해 `site.ts`(홈 로더), `admin-demo/preview/page.tsx`, `admin-panels.tsx`(섹션 find/mutate), `admin-editor.tsx`를 갱신했습니다. `admin-store.ts` 기본 스냅샷은 `getSiteContent()` 경유로 자동 반영됩니다.
 - `admin-editor.tsx`의 "편집 대상" 드롭다운을 실제 `content.pages` 기반으로 렌더(공통 요소 최상단 + 페이지 목록)하고, 섹션 아코디언·DnD 순서·노출 토글·삭제·하이라이트를 선택 페이지(`getPage(draft, target)`) 기준으로 일반화했습니다. 현재 페이지는 `홈` 1개라 기존 동작과 동일합니다.
-- 서브 페이지 JSON 이관과 `+ 페이지 추가`(신규 페이지 생성 UI)는 이번 범위 밖으로 남겨두었습니다.
 - 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/admin-demo`, `/admin-demo/preview` 200 응답 확인. 브라우저 회귀 검증(공개 메인, 편집기 드롭다운·섹션 순서/노출/삭제, 미리보기·하이라이트, JSON 내보내기)까지 이상 없음을 확인했습니다.
+
+Phase D 확장 (서브 페이지 완전 이관 + 페이지/섹션 관리 UI) 완료 내용:
+
+- 하드코딩되어 있던 `/products/data-security`(개요)와 `/products/data-security/[lineup]`(상세) 콘텐츠를 `demo-site.json`의 `pages[]` 항목(`data-security`, `data-security-lineup`)으로 완전히 이관했습니다.
+- 서브 페이지용 섹션 타입 8종(`productHero`, `statement`, `benefits`, `lineupCards`, `placeholder`, `faq`, `pageHeader`, `lineupDetail`)과 각 뷰 컴포넌트(`src/components/sections/*`)를 신설하고 `section-renderer.tsx`에 연결했습니다. `lineupDetail`은 `activeLineupSlug`로 활성 탭을 결정합니다.
+- 공개 라우트 2개를 `getPage()`+`SectionRenderer` 기반으로 재작성했습니다. `[lineup]`의 `generateStaticParams`/`generateMetadata`도 JSON에서 파생하며, 빌드 시 on-application/on-db/on-os 3개 라우트가 그대로 생성됩니다. 시각 결과는 기존과 동일합니다.
+- 편집기: "편집 대상" 드롭다운에 `+ 페이지 추가`, 서브 페이지 선택 시 `페이지 삭제`(홈 제외)·페이지 제목/slug 설정, 페이지 하단에 `+ 섹션 추가`(14개 타입, `section-templates.ts` 기본값)를 추가했습니다.
+- 신규 섹션 편집 패널은 `pageId`+`section.id`로 대상 섹션을 직접 편집하므로 같은 타입 중복(placeholder 2개 등)도 안전합니다. `lineupDetail`은 라인업→카드→블록→항목의 깊은 중첩을 아래 "편집기 UX 개선"의 드릴-인 방식으로 편집합니다.
+- `/admin-demo/preview`가 UI 편집 대상을 구독해 현재 선택한 페이지의 섹션을 렌더합니다.
+- **미리보기↔패널 페이지 동기화**: 미리보기 내부의 내부 링크 클릭을 가로채(실제 이동 차단) `slug`→페이지 매핑(`resolvePageIdByPath`)으로 편집 대상만 전환합니다. 매칭되는 편집용 페이지가 없는 링크(예: `/company`)는 무시합니다. 안전장치로, 편집 대상이 바뀌었는데 iframe이 미리보기 라우트를 벗어나 있으면 미리보기 라우트로 되돌려 동기화를 회복합니다.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/`, `/products/data-security`, `/products/data-security/{on-application,on-db,on-os}`, `/admin-demo`, `/admin-demo/preview` 200 응답 및 이관 콘텐츠 렌더 확인.
+
+편집기 UX 개선 (드릴-인 네비게이션 + 리사이즈 스플리터) 완료 내용:
+
+- **리사이즈 스플리터**: 좌측 편집 패널과 우측 미리보기 사이에 세로 드래그 핸들을 추가했습니다(데스크톱 lg 이상). `flex` 레이아웃 + CSS 변수(`--panel-w`)로 너비를 제어하며 범위는 **320~760px**, 미리보기 영역이 최소 360px 유지되도록 상한을 함께 제한합니다. 조절 값은 `localStorage`(`penta-cms:admin-demo:ui:panelWidth`)에 저장되고, 핸들을 더블클릭하면 기본값(380px)으로 초기화됩니다. 서버/최초 렌더는 기본값으로 일치시키고 마운트 후 1회 복원해 하이드레이션 안전을 확보했습니다.
+- **공통 드릴-인 편집기(`src/components/admin/drill-in.tsx`)**: 깊게 중첩된 목록을 한 번에 한 레벨씩만 보여주는 재사용 컴포넌트입니다. 브레드크럼(경로 클릭 이동) + "뒤로" + 현재 레벨 목록(드래그 정렬·추가·삭제)으로 구성되며, 자식이 있는 노드는 "N개 편집 →"로 파고들고 말단(leaf) 노드는 목록에서 바로 인라인 편집합니다. 내비게이션 경로(`path`)는 매 렌더 실제 데이터에서 파생하므로 삭제된 노드가 있어도 안전하게 자동 정리됩니다.
+- **`lineupDetail` 적용**: 기존 3단 인라인 중첩(라인업→카드→블록)을 드릴-인으로 교체해 좁은 패널에서도 편집이 편해졌습니다.
+- **`footer` 적용(옵션 요청 반영)**: `메뉴 그룹 → 링크`를 드릴-인으로 전환했습니다. 기존 "링크를 다른 그룹으로 드래그 이동"은 드릴-인 구조상 사라지므로, 각 링크 편집 화면에 **"그룹 이동" 선택 상자**를 추가해 동일 기능을 유지했습니다(그룹이 2개 이상일 때 노출). 하단 법무/회사 정보는 중첩이 얕아 기존처럼 인라인 유지합니다. 이 과정에서 기존 `FooterMenuEditor`/`FooterGroupRow`/`FooterLinkRow`(단일 `DndContext` 기반 그룹 간 이동)를 제거했습니다.
+- 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. 서브 페이지 정적 라우트(on-application/on-db/on-os) 생성 확인.
 
 Phase A 완료 내용:
 
@@ -317,7 +335,7 @@ Phase B+ (드래그 앤 드롭 정렬) 완료 내용:
 - 공통 프리미티브 `src/components/admin/sortable.tsx`(`SortableList`/`SortableRow`/`DragHandle`/`RemoveButton`/`usePointerSortSensors`) 신설. `admin-fields.tsx`의 `RepeaterItem`·`IconButton`·`moveItem` 제거.
 - 안정 정렬 키를 위해 모델에 `id` 추가(`IdentifiedLink`): `navigation.items`, `footer.groups`(+`items`), `footer.legal.utilityLinks`. `demo-site.json`도 갱신(공개 렌더링 영향 없음).
 - 평면 리스트 7종은 `SortableList`+`arrayMove`로 재정렬. 섹션 아코디언은 `SortableSectionItem`(`useSortable`)로 헤더 핸들 드래그.
-- **푸터**: 그룹 순서 변경 + 링크의 **그룹 간 이동** 지원(단일 `DndContext` + `active.id` prefix 구분 + 그룹별 `useDroppable` 존 + `DragOverlay`).
+- **푸터**: 그룹 순서 변경 + 링크의 **그룹 간 이동** 지원(단일 `DndContext` + `active.id` prefix 구분 + 그룹별 `useDroppable` 존 + `DragOverlay`). → 이후 "편집기 UX 개선"에서 드릴-인 방식으로 교체되었고, 그룹 간 이동은 링크별 "그룹 이동" 선택 상자로 대체되었습니다.
 - 검증: `npm run typecheck`, `npm run lint`, `npm run build` 통과. `/admin-demo`, `/admin-demo/preview` 200 응답 확인.
 
 Phase C (미리보기 하이라이트) 완료 내용:
@@ -351,10 +369,10 @@ Phase C (미리보기 하이라이트) 완료 내용:
 
 다음 세션 시작 시 권장 작업:
 
-- 3.5단계 범위(Phase A~C)와 후속 Phase D(멀티 페이지 데이터 모델 전환)까지 완료되었습니다. 이후 후보는 다음과 같습니다(우선순위는 요구사항 워크숍에서 확정).
-  1. **서브 페이지 관리(Phase D 확장)**: 서브 페이지(`/products/data-security` 등)를 `pages[]`로 이관하고, `+ 페이지 추가`(신규 페이지 생성) UI와 페이지별 섹션 편집을 활성화합니다.
+- 3.5단계 범위(Phase A~C)와 후속 Phase D(멀티 페이지 데이터 모델 전환) 및 Phase D 확장(서브 페이지 완전 이관 + 페이지/섹션 관리 UI)까지 완료되었습니다. 이후 후보는 다음과 같습니다(우선순위는 요구사항 워크숍에서 확정).
+  1. **다른 제품군 서브 페이지 확장**: WAPPLES / iSIGN / Cloudbric 등 남은 제품 페이지도 동일한 섹션 모델로 추가하고, 공개 라우트를 slug 기반 동적 라우트로 일반화할지 검토합니다.
   2. **Asset Manager**(4·5단계): 경로 입력 → 로컬 파일 업로드, Payload `Media`(Upload) + MinIO 연동. 아래 "실제 프로젝트 후속 요구사항" 참고.
-- 선택 사항: 그룹 간 링크 이동 시 `onDragOver` 기반 라이브 프리뷰(대상 그룹에서 실시간 빈칸 표시) 보강.
+- 편집기 UX: 좌측 패널 리사이즈 스플리터와 깊은 중첩 섹션(`lineupDetail`)·푸터의 드릴-인 편집을 완료했습니다. 필요 시 다른 반복 섹션(benefits/faq/lineupCards 등)에도 동일 드릴-인 패턴을 확대 적용할 수 있습니다.
 - 어떤 작업이든 완료 시 `npm run typecheck`, `npm run lint`, `npm run build`를 실행하고 `http://localhost:3000/admin-demo`, `http://localhost:3000/admin-demo/preview`를 확인합니다.
 
 ## 관리자 데모 편집 항목
